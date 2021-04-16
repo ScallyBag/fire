@@ -241,7 +241,7 @@ namespace evaluate
 	}
 
 	// calculate scale factor based on material hash, opposite colored bishops, passed pawns, etc 
-	sfactor calculate_scale_factor(const position& pos, const material::s_mat_hash_entry* material_entry, const int value)
+	sfactor calculate_scale_factor(const position& pos, const material::mat_hash_entry* material_entry, const int value)
 	{
 #ifndef TUNER
 		const auto sf_mult = 3;
@@ -275,7 +275,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline void eval_init(const position& pos, s_attack_info& ai, const pawn::s_pawn_hash_entry* pawn_entry)
+	inline void eval_init(const position& pos, attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
 	{
 		ai.attack[me][pt_king] = pos.attack_from<pt_king>(pos.king(me));
 		ai.attack[me][pt_pawn] = pawn_entry->pawn_attack(me);
@@ -293,7 +293,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_bishops(const position& pos, s_attack_info& ai, const pawn::s_pawn_hash_entry* pawn_entry)
+	inline int eval_bishops(const position& pos, attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
@@ -388,7 +388,7 @@ namespace evaluate
 		return score;
 	}
 
-	inline int eval_initiative(const position& pos, const pawn::s_pawn_hash_entry* pawn_entry, const int eg)
+	inline int eval_initiative(const position& pos, const pawn::pawn_hash_entry* pawn_entry, const int eg)
 	{
 #ifndef TUNER
 		constexpr auto initiative_mult = 38;
@@ -401,7 +401,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_king_attack(const position& pos, const s_attack_info& ai, const int attack_score)
+	inline int eval_king_attack(const position& pos, const attack_info& ai, const int attack_score)
 	{
 		const auto you = me == white ? black : white;
 #ifndef TUNER
@@ -480,7 +480,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_knights(const position& pos, s_attack_info& ai)
+	inline int eval_knights(const position& pos, attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
@@ -517,7 +517,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_passed_pawns(const position& pos, const s_attack_info& ai, uint64_t bb_passed_pawns)
+	inline int eval_passed_pawns(const position& pos, const attack_info& ai, uint64_t bb_passed_pawns)
 	{
 		assert(bb_passed_pawns != 0);
 		constexpr auto you = me == white ? black : white;
@@ -593,7 +593,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_queens(const position& pos, s_attack_info& ai)
+	inline int eval_queens(const position& pos, attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
@@ -636,7 +636,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_rooks(const position& pos, s_attack_info& ai)
+	inline int eval_rooks(const position& pos, attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
@@ -693,7 +693,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_space(const position& pos, const s_attack_info& ai)
+	inline int eval_space(const position& pos, const attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 #ifndef TUNER
@@ -715,7 +715,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_strong_squares(const position& pos, const s_attack_info& ai, const pawn::s_pawn_hash_entry* pawn_entry)
+	inline int eval_strong_squares(const position& pos, const attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
 	{
 		constexpr auto you = me == white ? black : white;
 		constexpr uint64_t rank456 = me == white ? 0x3C3C3C000000 : 0x3C3C3C0000;
@@ -755,7 +755,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	int eval_threats(const position& pos, s_attack_info& ai)
+	int eval_threats(const position& pos, attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 		constexpr auto rank2 = me == white ? rank_2_bb : rank_7_bb;
@@ -889,7 +889,7 @@ namespace evaluate
 		auto king_safety = pawn_entry->king_safety<white>(pos);
 		king_safety -= pawn_entry->king_safety<black>(pos);
 
-		s_attack_info ai{};
+		attack_info ai{};
 
 		eval_init<white>(pos, ai, pawn_entry);
 		eval_init<black>(pos, ai, pawn_entry);

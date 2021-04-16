@@ -35,7 +35,7 @@ const uint8_t flags_mask = 0xc7;
 const uint8_t threat_mask = 0x03;
 const uint8_t use_mask = 0xfb;
 
-struct s_main_hash_entry
+struct main_hash_entry
 {
 	[[nodiscard]] uint32_t move() const
 	{
@@ -102,13 +102,13 @@ class hash
 	static constexpr int cache_line = 64;
 	static constexpr int bucket_size = 3;
 
-	struct s_bucket
+	struct bucket
 	{
-		s_main_hash_entry entry[bucket_size];
+		main_hash_entry entry[bucket_size];
 		char padding[2];
 	};
 
-	static_assert(cache_line % sizeof(s_bucket) == 0, "Cluster size incorrect");
+	static_assert(cache_line % sizeof(bucket) == 0, "Cluster size incorrect");
 
 public:
 	~hash()
@@ -125,15 +125,15 @@ public:
 	{
 		return age_;
 	}
-	[[nodiscard]] s_main_hash_entry* probe(uint64_t key) const;
-	[[nodiscard]] s_main_hash_entry* replace(uint64_t key) const;
+	[[nodiscard]] main_hash_entry* probe(uint64_t key) const;
+	[[nodiscard]] main_hash_entry* replace(uint64_t key) const;
 	[[nodiscard]] int hash_full() const;
 	void init(size_t mb_size);
 	void clear() const;
 
-	[[nodiscard]] inline s_main_hash_entry* entry(const uint64_t key) const
+	[[nodiscard]] inline main_hash_entry* entry(const uint64_t key) const
 	{
-		return reinterpret_cast<s_main_hash_entry*>(reinterpret_cast<char*>(hash_mem_) + (key & bucket_mask_));
+		return reinterpret_cast<main_hash_entry*>(reinterpret_cast<char*>(hash_mem_) + (key & bucket_mask_));
 	}
 
 	inline void prefetch_entry(const uint64_t key) const
@@ -144,7 +144,7 @@ public:
 private:
 	size_t buckets_ = 0;
 	size_t bucket_mask_ = 0;
-	s_bucket* hash_mem_ = nullptr;
+	bucket* hash_mem_ = nullptr;
 	uint8_t age_ = 0;
 };
 

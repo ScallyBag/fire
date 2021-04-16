@@ -28,7 +28,7 @@
 namespace pawn
 {
 	template <side me>
-	int eval_pawns(const position& pos, s_pawn_hash_entry* e)
+	int eval_pawns(const position& pos, pawn_hash_entry* e)
 	{
 #ifndef TUNER
 		constexpr auto center_bind = 4259831;
@@ -159,7 +159,7 @@ namespace pawn
 					}
 	}
 
-	s_pawn_hash_entry* probe(const position& pos)
+	pawn_hash_entry* probe(const position& pos)
 	{
 		const auto key = pos.pawn_key();
 		auto* e = pos.thread_info()->pawn_table[key];
@@ -266,7 +266,7 @@ namespace pawn
 	}
 
 	template <side me>
-	score s_pawn_hash_entry::calculate_king_safety(const position& pos)
+	score pawn_hash_entry::calculate_king_safety(const position& pos)
 	{
 		const auto you = me == white ? black : white;
 #ifndef TUNER
@@ -316,6 +316,6 @@ namespace pawn
 		return result;
 	}
 
-	template score s_pawn_hash_entry::calculate_king_safety<white>(const position& pos);
-	template score s_pawn_hash_entry::calculate_king_safety<black>(const position& pos);
+	template score pawn_hash_entry::calculate_king_safety<white>(const position& pos);
+	template score pawn_hash_entry::calculate_king_safety<black>(const position& pos);
 }

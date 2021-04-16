@@ -48,36 +48,36 @@ public:
 	void wait_for_search_to_end();
 	void wait(std::atomic_bool& condition);
 
-	s_thread_info* ti{};
-	s_cmh_info* cmhi{};
+	threadinfo* ti{};
+	cmhinfo* cmhi{};
 	position* root_position{};
 
-	s_root_moves root_moves;
+	rootmoves root_moves;
 	int completed_depth = no_depth;
 	int active_pv{};
 };
 
-struct s_cmh_info
+struct cmhinfo
 {
 	counter_move_history counter_move_stats;
 };
 
-struct s_thread_info
+struct threadinfo
 {
 	position root_position{};
-	s_position_info position_inf[1024]{};
+	position_info position_inf[1024]{};
 	s_move move_list[8192]{};
 	move_value_stats history{};
 	move_value_stats evasion_history{};
-	s_max_gain_stats max_gain_table;
+	max_gain_stats max_gain_table;
 	counter_move_stats counter_moves{};
-	s_counter_follow_up_move_stats counter_followup_moves;
+	counter_follow_up_move_stats counter_followup_moves;
 	move_value_stats capture_history{};
 	material::material_hash material_table{};
 	pawn::pawn_hash pawn_table{};
 };
 
-struct s_main_thread final : thread
+struct mainthread final : thread
 {
 	void begin_search() override;
 	bool quick_move_allow = false, quick_move_played = false, quick_move_evaluation_busy = false;
@@ -88,7 +88,7 @@ struct s_main_thread final : thread
 	int previous_root_depth = {};
 };
 
-struct s_thread_pool : std::vector<thread*>
+struct threadpool : std::vector<thread*>
 {
 	void init();
 	void exit();
@@ -97,11 +97,11 @@ struct s_thread_pool : std::vector<thread*>
 	time_point start{};
 	int total_analyze_time{};
 	thread* threads[max_threads]{};
-	s_main_thread* main()
+	mainthread* main()
 	{
-		return static_cast<s_main_thread*>(threads[0]);
+		return static_cast<mainthread*>(threads[0]);
 	}
-	void begin_search(position&, const s_search_limit&);
+	void begin_search(position&, const search_limit&);
 	void change_thread_count(int num_threads);
 	[[nodiscard]] uint64_t visited_nodes() const;
 	[[nodiscard]] uint64_t tb_hits() const;
@@ -113,12 +113,12 @@ struct s_thread_pool : std::vector<thread*>
 	int root_contempt_value = score_0;
 	endgames end_games;
 	position* root_position{};
-	s_root_moves root_moves;
-	s_position_info* root_position_info{};
+	rootmoves root_moves;
+	position_info* root_position_info{};
 	bool analysis_mode{};
 	int fifty_move_distance{};
 	int multi_pv{}, multi_pv_max{};
 	bool dummy_null_move_threat{}, dummy_prob_cut{};
 };
 
-extern s_thread_pool thread_pool;
+extern threadpool thread_pool;

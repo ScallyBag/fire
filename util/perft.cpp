@@ -33,17 +33,17 @@ static uint64_t perft(position& pos, const int depth) {
 	uint64_t cnt = 0;
 	const auto leaf = depth == 2;
 
-	for (const auto& m : s_legal_move_list(pos))
+	for (const auto& m : legal_move_list(pos))
 	{
 		pos.play_move(m, pos.give_check(m));
-		cnt += leaf ? s_legal_move_list(pos).size() : perft(pos, depth - 1);
+		cnt += leaf ? legal_move_list(pos).size() : perft(pos, depth - 1);
 		pos.take_move_back(m);
 	}
 	return cnt;
 }
 
 uint64_t start_perft(position& pos, const int depth) {
-	return depth > 1 ? perft(pos, depth) : s_legal_move_list(pos).size();
+	return depth > 1 ? perft(pos, depth) : legal_move_list(pos).size();
 }
 
 void perft(int depth, std::string& fen)
@@ -222,7 +222,7 @@ void divide(int depth, std::string& fen)
 
 				// start perft/divide
 				const auto start_time = now();
-				for (const auto& m : s_legal_move_list(pos))
+				for (const auto& m : legal_move_list(pos))
 				{
 					pos.play_move(m, pos.give_check(m));
 					const auto cnt = depth > 1 ? start_perft(pos, depth - 1) : 1;
@@ -274,7 +274,7 @@ void divide(int depth, std::string& fen)
 
 		// start perft/divide
 		const auto start_time = now();
-		for (const auto& m : s_legal_move_list(pos))
+		for (const auto& m : legal_move_list(pos))
 		{
 			pos.play_move(m, pos.give_check(m));
 			const auto cnt = depth > 1 ? start_perft(pos, depth - 1) : 1;

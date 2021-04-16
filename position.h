@@ -22,13 +22,13 @@ class position;
 class thread;
 
 struct s_move;
-struct s_thread_info;
-struct s_cmh_info;
+struct threadinfo;
+struct cmhinfo;
 
 template <int max_plus, int max_min>
-struct s_piece_square_stats;
+struct piece_square_stats;
 
-typedef s_piece_square_stats<24576, 24576> counter_move_values;
+typedef piece_square_stats<24576, 24576> counter_move_values;
 
 constexpr int delayed_number{7};
 
@@ -89,7 +89,7 @@ namespace pst
 	extern int psq[num_pieces][num_squares];
 }
 
-struct s_attack_info
+struct attack_info
 {
 	uint64_t attack[num_sides][num_piecetypes];
 	uint64_t double_attack[num_sides];
@@ -100,7 +100,7 @@ struct s_attack_info
 	uint64_t k_zone[num_sides];
 };
 
-struct s_position_info
+struct position_info
 {
 	uint64_t pawn_key;
 	uint64_t material_key, bishop_color_key;
@@ -141,7 +141,7 @@ struct s_position_info
 	square pin_by[num_squares];
 };
 
-static_assert(offsetof(struct s_position_info, key) == 48, "offset wrong");
+static_assert(offsetof(struct position_info, key) == 48, "offset wrong");
 
 class position
 {
@@ -232,22 +232,22 @@ public:
 	void increase_tb_hits();
 	[[nodiscard]] bool is_chess960() const;
 	[[nodiscard]] thread* my_thread() const;
-	[[nodiscard]] s_thread_info* thread_info() const;
-	[[nodiscard]] s_cmh_info* cmh_info() const;
+	[[nodiscard]] threadinfo* thread_info() const;
+	[[nodiscard]] cmhinfo* cmh_info() const;
 	[[nodiscard]] uint64_t visited_nodes() const;
 	[[nodiscard]] uint64_t tb_hits() const;
 	[[nodiscard]] int fifty_move_counter() const;
 	[[nodiscard]] int psq_score() const;
 	[[nodiscard]] int non_pawn_material(side color) const;
-	[[nodiscard]] s_position_info* info() const
+	[[nodiscard]] position_info* info() const
 	{
 		return st_;
 	}
-	void copy_position(const position* pos, thread* th, s_position_info* copy_state);
+	void copy_position(const position* pos, thread* th, position_info* copy_state);
 	double epd_result;
 private:
 	void set_castling_possibilities(side color, square from_r);
-	void set_position_info(s_position_info* si) const;
+	void set_position_info(position_info* si) const;
 	void calculate_bishop_color_key() const;
 
 	void move_piece(side color, ptype piece, square sq);
@@ -257,11 +257,11 @@ private:
 	void do_castle_move(side me, square from, square to, square& from_r, square& to_r);
 	[[nodiscard]] bool is_draw() const;
 
-	s_position_info* st_;
+	position_info* st_;
 	side on_move_;
 	thread* my_thread_;
-	s_thread_info* thread_info_;
-	s_cmh_info* cmh_info_;
+	threadinfo* thread_info_;
+	cmhinfo* cmh_info_;
 	ptype board_[num_squares];
 	uint64_t piece_bb_[num_pieces];
 	uint64_t color_bb_[num_sides];
@@ -372,7 +372,7 @@ inline int position::castling_possible(const side color) const
 	return st_->castle_possibilities & (white_short | white_long) << 2 * color;
 }
 
-inline s_cmh_info* position::cmh_info() const
+inline cmhinfo* position::cmh_info() const
 {
 	return cmh_info_;
 }
@@ -572,7 +572,7 @@ inline uint64_t position::tb_hits() const
 	return tb_hits_;
 }
 
-inline s_thread_info* position::thread_info() const
+inline threadinfo* position::thread_info() const
 {
 	return thread_info_;
 }

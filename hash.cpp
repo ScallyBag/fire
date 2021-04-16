@@ -26,7 +26,7 @@ hash main_hash;
 // set hash size in MB
 void hash::init(const size_t mb_size)
 {
-	const auto new_size = static_cast<size_t>(1) << msb(mb_size * 1024 * 1024 / sizeof(s_bucket));
+	const auto new_size = static_cast<size_t>(1) << msb(mb_size * 1024 * 1024 / sizeof(bucket));
 
 	if (new_size == buckets_)
 		return;
@@ -36,7 +36,7 @@ void hash::init(const size_t mb_size)
 	if (hash_mem_)
 		free(hash_mem_);
 
-	hash_mem_ = static_cast<s_bucket*>(calloc(buckets_ * sizeof(s_bucket) + 63, 1));
+	hash_mem_ = static_cast<bucket*>(calloc(buckets_ * sizeof(bucket) + 63, 1));
 
 	if (!hash_mem_)
 	{
@@ -46,17 +46,17 @@ void hash::init(const size_t mb_size)
 	}
 
 	buckets_ = new_size;
-	bucket_mask_ = (buckets_ - 1) * sizeof(s_bucket);
+	bucket_mask_ = (buckets_ - 1) * sizeof(bucket);
 }
 
 // reset allocated memory to 0
 void hash::clear() const
 {
-	std::memset(hash_mem_, 0, buckets_ * sizeof(s_bucket));
+	std::memset(hash_mem_, 0, buckets_ * sizeof(bucket));
 }
 
 // probe exiting entries transposition table
-s_main_hash_entry* hash::probe(const uint64_t key) const
+main_hash_entry* hash::probe(const uint64_t key) const
 {
 	auto* const hash_entry = entry(key);
 	const uint16_t key16 = key >> 48;
@@ -74,7 +74,7 @@ s_main_hash_entry* hash::probe(const uint64_t key) const
 }
 
 // overwrite existing entry if aged
-s_main_hash_entry* hash::replace(const uint64_t key) const
+main_hash_entry* hash::replace(const uint64_t key) const
 {
 	auto* const hash_entry = entry(key);
 	const uint16_t key16 = key >> 48;
@@ -99,7 +99,7 @@ int hash::hash_full() const
 	auto cnt = 0;
 	for (auto i = 0; i < i_max; i++)
 	{
-		const s_main_hash_entry* hash_entry = &hash_mem_[i].entry[0];
+		const main_hash_entry* hash_entry = &hash_mem_[i].entry[0];
 		for (auto j = 0; j < bucket_size; j++)
 			if (hash_entry[j].key_ && (hash_entry[j].flags_ & age_mask) == age_)
 				cnt++;

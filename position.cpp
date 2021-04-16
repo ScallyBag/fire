@@ -141,7 +141,7 @@ square position::calculate_threat() const
 	return no_square;
 }
 
-void position::copy_position(const position* pos, thread* th, s_position_info* copy_state)
+void position::copy_position(const position* pos, thread* th, position_info* copy_state)
 {
 	std::memcpy(this, pos, sizeof(position));
 	if (th)
@@ -405,7 +405,7 @@ void position::play_move(const uint32_t move, const bool gives_check)
 	++nodes_;
 	auto key = st_->key ^ zobrist::on_move;
 
-	std::memcpy(st_ + 1, st_, offsetof(s_position_info, key));
+	std::memcpy(st_ + 1, st_, offsetof(position_info, key));
 	st_++;
 
 	st_->draw50_moves = (st_ - 1)->draw50_moves + 1;
@@ -564,7 +564,7 @@ void position::play_null_move()
 
 	main_hash.prefetch_entry(key);
 
-	std::memcpy(st_ + 1, st_, offsetof(s_position_info, key));
+	std::memcpy(st_ + 1, st_, offsetof(position_info, key));
 	st_++;
 
 	st_->key = key;
@@ -731,7 +731,7 @@ void position::set_castling_possibilities(const side color, const square from_r)
 }
 
 
-void position::set_position_info(s_position_info* si) const
+void position::set_position_info(position_info* si) const
 {
 	si->key = si->material_key = 0;
 	si->non_pawn_material[white] = si->non_pawn_material[black] = mat_0;
@@ -788,7 +788,7 @@ position& position::set(const std::string& fen_str, const bool is_chess960, thre
 	std::memset(this, 0, sizeof(position));
 	std::fill_n(&piece_list_[0][0], sizeof piece_list_ / sizeof(square), no_square);
 	st_ = th->ti->position_inf + 5;
-	std::memset(st_, 0, sizeof(s_position_info));
+	std::memset(st_, 0, sizeof(position_info));
 	chess960_ = is_chess960;
 
 	ss >> std::noskipws;

@@ -304,7 +304,7 @@ void set_option(std::istringstream& input)
 // including time and inc, etc.
 void go(position& pos, std::istringstream& input)
 {
-	s_search_limit search_param;
+	search_limit search_param;
 	std::string token;
 	search_param.infinite = 1;
 

@@ -18,7 +18,7 @@
 #include "fire.h"
 
 typedef std::chrono::milliseconds::rep time_point;
-typedef s_move_list<max_moves> max_moves_list;
+typedef movelist<max_moves> max_moves_list;
 
 inline time_point now()
 {
@@ -26,9 +26,9 @@ inline time_point now()
 		(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-struct s_search_limit
+struct search_limit
 {
-	s_search_limit()
+	search_limit()
 	{
 		nodes = time[white] = time[black] = inc[white] = inc[black] =
 			moves_to_go = depth = move_time = mate = infinite = ponder = 0;
@@ -48,7 +48,7 @@ struct s_search_limit
 class timecontrol
 {
 public:
-	void init(s_search_limit& limit, side me, int ply);
+	void init(search_limit& limit, side me, int ply);
 	[[nodiscard]] int64_t optimum() const {return optimal_time_;}
 	[[nodiscard]] int64_t maximum() const {return maximum_time_;}
 	[[nodiscard]] int64_t elapsed() const;

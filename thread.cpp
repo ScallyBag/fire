@@ -23,7 +23,7 @@
 #include "search.h"
 #include "uci.h"
 
-s_cmh_info* cmh_data;
+cmhinfo* cmh_data;
 
 thread::thread()
 {
@@ -48,11 +48,11 @@ thread::~thread()
 	native_thread_.join();
 }
 
-void s_thread_pool::init()
+void threadpool::init()
 {
-	cmh_data = static_cast<s_cmh_info*>(calloc(sizeof(s_cmh_info), true));
+	cmh_data = static_cast<cmhinfo*>(calloc(sizeof(cmhinfo), true));
 
-	threads[0] = new s_main_thread;
+	threads[0] = new mainthread;
 	thread_count = 1;
 	end_games.init_endgames();
 	end_games.init_scale_factors();	
@@ -62,7 +62,7 @@ void s_thread_pool::init()
 	total_analyze_time = 0;
 }
 
-void s_thread_pool::begin_search(position& pos, const s_search_limit& time)
+void threadpool::begin_search(position& pos, const search_limit& time)
 {
 	main()->wait_for_search_to_end();
 
@@ -74,12 +74,12 @@ void s_thread_pool::begin_search(position& pos, const s_search_limit& time)
 	main()->wake(true);
 }
 
-void s_thread_pool::delete_counter_move_history()
+void threadpool::delete_counter_move_history()
 {
 	cmh_data->counter_move_stats.clear();
 }
 
-void s_thread_pool::change_thread_count(int const num_threads)
+void threadpool::change_thread_count(int const num_threads)
 {
 	assert(uci_threads > 0);
 
@@ -90,7 +90,7 @@ void s_thread_pool::change_thread_count(int const num_threads)
 		delete threads[--thread_count];
 }
 
-void s_thread_pool::exit()
+void threadpool::exit()
 {
 	while (thread_count > 0)
 		delete threads[--thread_count];
@@ -102,9 +102,9 @@ void thread::idle_loop()
 {
 	cmhi = cmh_data;
 
-	auto* p = calloc(sizeof(s_thread_info), true);
-	std::memset(p, 0, sizeof(s_thread_info));
-	ti = new(p) s_thread_info;
+	auto* p = calloc(sizeof(threadinfo), true);
+	std::memset(p, 0, sizeof(threadinfo));
+	ti = new(p) threadinfo;
 
 	root_position = &ti->root_position;
 
@@ -129,7 +129,7 @@ void thread::idle_loop()
 	free(p);
 }
 
-uint64_t s_thread_pool::tb_hits() const
+uint64_t threadpool::tb_hits() const
 {
 	uint64_t hits = 0;
 	for (auto i = 0; i < active_thread_count; ++i)
@@ -165,7 +165,7 @@ void thread::wake(const bool activate_search)
 	sleep_condition_.notify_one();
 }
 
-uint64_t s_thread_pool::visited_nodes() const
+uint64_t threadpool::visited_nodes() const
 {
 	uint64_t nodes = 0;
 	for (auto i = 0; i < active_thread_count; ++i)
@@ -173,4 +173,4 @@ uint64_t s_thread_pool::visited_nodes() const
 	return nodes;
 }
 
-s_thread_pool thread_pool;
+threadpool thread_pool;

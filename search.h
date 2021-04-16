@@ -21,17 +21,17 @@
 #include "fire.h"
 #include "position.h"
 
-typedef s_move_list<max_pv> principal_variation;
+typedef movelist<max_pv> principal_variation;
 
-struct s_signaling
+struct signaling
 {
 	std::atomic_bool stop_analyzing, stop_if_ponder_hit;
 };
 
 namespace search
 {
-	inline s_signaling signals;
-	inline s_search_limit timer;
+	inline signaling signals;
+	inline search_limit timer;
 	inline bool running;
 
 	void init();
@@ -56,7 +56,7 @@ namespace search
 		return counter_move_bonus[static_cast<uint32_t>(d) / plies];
 	}
 
-	struct s_easy_move_manager
+	struct easy_move_manager
 	{
 		void clear()
 		{
@@ -95,7 +95,7 @@ namespace search
 		uint32_t pv[3];
 	};
 
-	inline s_easy_move_manager easy_move;
+	inline easy_move_manager easy_move;
 	inline int draw[num_sides];
 	inline uint64_t previous_info_time;
 
@@ -163,8 +163,8 @@ namespace search
 }
 
 template <int max_plus, int max_min>
-struct s_piece_square_stats;
-typedef s_piece_square_stats<24576, 24576> counter_move_values;
+struct piece_square_stats;
+typedef piece_square_stats<24576, 24576> counter_move_values;
 
 const int egtb_helpful = 0 * plies;
 const int egtb_not_helpful = 10 * plies;
@@ -178,17 +178,17 @@ typedef int (*egtb_probe)(position& pos);
 void filter_root_moves(position& pos);
 std::string value(int val);
 
-struct s_root_move
+struct rootmove
 {
-	s_root_move() = default;
+	rootmove() = default;
 
-	explicit s_root_move(const uint32_t move)
+	explicit rootmove(const uint32_t move)
 	{
 		pv.move_number = 1;
 		pv.moves[0] = move;
 	}
 
-	bool operator<(const s_root_move& root_move) const
+	bool operator<(const rootmove& root_move) const
 	{
 		return root_move.score < score;
 	}
@@ -208,24 +208,24 @@ struct s_root_move
 	principal_variation pv;
 };
 
-struct s_root_moves
+struct rootmoves
 {
-	s_root_moves() = default;
+	rootmoves() = default;
 
 	int move_number = 0, dummy = 0;
-	s_root_move moves[max_moves];
+	rootmove moves[max_moves];
 
-	void add(const s_root_move root_move)
+	void add(const rootmove root_move)
 	{
 		moves[move_number++] = root_move;
 	}
 
-	s_root_move& operator[](const int index)
+	rootmove& operator[](const int index)
 	{
 		return moves[index];
 	}
 
-	const s_root_move& operator[](const int index) const
+	const rootmove& operator[](const int index) const
 	{
 		return moves[index];
 	}

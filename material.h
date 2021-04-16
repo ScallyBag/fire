@@ -22,7 +22,7 @@
 namespace material
 {
 	// material hash data structure
-	struct s_mat_hash_entry
+	struct mat_hash_entry
 	{
 		[[nodiscard]] int get_game_phase() const
 		{
@@ -46,10 +46,10 @@ namespace material
 		bool conversion_is_estimated;
 	};
 
-	static_assert(sizeof(s_mat_hash_entry) == 32, "Material Entry size incorrect");
+	static_assert(sizeof(mat_hash_entry) == 32, "Material Entry size incorrect");
 
 	template <class entry, int Size>
-	struct s_material_hash_table
+	struct material_hash_table
 	{
 		entry* operator[](const uint64_t key)
 		{
@@ -120,6 +120,6 @@ namespace material
 	// default material hash size = 16 MB;
 	const int material_hash_size = 16384;
 
-	typedef s_material_hash_table<s_mat_hash_entry, material_hash_size> material_hash;
-	s_mat_hash_entry* probe(const position& pos);
+	typedef material_hash_table<mat_hash_entry, material_hash_size> material_hash;
+	mat_hash_entry* probe(const position& pos);
 }

@@ -109,7 +109,7 @@ namespace util
 		if (str.length() == 5)
 			str[4] = static_cast<char>(tolower(str[4]));
 
-		for (const auto& new_move : s_legal_move_list(pos))
+		for (const auto& new_move : legal_move_list(pos))
 			if (str == move_to_string(new_move, pos))
 				return new_move;
 

@@ -266,7 +266,7 @@ namespace pawn
 		}
 	};
 
-	struct s_pawn_hash_entry
+	struct pawn_hash_entry
 	{
 		[[nodiscard]] int pawns_score() const
 		{
@@ -338,11 +338,11 @@ namespace pawn
 		char padding[20];
 	};
 
-	static_assert(offsetof(struct s_pawn_hash_entry, half_open_lines) == 72, "offset wrong");
-	static_assert(sizeof(s_pawn_hash_entry) == 128, "Pawn Hash Entry size incorrect");
+	static_assert(offsetof(struct pawn_hash_entry, half_open_lines) == 72, "offset wrong");
+	static_assert(sizeof(pawn_hash_entry) == 128, "Pawn Hash Entry size incorrect");
 
 	template <class entry, int size>
-	struct s_pawn_hash_table
+	struct pawn_hash_table
 	{
 		entry* operator[](const uint64_t key)
 		{
@@ -355,9 +355,9 @@ namespace pawn
 	};
 
 	void init();
-	s_pawn_hash_entry* probe(const position& pos);
+	pawn_hash_entry* probe(const position& pos);
 	const int pawn_hash_size = 16384;
-	typedef s_pawn_hash_table<s_pawn_hash_entry, pawn_hash_size> pawn_hash;
+	typedef pawn_hash_table<pawn_hash_entry, pawn_hash_size> pawn_hash;
 }
 
 	inline square square_in_front(const side color, const square sq)

@@ -423,12 +423,12 @@ namespace movepick
 	}
 }
 
-int s_killer_stats::index_my_pieces(const position& pos, const side color)
+int killer_stats::index_my_pieces(const position& pos, const side color)
 {
 	return movepick::hash_bb(pos.pieces(color));
 }
 
-int s_killer_stats::index_your_pieces(const position& pos, const side color, const square to)
+int killer_stats::index_your_pieces(const position& pos, const side color, const square to)
 {
 	return movepick::hash_bb(pos.pieces(color, piece_type(pos.piece_on_square(to))));
 }

@@ -134,7 +134,7 @@ namespace material
 	}
 
 	// probe material hash table, set game_phase, scale function, etc.
-	s_mat_hash_entry* probe(const position& pos)
+	mat_hash_entry* probe(const position& pos)
 	{
 		const auto key = pos.material_key() ^ pos.bishop_color_key();
 		auto* hash_entry = pos.thread_info()->material_table[key];
@@ -142,7 +142,7 @@ namespace material
 		if (hash_entry->key64 == key)
 			return hash_entry;
 
-		std::memset(hash_entry, 0, sizeof(s_mat_hash_entry));
+		std::memset(hash_entry, 0, sizeof(mat_hash_entry));
 		hash_entry->key64 = key;
 		hash_entry->factor[white] = hash_entry->factor[black] = static_cast<uint8_t>(normal_factor);
 		hash_entry->game_phase = static_cast<uint8_t>(pos.game_phase());
@@ -226,13 +226,13 @@ namespace material
 	}
 	
 	// retrieve endgame value from material hash
-	int s_mat_hash_entry::value_from_function(const position& pos) const
+	int mat_hash_entry::value_from_function(const position& pos) const
 	{
 		return (*thread_pool.end_games.value_functions[value_function_index])(pos);
 	}
 
 	// retrieve scale factor from material hash
-	sfactor s_mat_hash_entry::scale_factor_from_function(const position& pos, const side color) const
+	sfactor mat_hash_entry::scale_factor_from_function(const position& pos, const side color) const
 	{
 		if (scale_function_index[color] >= 0)
 		{

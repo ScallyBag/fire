@@ -352,12 +352,12 @@ constexpr bool is_ok(const uint32_t move)
 }
 
 template <int capacity>
-struct s_move_list
+struct movelist
 {
 	int move_number;
 	uint32_t moves[capacity] = {};
 
-	s_move_list() : move_number(0)
+	movelist() : move_number(0)
 	{
 	}
 

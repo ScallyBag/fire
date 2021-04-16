@@ -69,9 +69,9 @@ s_move* generate_moves(const position& pos, s_move* moves);
 s_move* generate_captures_on_square(const position& pos, s_move* moves, square sq);
 s_move* generate_legal_moves(const position& pos, s_move* moves);
 
-struct s_legal_move_list
+struct legal_move_list
 {
-	explicit s_legal_move_list(const position& pos)
+	explicit legal_move_list(const position& pos)
 	{
 		last_ = generate_legal_moves(pos, moves_);
 	}

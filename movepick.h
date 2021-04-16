@@ -44,7 +44,7 @@ namespace movepick
 }
 
 template <typename tn>
-struct s_piece_square_table
+struct piece_square_table
 {
 	const tn* operator[](ptype piece) const
 	{
@@ -76,7 +76,7 @@ protected:
 };
 
 template <int max_plus, int max_min>
-struct s_piece_square_stats : s_piece_square_table<int16_t>
+struct piece_square_stats : piece_square_table<int16_t>
 {
 	static int calculate_offset(const ptype piece, const square to)
 	{
@@ -110,7 +110,7 @@ struct s_piece_square_stats : s_piece_square_table<int16_t>
 };
 
 template <typename T>
-struct s_color_square_stats
+struct color_square_stats
 {
 	const T* operator[](side color) const
 	{
@@ -131,7 +131,7 @@ private:
 	T table_[num_sides][num_squares];
 };
 
-struct s_counter_move_full_stats
+struct counter_move_full_stats
 {
 	uint32_t get(const side color, const uint32_t move)
 	{
@@ -152,7 +152,7 @@ private:
 	uint16_t table_[num_sides][64 * 64] = {};
 };
 
-struct s_counter_follow_up_move_stats
+struct counter_follow_up_move_stats
 {
 	uint32_t get(const ptype piece1, const square to1, const ptype piece2, const square to2)
 	{
@@ -173,7 +173,7 @@ private:
 	uint16_t table_[num_pieces][num_squares][num_piecetypes][num_squares] = {};
 };
 
-struct s_max_gain_stats
+struct max_gain_stats
 {
 	[[nodiscard]] int get(const ptype piece, const uint32_t move) const
 	{
@@ -195,7 +195,7 @@ private:
 	int table_[num_pieces][64 * 64] = {};
 };
 
-struct s_killer_stats
+struct killer_stats
 {
 	static int index_my_pieces(const position& pos, side color);
 	static int index_your_pieces(const position& pos, side color, square to);
@@ -219,10 +219,10 @@ private:
 	uint32_t table_[num_sides][65536] = {};
 };
 
-typedef s_piece_square_table<uint16_t> counter_move_stats;
-typedef s_piece_square_stats<8192, 8192> move_value_stats;
-typedef s_piece_square_stats<3 * 8192, 3 * 8192> counter_move_values;
-typedef s_piece_square_table<counter_move_values> counter_move_history;
+typedef piece_square_table<uint16_t> counter_move_stats;
+typedef piece_square_stats<8192, 8192> move_value_stats;
+typedef piece_square_stats<3 * 8192, 3 * 8192> counter_move_values;
+typedef piece_square_table<counter_move_values> counter_move_history;
 
 inline stage& operator++(stage& d)
 {

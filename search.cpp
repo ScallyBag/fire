@@ -120,7 +120,7 @@ namespace search
 		assert(depth >= plies && depth < max_depth);
 
 		uint32_t quiet_moves[max_quiet_moves];
-		s_main_hash_entry* hash_entry = nullptr;
+		main_hash_entry* hash_entry = nullptr;
 
 		uint64_t key64 = 0;
 
@@ -152,7 +152,7 @@ namespace search
 
 		if (my_thread == thread_pool.main())
 		{
-			if (auto * main_thread = static_cast<s_main_thread*>(my_thread); ++main_thread->interrupt_counter >= 4096)
+			if (auto * main_thread = static_cast<mainthread*>(my_thread); ++main_thread->interrupt_counter >= 4096)
 			{
 				if (main_thread->quick_move_evaluation_busy)
 				{
@@ -644,7 +644,7 @@ namespace search
 			if (signals.stop_analyzing.load(std::memory_order_relaxed))
 				return alpha;
 
-			if (my_thread == thread_pool.main() && static_cast<s_main_thread*>(my_thread)->quick_move_evaluation_stopped)
+			if (my_thread == thread_pool.main() && static_cast<mainthread*>(my_thread)->quick_move_evaluation_stopped)
 				return alpha;
 
 			if (root_node)
@@ -663,7 +663,7 @@ namespace search
 						root_move.pv.add(*z);
 
 					if (move_number > 1 && my_thread == thread_pool.main())
-						static_cast<s_main_thread*>(my_thread)->best_move_changed += 1024;
+						static_cast<mainthread*>(my_thread)->best_move_changed += 1024;
 
 					if (!bench_active && my_thread == thread_pool.main())
 						acout() << print_pv(pos, alpha, beta, my_thread->active_pv, move_index) << std::endl;
@@ -757,7 +757,7 @@ namespace search
 	{
 		auto score = no_score;
 
-		for (const auto& move : s_legal_move_list(pos))
+		for (const auto& move : legal_move_list(pos))
 		{
 			pos.play_move(move);
 
@@ -1125,7 +1125,7 @@ namespace search
 	void reset()
 	{
 		main_hash.clear();
-		s_thread_pool::delete_counter_move_history();
+		threadpool::delete_counter_move_history();
 
 		for (auto i = 0; i < thread_pool.thread_count; ++i)
 		{
@@ -1328,7 +1328,7 @@ namespace search
 	}
 }
 
-void s_main_thread::begin_search()
+void mainthread::begin_search()
 {
 	constexpr auto default_draw_value = 24;
 	search::running = true;
@@ -1380,9 +1380,9 @@ void s_main_thread::begin_search()
 	tb_number = std::max(egtb::max_pieces_wdl, std::max(egtb::max_pieces_dtm, egtb::max_pieces_dtz));
 
 	root_moves.move_number = 0;
-	for (const auto& move : s_legal_move_list(*root_position))
+	for (const auto& move : legal_move_list(*root_position))
 		if (search::timer.search_moves.empty() || search::timer.search_moves.find(move) >= 0)
-			root_moves.add(s_root_move(move));
+			root_moves.add(rootmove(move));
 
 	if (thread_pool.analysis_mode)
 	{
@@ -1411,7 +1411,7 @@ void s_main_thread::begin_search()
 
 	if (root_moves.move_number == 0)
 	{
-		root_moves.add(s_root_move(no_move));
+		root_moves.add(rootmove(no_move));
 		root_moves[0].score = root_position->is_in_check() ? -mate_score : draw_score;
 		root_moves[0].depth = main_thread_inc;
 		thread_pool.active_thread_count = 1;
@@ -1539,7 +1539,7 @@ void thread::begin_search()
 
 	auto* pi = root_position->info();
 
-	std::memset(pi + 1, 0, 2 * sizeof(s_position_info));
+	std::memset(pi + 1, 0, 2 * sizeof(position_info));
 	pi->killers[0] = pi->killers[1] = no_move;
 	pi->previous_move = no_move;
 	(pi - 2)->position_value = score_0;
@@ -1803,7 +1803,7 @@ void filter_root_moves(position& pos)
 		: draw_score;
 }
 
-bool s_root_move::ponder_move_from_hash(position& pos)
+bool rootmove::ponder_move_from_hash(position& pos)
 {
 	assert(pv.size() == 1);
 	if (!pv[0])
@@ -1881,7 +1881,7 @@ std::string print_pv(const position& pos, const int alpha, const int beta, const
 	return ss.str();
 }
 
-void s_root_move::pv_from_hash(position& pos)
+void rootmove::pv_from_hash(position& pos)
 {
 	uint64_t keys[max_ply];
 	auto number = 0;
