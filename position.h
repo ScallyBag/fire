@@ -241,7 +241,7 @@ public:
 	[[nodiscard]] int non_pawn_material(side color) const;
 	[[nodiscard]] position_info* info() const
 	{
-		return st_;
+		return pos_info_;
 	}
 	void copy_position(const position* pos, thread* th, position_info* copy_state);
 	double epd_result;
@@ -257,9 +257,9 @@ private:
 	void do_castle_move(side me, square from, square to, square& from_r, square& to_r);
 	[[nodiscard]] bool is_draw() const;
 
-	position_info* st_;
+	position_info* pos_info_;
 	side on_move_;
-	thread* my_thread_;
+	thread* this_thread_;
 	threadinfo* thread_info_;
 	cmhinfo* cmh_info_;
 	ptype board_[num_squares];
@@ -343,7 +343,7 @@ inline uint64_t position::attack_to(const square sq) const
 
 inline uint64_t position::bishop_color_key() const
 {
-	return st_->bishop_color_key;
+	return pos_info_->bishop_color_key;
 }
 
 inline bool position::capture_or_promotion(const uint32_t move) const
@@ -364,12 +364,12 @@ inline bool position::castling_impossible(const  uint8_t castle) const
 
 inline int position::castling_possible(const  uint8_t castle) const
 {
-	return st_->castle_possibilities & castle;
+	return pos_info_->castle_possibilities & castle;
 }
 
 inline int position::castling_possible(const side color) const
 {
-	return st_->castle_possibilities & (white_short | white_long) << 2 * color;
+	return pos_info_->castle_possibilities & (white_short | white_long) << 2 * color;
 }
 
 inline cmhinfo* position::cmh_info() const
@@ -386,7 +386,7 @@ inline bool position::different_color_bishops() const
 
 inline uint64_t position::discovered_check_possible() const
 {
-	return st_->x_ray[~on_move_] & pieces(on_move_);
+	return pos_info_->x_ray[~on_move_] & pieces(on_move_);
 }
 
 inline bool position::empty_square(const square sq) const
@@ -396,12 +396,12 @@ inline bool position::empty_square(const square sq) const
 
 inline square position::enpassant_square() const
 {
-	return st_->enpassant_square;
+	return pos_info_->enpassant_square;
 }
 
 inline int position::fifty_move_counter() const
 {
-	return st_->draw50_moves;
+	return pos_info_->draw50_moves;
 }
 
 inline int position::game_ply() const
@@ -432,7 +432,7 @@ inline bool position::is_chess960() const
 
 inline uint64_t position::is_in_check() const
 {
-	return st_->in_check;
+	return pos_info_->in_check;
 }
 
 inline bool position::is_passed_pawn(const side color, const square sq) const
@@ -442,7 +442,7 @@ inline bool position::is_passed_pawn(const side color, const square sq) const
 
 inline uint64_t position::key() const
 {
-	return st_->key;
+	return pos_info_->key;
 }
 
 inline square position::king(const side color) const
@@ -452,12 +452,12 @@ inline square position::king(const side color) const
 
 inline uint64_t position::material_key() const
 {
-	return st_->material_key;
+	return pos_info_->material_key;
 }
 
 inline bool position::material_or_castle_changed() const
 {
-	return st_->material_key != (st_ - 1)->material_key || st_->castle_possibilities != (st_ - 1)->castle_possibilities;
+	return pos_info_->material_key != (pos_info_ - 1)->material_key || pos_info_->castle_possibilities != (pos_info_ - 1)->castle_possibilities;
 }
 
 inline ptype position::moved_piece(const uint32_t move) const
@@ -467,12 +467,12 @@ inline ptype position::moved_piece(const uint32_t move) const
 
 inline thread* position::my_thread() const
 {
-	return my_thread_;
+	return this_thread_;
 }
 
 inline int position::non_pawn_material(const side color) const
 {
-	return st_->non_pawn_material[color];
+	return pos_info_->non_pawn_material[color];
 }
 
 inline int position::number(const side color, const uint8_t piece) const
@@ -498,7 +498,7 @@ inline bool position::passed_pawn_advance(const uint32_t move, const rank r) con
 
 inline uint64_t position::pawn_key() const
 {
-	return st_->pawn_key;
+	return pos_info_->pawn_key;
 }
 
 inline const square* position::piece_list(const side color, const uint8_t piece) const
@@ -559,12 +559,12 @@ inline uint64_t position::pieces(const side color, const uint8_t piece1, const u
 
 inline uint64_t position::pinned_pieces() const
 {
-	return st_->x_ray[on_move_] & pieces(on_move_);
+	return pos_info_->x_ray[on_move_] & pieces(on_move_);
 }
 
 inline int position::psq_score() const
 {
-	return st_->psq;
+	return pos_info_->psq;
 }
 
 inline uint64_t position::tb_hits() const

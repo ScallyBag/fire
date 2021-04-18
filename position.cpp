@@ -56,7 +56,7 @@ void position::calculate_bishop_color_key() const
 		key ^= 0xAC4789A2F3094B57;
 	if (pieces(black, pt_bishop) & ~dark_squares)
 		key ^= 0x4B57AC4789A2F309;
-	st_->bishop_color_key = key;
+	pos_info_->bishop_color_key = key;
 }
 
 void position::calculate_check_pins() const
@@ -64,12 +64,12 @@ void position::calculate_check_pins() const
 	calculate_pins<white>();
 	calculate_pins<black>();
 	const auto square_k = king(~on_move_);
-	st_->check_squares[pt_pawn] = attack_from<pt_pawn>(square_k, ~on_move_);
-	st_->check_squares[pt_knight] = attack_from<pt_knight>(square_k);
-	st_->check_squares[pt_bishop] = attack_from<pt_bishop>(square_k);
-	st_->check_squares[pt_rook] = attack_from<pt_rook>(square_k);
-	st_->check_squares[pt_queen] = st_->check_squares[pt_bishop] | st_->check_squares[pt_rook];
-	st_->check_squares[pt_king] = 0;
+	pos_info_->check_squares[pt_pawn] = attack_from<pt_pawn>(square_k, ~on_move_);
+	pos_info_->check_squares[pt_knight] = attack_from<pt_knight>(square_k);
+	pos_info_->check_squares[pt_bishop] = attack_from<pt_bishop>(square_k);
+	pos_info_->check_squares[pt_rook] = attack_from<pt_rook>(square_k);
+	pos_info_->check_squares[pt_queen] = pos_info_->check_squares[pt_bishop] | pos_info_->check_squares[pt_rook];
+	pos_info_->check_squares[pt_king] = 0;
 }
 
 template <side color>
@@ -88,19 +88,19 @@ void position::calculate_pins() const
 		if (const auto b = bb_between(square_k, sq) & pieces(); b && !more_than_one(b))
 		{
 			result |= b;
-			st_->pin_by[lsb(b)] = sq;
+			pos_info_->pin_by[lsb(b)] = sq;
 		}
 	}
-	st_->x_ray[color] = result;
+	pos_info_->x_ray[color] = result;
 }
 
 square position::calculate_threat() const
 {
-	if (!st_->move_counter_values)
+	if (!pos_info_->move_counter_values)
 		return no_square;
 
-	const auto to = to_square(st_->previous_move);
-	switch (st_->moved_piece)
+	const auto to = to_square(pos_info_->previous_move);
+	switch (pos_info_->moved_piece)
 	{
 	case w_pawn:
 		if (const auto b = pawnattack[white][to] & pieces_excluded(black, pt_pawn))
@@ -146,25 +146,25 @@ void position::copy_position(const position* pos, thread* th, position_info* cop
 	std::memcpy(this, pos, sizeof(position));
 	if (th)
 	{
-		my_thread_ = th;
+		this_thread_ = th;
 		thread_info_ = th->ti;
 		cmh_info_ = th->cmhi;
-		st_ = th->ti->position_inf + 5;
+		pos_info_ = th->ti->position_inf + 5;
 
 		auto* orig_st = pos->thread_info_->position_inf + 5;
 		while (orig_st < copy_state - 4)
 		{
-			st_->key = orig_st->key;
-			st_++;
+			pos_info_->key = orig_st->key;
+			pos_info_++;
 			orig_st++;
 		}
 		while (orig_st <= copy_state)
 		{
-			*st_ = *orig_st;
-			st_++;
+			*pos_info_ = *orig_st;
+			pos_info_++;
 			orig_st++;
 		}
-		st_--;
+		pos_info_--;
 	}
 }
 
@@ -211,14 +211,14 @@ std::string position::fen() const
 		ss << '-';
 
 	ss << (enpassant_square() == no_square ? " - " : " " + sq(enpassant_square()) + " ")
-		<< st_->draw50_moves << " " << 1 + (game_ply_ - (on_move_ == black)) / 2;
+		<< pos_info_->draw50_moves << " " << 1 + (game_ply_ - (on_move_ == black)) / 2;
 
 	return ss.str();
 }
 
 int position::game_phase() const
 {
-	return std::max(0, std::min(middlegame_phase, static_cast<int>(st_->phase) - 6));
+	return std::max(0, std::min(middlegame_phase, static_cast<int>(pos_info_->phase) - 6));
 }
 
 bool position::give_check(const uint32_t move) const
@@ -230,10 +230,10 @@ bool position::give_check(const uint32_t move) const
 	const auto to = to_square(move);
 	const auto square_k = king(~on_move_);
 
-	if (st_->check_squares[piece_type(piece_on_square(from))] & to)
+	if (pos_info_->check_squares[piece_type(piece_on_square(from))] & to)
 		return true;
 
-	if (st_->x_ray[~on_move_] & from && !aligned(from, to, square_k))
+	if (pos_info_->x_ray[~on_move_] & from && !aligned(from, to, square_k))
 		return true;
 
 	if (move < static_cast<uint32_t>(castle_move))
@@ -298,21 +298,21 @@ void position::init_hash_move50(const int fifty_move_distance)
 
 bool position::is_draw() const
 {
-	if (st_->draw50_moves >= 2 * thread_pool.fifty_move_distance)
+	if (pos_info_->draw50_moves >= 2 * thread_pool.fifty_move_distance)
 	{
-		if (st_->draw50_moves == 100)
-			return !st_->in_check || at_least_one_legal_move(*this);
+		if (pos_info_->draw50_moves == 100)
+			return !pos_info_->in_check || at_least_one_legal_move(*this);
 		return true;
 	}
 
-	auto n = std::min(st_->draw50_moves, st_->distance_to_null_move) - 4;
+	auto n = std::min(pos_info_->draw50_moves, pos_info_->distance_to_null_move) - 4;
 	if (n < 0)
 		return false;
 
-	auto* stp = st_ - 4;
+	auto* stp = pos_info_ - 4;
 	do
 	{
-		if (stp->key == st_->key)
+		if (stp->key == pos_info_->key)
 			return true;
 
 		stp -= 2;
@@ -328,7 +328,7 @@ uint64_t position::key_after_move(const uint32_t move) const
 	const auto to = to_square(move);
 	const auto piece = piece_on_square(from);
 	const auto capture_piece = piece_on_square(to);
-	auto key = st_->key ^ zobrist::on_move;
+	auto key = pos_info_->key ^ zobrist::on_move;
 
 	if (capture_piece)
 		key ^= zobrist::psq[capture_piece][to];
@@ -365,7 +365,7 @@ bool position::legal_move(const uint32_t move) const
 	if (piece_type(piece_on_square(from)) == pt_king)
 		return move_type(move) == castle_move || !(attack_to(to_square(move)) & pieces(~me));
 
-	return !(st_->x_ray[on_move_] & from) || aligned(from, to_square(move), king(me));
+	return !(pos_info_->x_ray[on_move_] & from) || aligned(from, to_square(move), king(me));
 }
 
 template <bool yes>
@@ -392,7 +392,7 @@ void position::do_castle_move(const side me, square from, square to, square& fro
 void position::play_move(const uint32_t move)
 {
 	const bool gives_check = move < static_cast<uint32_t>(castle_move) && !discovered_check_possible()
-		? st_->check_squares[piece_type(piece_on_square(from_square(move)))] & to_square(move)
+		? pos_info_->check_squares[piece_type(piece_on_square(from_square(move)))] & to_square(move)
 		: give_check(move);
 
 	play_move(move, gives_check);
@@ -403,13 +403,13 @@ void position::play_move(const uint32_t move, const bool gives_check)
 	assert(is_ok(move));
 
 	++nodes_;
-	auto key = st_->key ^ zobrist::on_move;
+	auto key = pos_info_->key ^ zobrist::on_move;
 
-	std::memcpy(st_ + 1, st_, offsetof(position_info, key));
-	st_++;
+	std::memcpy(pos_info_ + 1, pos_info_, offsetof(position_info, key));
+	pos_info_++;
 
-	st_->draw50_moves = (st_ - 1)->draw50_moves + 1;
-	st_->distance_to_null_move = (st_ - 1)->distance_to_null_move + 1;
+	pos_info_->draw50_moves = (pos_info_ - 1)->draw50_moves + 1;
+	pos_info_->distance_to_null_move = (pos_info_ - 1)->distance_to_null_move + 1;
 
 	const auto me = on_move_;
 	const auto you = ~me;
@@ -429,7 +429,7 @@ void position::play_move(const uint32_t move, const bool gives_check)
 
 		capture_piece = no_piece;
 		const auto my_rook = make_piece(me, pt_rook);
-		st_->psq += pst::psq[my_rook][to_r] - pst::psq[my_rook][from_r];
+		pos_info_->psq += pst::psq[my_rook][to_r] - pst::psq[my_rook][from_r];
 		key ^= zobrist::psq[my_rook][from_r] ^ zobrist::psq[my_rook][to_r];
 	}
 	else
@@ -456,40 +456,40 @@ void position::play_move(const uint32_t move, const bool gives_check)
 				board_[capture_square] = no_piece;
 			}
 
-			st_->pawn_key ^= zobrist::psq[capture_piece][capture_square];
+			pos_info_->pawn_key ^= zobrist::psq[capture_piece][capture_square];
 		}
 		else
-			st_->non_pawn_material[you] -= material_value[capture_piece];
+			pos_info_->non_pawn_material[you] -= material_value[capture_piece];
 
-		st_->phase -= static_cast<uint8_t>(piece_phase[capture_piece]);
+		pos_info_->phase -= static_cast<uint8_t>(piece_phase[capture_piece]);
 
 		delete_piece(you, capture_piece, capture_square);
 
 		key ^= zobrist::psq[capture_piece][capture_square];
-		st_->material_key ^= zobrist::psq[capture_piece][piece_number_[capture_piece]];
-		prefetch(thread_info_->material_table[st_->material_key ^ st_->bishop_color_key]);
+		pos_info_->material_key ^= zobrist::psq[capture_piece][piece_number_[capture_piece]];
+		prefetch(thread_info_->material_table[pos_info_->material_key ^ pos_info_->bishop_color_key]);
 
 		if (piece_type(capture_piece) == pt_bishop)
 			calculate_bishop_color_key();
 
-		st_->psq -= pst::psq[capture_piece][capture_square];
+		pos_info_->psq -= pst::psq[capture_piece][capture_square];
 
-		st_->draw50_moves = 0;
+		pos_info_->draw50_moves = 0;
 	}
 
 	key ^= zobrist::psq[piece][from] ^ zobrist::psq[piece][to];
 
-	if (st_->enpassant_square != no_square)
+	if (pos_info_->enpassant_square != no_square)
 	{
-		key ^= zobrist::enpassant[file_of(st_->enpassant_square)];
-		st_->enpassant_square = no_square;
+		key ^= zobrist::enpassant[file_of(pos_info_->enpassant_square)];
+		pos_info_->enpassant_square = no_square;
 	}
 
-	if (st_->castle_possibilities && castle_mask_[from] | castle_mask_[to])
+	if (pos_info_->castle_possibilities && castle_mask_[from] | castle_mask_[to])
 	{
 		const int8_t castle = castle_mask_[from] | castle_mask_[to];
-		key ^= zobrist::castle[st_->castle_possibilities & castle];
-		st_->castle_possibilities &= ~castle;
+		key ^= zobrist::castle[pos_info_->castle_possibilities & castle];
+		pos_info_->castle_possibilities &= ~castle;
 	}
 
 	if (move_type(move) != castle_move)
@@ -500,8 +500,8 @@ void position::play_move(const uint32_t move, const bool gives_check)
 		if ((static_cast<int>(to) ^ static_cast<int>(from)) == 16
 			&& attack_from<pt_pawn>(to - pawn_ahead(me), me) & pieces(you, pt_pawn))
 		{
-			st_->enpassant_square = (from + to) / 2;
-			key ^= zobrist::enpassant[file_of(st_->enpassant_square)];
+			pos_info_->enpassant_square = (from + to) / 2;
+			key ^= zobrist::enpassant[file_of(pos_info_->enpassant_square)];
 		}
 
 		else if (move >= static_cast<uint32_t>(promotion_p))
@@ -515,42 +515,42 @@ void position::play_move(const uint32_t move, const bool gives_check)
 			move_piece(me, promotion, to);
 
 			key ^= zobrist::psq[piece][to] ^ zobrist::psq[promotion][to];
-			st_->pawn_key ^= zobrist::psq[piece][to];
-			st_->material_key ^= zobrist::psq[promotion][piece_number_[promotion] - 1]
+			pos_info_->pawn_key ^= zobrist::psq[piece][to];
+			pos_info_->material_key ^= zobrist::psq[promotion][piece_number_[promotion] - 1]
 				^ zobrist::psq[piece][piece_number_[piece]];
 
 			if (piece_type(promotion) == pt_bishop)
 				calculate_bishop_color_key();
 
-			st_->psq += pst::psq[promotion][to] - pst::psq[piece][to];
+			pos_info_->psq += pst::psq[promotion][to] - pst::psq[piece][to];
 
-			st_->non_pawn_material[me] += material_value[promotion];
-			st_->phase += static_cast<uint8_t>(piece_phase[promotion]);
+			pos_info_->non_pawn_material[me] += material_value[promotion];
+			pos_info_->phase += static_cast<uint8_t>(piece_phase[promotion]);
 		}
 
-		st_->pawn_key ^= zobrist::psq[piece][from] ^ zobrist::psq[piece][to];
-		prefetch2(thread_info_->pawn_table[st_->pawn_key]);
+		pos_info_->pawn_key ^= zobrist::psq[piece][from] ^ zobrist::psq[piece][to];
+		prefetch2(thread_info_->pawn_table[pos_info_->pawn_key]);
 
-		st_->draw50_moves = 0;
+		pos_info_->draw50_moves = 0;
 	}
 
 	main_hash.prefetch_entry(key);
 
 	piece_bb_[all_pieces] = color_bb_[white] | color_bb_[black];
 
-	st_->psq += pst::psq[piece][to] - pst::psq[piece][from];
+	pos_info_->psq += pst::psq[piece][to] - pst::psq[piece][from];
 
-	st_->captured_piece = capture_piece;
-	st_->moved_piece = piece_on_square(to);
-	st_->previous_move = move;
-	st_->move_counter_values = &cmh_info_->counter_move_stats[piece][to];
-	st_->eval_positional = no_eval;
+	pos_info_->captured_piece = capture_piece;
+	pos_info_->moved_piece = piece_on_square(to);
+	pos_info_->previous_move = move;
+	pos_info_->move_counter_values = &cmh_info_->counter_move_stats[piece][to];
+	pos_info_->eval_positional = no_eval;
 
-	st_->key = key;
+	pos_info_->key = key;
 
 	on_move_ = ~on_move_;
-	st_->in_check = gives_check ? attack_to(king(you)) & pieces(me) : 0;
-	st_->move_repetition = is_draw();
+	pos_info_->in_check = gives_check ? attack_to(king(you)) & pieces(me) : 0;
+	pos_info_->move_repetition = is_draw();
 	calculate_check_pins();
 }
 
@@ -558,29 +558,29 @@ void position::play_null_move()
 {
 	++nodes_;
 
-	auto key = st_->key ^ zobrist::on_move;
-	if (st_->enpassant_square != no_square)
-		key ^= zobrist::enpassant[file_of(st_->enpassant_square)];
+	auto key = pos_info_->key ^ zobrist::on_move;
+	if (pos_info_->enpassant_square != no_square)
+		key ^= zobrist::enpassant[file_of(pos_info_->enpassant_square)];
 
 	main_hash.prefetch_entry(key);
 
-	std::memcpy(st_ + 1, st_, offsetof(position_info, key));
-	st_++;
+	std::memcpy(pos_info_ + 1, pos_info_, offsetof(position_info, key));
+	pos_info_++;
 
-	st_->key = key;
-	st_->draw50_moves = (st_ - 1)->draw50_moves + 1;
-	st_->distance_to_null_move = 0;
+	pos_info_->key = key;
+	pos_info_->draw50_moves = (pos_info_ - 1)->draw50_moves + 1;
+	pos_info_->distance_to_null_move = 0;
 
-	st_->enpassant_square = no_square;
-	st_->in_check = 0;
-	st_->captured_piece = no_piece;
-	st_->previous_move = null_move;
-	st_->move_counter_values = nullptr;
-	st_->eval_positional = (st_ - 1)->eval_positional;
-	st_->eval_factor = (st_ - 1)->eval_factor;
+	pos_info_->enpassant_square = no_square;
+	pos_info_->in_check = 0;
+	pos_info_->captured_piece = no_piece;
+	pos_info_->previous_move = null_move;
+	pos_info_->move_counter_values = nullptr;
+	pos_info_->eval_positional = (pos_info_ - 1)->eval_positional;
+	pos_info_->eval_factor = (pos_info_ - 1)->eval_factor;
 
 	on_move_ = ~on_move_;
-	st_->move_repetition = is_draw();
+	pos_info_->move_repetition = is_draw();
 	calculate_check_pins();
 }
 
@@ -617,10 +617,10 @@ bool position::see_test(const uint32_t move, const int limit) const
 		if (!my_attackers)
 			return true;
 		{
-			auto pinned = my_attackers & st_->x_ray[~me];
+			auto pinned = my_attackers & pos_info_->x_ray[~me];
 			while (pinned)
 			{
-				if (const auto sq = pop_lsb(&pinned); occupied & st_->pin_by[sq])
+				if (const auto sq = pop_lsb(&pinned); occupied & pos_info_->pin_by[sq])
 				{
 					my_attackers ^= sq;
 					if (!my_attackers)
@@ -658,10 +658,10 @@ bool position::see_test(const uint32_t move, const int limit) const
 		if (!my_attackers)
 			return false;
 		{
-			auto pinned = my_attackers & st_->x_ray[me];
+			auto pinned = my_attackers & pos_info_->x_ray[me];
 			while (pinned)
 			{
-				if (const auto sq = pop_lsb(&pinned); occupied & st_->pin_by[sq])
+				if (const auto sq = pop_lsb(&pinned); occupied & pos_info_->pin_by[sq])
 				{
 					my_attackers ^= sq;
 					if (!my_attackers)
@@ -708,7 +708,7 @@ void position::set_castling_possibilities(const side color, const square from_r)
 	const auto to_k = relative_square(color, from_k < from_r ? g1 : c1);
 	const auto to_r = relative_square(color, from_k < from_r ? f1 : d1);
 
-	st_->castle_possibilities |= castle;
+	pos_info_->castle_possibilities |= castle;
 	castle_mask_[from_k] |= castle;
 	castle_mask_[from_r] |= castle;
 	castle_rook_square_[to_k] = from_r;
@@ -787,8 +787,8 @@ position& position::set(const std::string& fen_str, const bool is_chess960, thre
 
 	std::memset(this, 0, sizeof(position));
 	std::fill_n(&piece_list_[0][0], sizeof piece_list_ / sizeof(square), no_square);
-	st_ = th->ti->position_inf + 5;
-	std::memset(st_, 0, sizeof(position_info));
+	pos_info_ = th->ti->position_inf + 5;
+	std::memset(pos_info_, 0, sizeof(position_info));
 	chess960_ = is_chess960;
 
 	ss >> std::noskipws;
@@ -843,22 +843,22 @@ position& position::set(const std::string& fen_str, const bool is_chess960, thre
 	if (uint8_t f = 0; ss >> f && (f >= 'a' && f <= 'h')
 		&& (ss >> r && (r == '3' || r == '6')))
 	{
-		st_->enpassant_square = make_square(static_cast<file>(f - 'a'), static_cast<rank>(r - '1'));
+		pos_info_->enpassant_square = make_square(static_cast<file>(f - 'a'), static_cast<rank>(r - '1'));
 
-		if (!(attack_to(st_->enpassant_square) & pieces(on_move_, pt_pawn)))
-			st_->enpassant_square = no_square;
+		if (!(attack_to(pos_info_->enpassant_square) & pieces(on_move_, pt_pawn)))
+			pos_info_->enpassant_square = no_square;
 	}
 	else
-		st_->enpassant_square = no_square;
+		pos_info_->enpassant_square = no_square;
 
-	ss >> std::skipws >> st_->draw50_moves >> game_ply_;
+	ss >> std::skipws >> pos_info_->draw50_moves >> game_ply_;
 
 	game_ply_ = std::max(2 * (game_ply_ - 1), 0) + (on_move_ == black);
 
-	my_thread_ = th;
+	this_thread_ = th;
 	thread_info_ = th->ti;
 	cmh_info_ = th->cmhi;
-	set_position_info(st_);
+	set_position_info(pos_info_);
 	calculate_check_pins();
 
 	return *this;
@@ -882,8 +882,8 @@ void position::take_move_back(const uint32_t move)
 	if (move < static_cast<uint32_t>(castle_move))
 	{
 		relocate_piece(me, piece, to, from);
-		if (st_->captured_piece)
-			move_piece(~me, st_->captured_piece, to);
+		if (pos_info_->captured_piece)
+			move_piece(~me, pos_info_->captured_piece, to);
 	}
 	else
 	{
@@ -907,7 +907,7 @@ void position::take_move_back(const uint32_t move)
 		{
 			relocate_piece(me, piece, to, from);
 
-			if (st_->captured_piece)
+			if (pos_info_->captured_piece)
 			{
 				auto capture_square = to;
 
@@ -922,18 +922,18 @@ void position::take_move_back(const uint32_t move)
 					assert(st_->captured_piece == make_piece(~me, pt_pawn));
 				}
 
-				move_piece(~me, st_->captured_piece, capture_square);
+				move_piece(~me, pos_info_->captured_piece, capture_square);
 			}
 		}
 	}
 	piece_bb_[all_pieces] = color_bb_[white] | color_bb_[black];
 
-	st_--;
+	pos_info_--;
 }
 
 void position::take_null_back()
 {
-	st_--;
+	pos_info_--;
 	on_move_ = ~on_move_;
 }
 

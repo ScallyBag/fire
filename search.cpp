@@ -537,8 +537,9 @@ namespace search
 					&& pi->position_value + futility_margin_ext(predicted_depth) <= alpha)
 					continue;
 
-				if (predicted_depth < predicted_depth_max_depth * plies && !pos.see_test(move, std::min(see_0, predicted_depth_see_test_base
-				                                                                                        - predicted_depth_see_test_mult * predicted_depth * predicted_depth / 64)))
+				if (predicted_depth < predicted_depth_max_depth * plies
+					&& !pos.see_test(move, std::min(see_0, predicted_depth_see_test_base
+					- predicted_depth_see_test_mult * predicted_depth * predicted_depth / 64)))
 					continue;
 			}
 

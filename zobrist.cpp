@@ -24,5 +24,5 @@ uint64_t position::exception_key(const uint32_t move)
 
 uint64_t position::draw50_key() const
 {
-	return zobrist::hash_50_move[st_->draw50_moves >> 2];
+	return zobrist::hash_50_move[pos_info_->draw50_moves >> 2];
 }
