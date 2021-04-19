@@ -42,7 +42,7 @@ namespace pawn
 
 	constexpr int ev(const int x)
 	{
-		return (x) * 2;
+		return x * 2;
 	}
 
 #ifdef TUNER
@@ -191,7 +191,7 @@ namespace pawn
 
 	inline score ps(const int mg, const int eg)
 	{
-		return make_score(((mg)*mg_mg_mult + (eg)*mg_eg_mult) / (ps_div), ((mg)*eg_mg_mult + (eg)*eg_eg_mult) / (ps_div));
+		return make_score((mg * mg_mg_mult + eg * mg_eg_mult) / ps_div, (mg * eg_mg_mult + eg * eg_eg_mult) / ps_div);
 	}
 
 	const uint64_t attack_files[num_files] =

@@ -220,7 +220,7 @@ void set_option(std::istringstream& input)
 			{
 				input >> token;
 				input >> token;
-				uci_multipv = (stoi(token));
+				uci_multipv = stoi(token);
 				acout() << "info string MultiPV " << uci_multipv << std::endl;
 				break;
 			}
@@ -236,7 +236,7 @@ void set_option(std::istringstream& input)
 			{
 				input >> token;
 				input >> token;
-				uci_syzygy_probe_depth = (stoi(token));
+				uci_syzygy_probe_depth = stoi(token);
 				acout() << "info string SyzygyProbeDepth " << uci_syzygy_probe_depth << std::endl;
 				break;
 			}
@@ -244,7 +244,7 @@ void set_option(std::istringstream& input)
 			{
 				input >> token;
 				input >> token;
-				uci_syzygy_probe_limit = (stoi(token));
+				uci_syzygy_probe_limit = stoi(token);
 				acout() << "info string SyzygyProbeLimit " << uci_syzygy_probe_limit << std::endl;
 				break;
 			}
@@ -302,48 +302,48 @@ void set_option(std::istringstream& input)
 
 // read input stream for 'go' parameters
 // including time and inc, etc.
-void go(position& pos, std::istringstream& input)
+void go(position& pos, std::istringstream& is)
 {
-	search_limit search_param;
+	search_param param;
 	std::string token;
-	search_param.infinite = 1;
+	param.infinite = 1;
 
-	while (input >> token)
+	while (is >> token)
 	{
 		if (token == "wtime")
 		{
-			input >> search_param.time[white];
-			search_param.infinite = 0;
+			is >> param.time[white];
+			param.infinite = 0;
 		}
 		else if (token == "btime")
 		{
-			input >> search_param.time[black];
-			search_param.infinite = 0;
+			is >> param.time[black];
+			param.infinite = 0;
 		}
 		else if (token == "winc")
 		{
-			input >> search_param.inc[white];
-			search_param.infinite = 0;
+			is >> param.inc[white];
+			param.infinite = 0;
 		}
 		else if (token == "binc")
 		{
-			input >> search_param.inc[black];
-			search_param.infinite = 0;
+			is >> param.inc[black];
+			param.infinite = 0;
 		}
 		else if (token == "movestogo")
 		{
-			input >> search_param.moves_to_go;
-			search_param.infinite = 0;
+			is >> param.moves_to_go;
+			param.infinite = 0;
 		}
 		else if (token == "depth")
 		{
-			input >> search_param.depth;
-			search_param.infinite = 0;
+			is >> param.depth;
+			param.infinite = 0;
 		}
 		else if (token == "infinite")
-			search_param.infinite = 1;
+			param.infinite = 1;
 	}
-	thread_pool.begin_search(pos, search_param);
+	thread_pool.begin_search(pos, param);
 }
 
 // convert fen to internal position representation

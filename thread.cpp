@@ -62,12 +62,12 @@ void threadpool::init()
 	total_analyze_time = 0;
 }
 
-void threadpool::begin_search(position& pos, const search_limit& time)
+void threadpool::begin_search(position& pos, const search_param& time)
 {
 	main()->wait_for_search_to_end();
 
 	search::signals.stop_if_ponder_hit = search::signals.stop_analyzing = false;
-	search::timer = time;
+	search::param = time;
 
 	root_position = &pos;
 

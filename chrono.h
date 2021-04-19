@@ -26,9 +26,9 @@ inline time_point now()
 		(std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-struct search_limit
+struct search_param
 {
-	search_limit()
+	search_param()
 	{
 		nodes = time[white] = time[black] = inc[white] = inc[black] =
 			moves_to_go = depth = move_time = mate = infinite = ponder = 0;
@@ -48,7 +48,7 @@ struct search_limit
 class timecontrol
 {
 public:
-	void init(search_limit& limit, side me, int ply);
+	void init(search_param& limit, side me, int ply);
 	[[nodiscard]] int64_t optimum() const {return optimal_time_;}
 	[[nodiscard]] int64_t maximum() const {return maximum_time_;}
 	[[nodiscard]] int64_t elapsed() const;

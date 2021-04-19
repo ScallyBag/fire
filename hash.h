@@ -19,7 +19,7 @@
 #include "fire.h"
 #include "thread.h"
 
-enum hash_flags : uint8_t
+enum hashflags : uint8_t
 {
 	no_limit,
 	threat_white = 1,
@@ -57,14 +57,14 @@ struct main_hash_entry
 		return depth_ * static_cast<int>(plies) + plies - 1;
 	}
 
-	[[nodiscard]] hash_flags bounds() const
+	[[nodiscard]] hashflags bounds() const
 	{
-		return static_cast<hash_flags>(flags_ & exact_value);
+		return static_cast<hashflags>(flags_ & exact_value);
 	}
 
-	[[nodiscard]] hash_flags threat() const
+	[[nodiscard]] hashflags threat() const
 	{
-		return static_cast<hash_flags>(flags_ & threat_mask);
+		return static_cast<hashflags>(flags_ & threat_mask);
 	}
 
 	void save(const uint64_t k, const int val, const uint8_t flags, const int d, const uint32_t z, const int eval, const uint8_t gen)

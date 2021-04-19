@@ -16,7 +16,6 @@
 
 #include "search.h"
 
-#include <iostream>
 #include <sstream>
 
 #include "chrono.h"
@@ -35,13 +34,13 @@ namespace search
 	void adjust_time_after_ponder_hit()
 	{
 		main_hash.new_age();
-		if (timer.use_time_calculating())
+		if (param.use_time_calculating())
 			time_control.adjustment_after_ponder_hit();
 	}
 
 	// alpha-beta pruning utilizing minimax algorithm, effectively eliminating 'unpromising' branches of the search tree...
 	// search time is consequently limited to a 'more promising' subtree, resulting in deeper searches
-	template <node_type nt>
+	template <nodetype nt>
 	int alpha_beta(position& pos, int alpha, int beta, int depth, bool cut_node)
 	{
 		// search constants (can be easily convert int global variables for tuning w/ CLOP, etc.)
@@ -396,10 +395,11 @@ namespace search
 			assert(pc_depth >= plies);
 			assert(pi->previous_move != no_move);
 
-			auto limit = depth >= limit_depth_min * plies
+			auto s_limit = depth >= limit_depth_min * plies
 				? position::see_values()[pi->captured_piece]
 				: std::max(see_0, (pc_beta - pi->position_value) / 2);
-			movepick::init_prob_cut(pos, hash_move, limit);
+			
+			movepick::init_prob_cut(pos, hash_move, s_limit);
 
 			while ((move = movepick::pick_move(pos)) != no_move)
 			{
@@ -869,7 +869,7 @@ namespace search
 	// start at the leaf nodes of the main search and resolve all tactics/capture moves in "quiet" positions.
 	// extend search at all unstable nodes & perform an extension of the evaluation function in order to obtain a static
 	// evaluation ... greatly mitigating the effect of the horizon problem.
-	template <node_type nt, bool state_check>
+	template <nodetype nt, bool state_check>
 	int q_search(position& pos, int alpha, const int beta, const int depth)
 	{
 		constexpr auto qs_futility_value_0 = 102;
@@ -1160,12 +1160,12 @@ namespace search
 				<< " tbhits " << tb_hits << " hashfull " << main_hash.hash_full() << std::endl;
 		}
 
-		if (timer.ponder)
+		if (param.ponder)
 			return;
 
-		if (timer.use_time_calculating() && elapsed > time_control.maximum() - 10
-			|| timer.move_time && elapsed >= timer.move_time
-			|| timer.nodes && thread_pool.visited_nodes() >= timer.nodes)
+		if (param.use_time_calculating() && elapsed > time_control.maximum() - 10
+			|| param.move_time && elapsed >= param.move_time
+			|| param.nodes && thread_pool.visited_nodes() >= param.nodes)
 			signals.stop_analyzing = true;
 	}
 
@@ -1335,12 +1335,12 @@ void mainthread::begin_search()
 	search::running = true;
 	root_position->copy_position(thread_pool.root_position, nullptr, nullptr);
 	const auto me = root_position->on_move();
-	time_control.init(search::timer, me, root_position->game_ply());
+	time_control.init(search::param, me, root_position->game_ply());
 	search::previous_info_time = 0;
 	interrupt_counter = 0;
 
 	thread_pool.contempt_color = me;
-	thread_pool.analysis_mode = !search::timer.use_time_calculating();
+	thread_pool.analysis_mode = !search::param.use_time_calculating();
 
 	thread_pool.fifty_move_distance = std::min(50, std::max(thread_pool.fifty_move_distance, root_position->fifty_move_counter() / 2 + 5));
 	thread_pool.piece_contempt = uci_contempt;
@@ -1373,7 +1373,7 @@ void mainthread::begin_search()
 		search::draw[~me] = draw_score + default_draw_value * root_position->game_phase() / middlegame_phase;
 	}
 
-	if (!search::timer.ponder)
+	if (!search::param.ponder)
 		main_hash.new_age();
 	tb_root_in_tb = false;
 	egtb::use_rule50 = uci_syzygy_50_move_rule;
@@ -1382,7 +1382,7 @@ void mainthread::begin_search()
 
 	root_moves.move_number = 0;
 	for (const auto& move : legal_move_list(*root_position))
-		if (search::timer.search_moves.empty() || search::timer.search_moves.find(move) >= 0)
+		if (search::param.search_moves.empty() || search::param.search_moves.find(move) >= 0)
 			root_moves.add(rootmove(move));
 
 	if (thread_pool.analysis_mode)
@@ -1458,7 +1458,7 @@ void mainthread::begin_search()
 
 NO_ANALYSIS:
 
-	if (!search::signals.stop_analyzing && (search::timer.ponder || search::timer.infinite))
+	if (!search::signals.stop_analyzing && (search::param.ponder || search::param.infinite))
 	{
 
 		if (root_moves[0].depth == main_thread_inc)
@@ -1477,7 +1477,7 @@ NO_ANALYSIS:
 
 	if (!this->quick_move_played
 		&& thread_pool.multi_pv == 1
-		&& !search::timer.depth
+		&& !search::param.depth
 		&& root_moves[0].pv[0] != no_move)
 	{
 		for (auto i = 1; i < thread_pool.active_thread_count; ++i)
@@ -1573,7 +1573,7 @@ void thread::begin_search()
 			(pi + i)->pawn_key = 0;
 	}
 
-	if (main_thread && !tb_root_in_tb && !search::timer.ponder && !thread_pool.analysis_mode
+	if (main_thread && !tb_root_in_tb && !search::param.ponder && !thread_pool.analysis_mode
 		&& main_thread->quick_move_allow && main_thread->previous_root_depth >= 12 * plies && thread_pool.multi_pv == 1)
 	{
 		if (auto * const hash_entry = main_hash.probe(root_position->key()); hash_entry && hash_entry->bounds() == exact_value)
@@ -1625,7 +1625,7 @@ void thread::begin_search()
 
 		if (main_thread)
 		{
-			if (search::timer.depth && search_iteration - 1 >= search::timer.depth)
+			if (search::param.depth && search_iteration - 1 >= search::param.depth)
 				search::signals.stop_analyzing = true;
 		}
 
@@ -1728,16 +1728,16 @@ void thread::begin_search()
 		if (!main_thread)
 			continue;
 
-		if (search::timer.mate
+		if (search::param.mate
 			&& best_value >= longest_mate_score
-			&& mate_score - best_value <= 2 * search::timer.mate)
+			&& mate_score - best_value <= 2 * search::param.mate)
 			search::signals.stop_analyzing = true;
 
-		if (!thread_pool.analysis_mode && !search::timer.ponder && best_value > mate_score - 32
+		if (!thread_pool.analysis_mode && !search::param.ponder && best_value > mate_score - 32
 			&& root_depth >= (mate_score - best_value + root_depth_mate_value_bv_add) * plies)
 			search::signals.stop_analyzing = true;
 
-		if (!thread_pool.analysis_mode && !search::timer.ponder && best_value < -mate_score + 32
+		if (!thread_pool.analysis_mode && !search::param.ponder && best_value < -mate_score + 32
 			&& root_depth >= (mate_score + best_value + root_depth_mate_value_bv_add) * plies)
 			search::signals.stop_analyzing = true;
 
@@ -1756,7 +1756,7 @@ void thread::begin_search()
 					|| time_control.elapsed() > time_control.optimum() * unstable_factor / 1024 * improvement_factor / 1024
 					|| ((main_thread->quick_move_played = play_easy_move)))
 				{
-					if (search::timer.ponder)
+					if (search::param.ponder)
 						search::signals.stop_if_ponder_hit = true;
 					else
 						search::signals.stop_analyzing = true;

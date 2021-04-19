@@ -40,7 +40,7 @@ void new_game();
 void uci_loop(int argc, char* argv[]);
 void set_position(position& pos, std::istringstream& is);
 void set_option(std::istringstream& input);
-void go(position& pos, std::istringstream& input);
+void go(position& pos, std::istringstream& is);
 void bench(int depth);
 std::string trim(const std::string& str, const std::string& whitespace = " \t");
 std::string sq(square sq);

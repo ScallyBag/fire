@@ -101,7 +101,7 @@ struct threadpool : std::vector<thread*>
 	{
 		return static_cast<mainthread*>(threads[0]);
 	}
-	void begin_search(position&, const search_limit&);
+	void begin_search(position&, const search_param&);
 	void change_thread_count(int num_threads);
 	[[nodiscard]] uint64_t visited_nodes() const;
 	[[nodiscard]] uint64_t tb_hits() const;

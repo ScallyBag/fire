@@ -23,15 +23,15 @@
 
 typedef movelist<max_pv> principal_variation;
 
-struct signaling
+struct search_signals
 {
 	std::atomic_bool stop_analyzing, stop_if_ponder_hit;
 };
 
 namespace search
 {
-	inline signaling signals;
-	inline search_limit timer;
+	inline search_signals signals;
+	inline search_param param;
 	inline bool running;
 
 	void init();
@@ -39,7 +39,7 @@ namespace search
 	void adjust_time_after_ponder_hit();
 	extern uint8_t lm_reductions[2][2][64 * static_cast<int>(plies)][64];
 
-	enum node_type
+	enum nodetype
 	{
 		PV, nonPV
 	};
@@ -99,10 +99,10 @@ namespace search
 	inline int draw[num_sides];
 	inline uint64_t previous_info_time;
 
-	template <node_type nt>
+	template <nodetype nt>
 	int alpha_beta(position& pos, int alpha, int beta, int depth, bool cut_node);
 
-	template <node_type nt, bool state_check>
+	template <nodetype nt, bool state_check>
 	int q_search(position& pos, int alpha, int beta, int depth);
 
 	int value_to_hash(int val, int ply);
