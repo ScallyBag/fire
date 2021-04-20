@@ -16,6 +16,8 @@
 
 // this tuner uses Texel Peter Österlund tuning method
 // https://www.chessprogramming.org/Texel%27s_Tuning_Method
+// the routines are adapted from the implementation found in
+// Monolith https://github.com/cimarronOST/Monolith
 
 #include "../fire.h"
 
