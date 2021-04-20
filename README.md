@@ -93,7 +93,10 @@ and others
 the endgame table bases are implemented using code adapted from
 - [Syzygy EGTBs & probing code](https://github.com/syzygy1/tb)
 
-If you are interested in learning about my particular testing methodology, I've explained it in some detail here:
+the quiescent search positions for the tuner have been generously shared by
+- [Zurichess](https://bitbucket.org/zurichess/zurichess/src/master/)
+
+if you are interested in learning about my particular testing methodology, I've explained it in some detail here:
 http://www.chessdom.com/fire-the-chess-engine-releases-a-new-version/
 
 
