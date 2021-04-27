@@ -45,10 +45,9 @@ Fire appears to be superior to Ethereal and really shines at ultra-fast TCs like
 | Ethereal 2.75  | 5697     | +1221    | -2334    | =2142     | 0         | 40.2%     | -70 elo  | 0%
 
 
-60 secs + 0.6 secs:
-http://www.fastgm.de/60-0.60.html
-10 min + 6 secs:
-http://www.fastgm.de/10min.html
+60 secs + 0.6 secs: http://www.fastgm.de/60-0.60.html
+
+10 min + 6 secs: http://www.fastgm.de/10min.html
 
 
 ## available binaries
