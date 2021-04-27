@@ -63,8 +63,8 @@ run 'bench' at command line to determine which binary runs best/fastest on your 
 please see **http://chesslogik.wix.com/fire** for more info
 
 ## compile it yourself
-- **windows** (visual studio) use included project files Fire.vcxproj or Fire.sln
-- **minGW** run included bash scripts makefire_pext.sh or makefire_popc.sh
+- **windows** (visual studio) use included project files: Fire.vcxproj or Fire.sln
+- **minGW** run one of the included bash shell scripts: makefire_pext.sh or makefire_popc.sh
 - **ubuntu** type 'make profile-build ARCH=x86-64-pext' or 'make profile-build ARCH=x86-64-popc'
 
 ## uci options
