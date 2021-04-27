@@ -36,13 +36,17 @@ Fire 8 has been thoroughly tested by the CCRL testing group:
 - ~3400 Elo on [CCRL 40/15](https://www.computerchess.org.uk/ccrl/4040/)
 - ~3600 Elo on [CCRL 40/2 FRC](https://www.computerchess.org.uk/ccrl/404FRC/)
 
-Fire appears to be superior to Ethereal and Houdini at fast time controls (like 40/4), but really shines at ultra-fast TCs like 1000ms + 100 ms (avg. game 14 secs)
+Fire appears to be superior to Ethereal at fast time controls, and really shines at ultra-fast TCs like 1000ms + 100 ms (avg. game 14 secs)
 
 
 | engine         | games    | win      | loss     | draw      | timeouts  | win%      | elo      | los        
 | :------------: | :------: | :------: | :------: | :------:  | :------:  | :------:  | :------: | :------:  
 | Fire 8.1       | 5697     | +2334    | -1221    | =2142     | 0         | 59.8%     | +70 elo  | 100%
 | Ethereal 2.75  | 5697     | +1221    | -2334    | =2142     | 0         | 40.2%     | -70 elo  | 0%
+
+
+and 60 secs + 0.6 secs:
+http://www.fastgm.de/60-0.60.html
 
 
 ## available binaries
