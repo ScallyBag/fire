@@ -25,7 +25,7 @@ by Norman Schmidt
 - integrated tuner (if compiled with #define TUNER)
 - timestamped bench, perft/divide, and tuner logs
 - asychronous cout (acout) class using std::unique_lock<std::mutex>
-
+- uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
 
 Fire 8 has undergone months of meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
@@ -36,7 +36,7 @@ Fire 8 has been thoroughly tested by the CCRL testing group:
 - ~3400 Elo on [CCRL 40/15](https://www.computerchess.org.uk/ccrl/4040/)
 - ~3600 Elo on [CCRL 40/2 FRC](https://www.computerchess.org.uk/ccrl/404FRC/)
 
-Fire appears to be superior to Ethereal at fast time controls, and really shines at ultra-fast TCs like 1000ms + 100 ms (avg. game 14 secs)
+Fire appears to be superior to Ethereal and really shines at ultra-fast TCs like 1000ms + 100 ms (avg. game 14 secs)
 
 
 | engine         | games    | win      | loss     | draw      | timeouts  | win%      | elo      | los        
@@ -45,8 +45,10 @@ Fire appears to be superior to Ethereal at fast time controls, and really shines
 | Ethereal 2.75  | 5697     | +1221    | -2334    | =2142     | 0         | 40.2%     | -70 elo  | 0%
 
 
-and 60 secs + 0.6 secs:
+60 secs + 0.6 secs:
 http://www.fastgm.de/60-0.60.html
+10 min + 6 secs:
+http://www.fastgm.de/10min.html
 
 
 ## available binaries
