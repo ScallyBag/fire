@@ -16,7 +16,7 @@
 
 #pragma once
 #include "../fire.h"
-// these macros specify basic arithmetic operations: + (addition), - (subtraction), ++ (post-increment) and -- (post-decrement) on enumerated e_rank values
+// these macros specify basic arithmetic operations: + (addition), - (subtraction), ++ (post-increment) and -- (post-decrement) on enumerated rank values
 inline rank operator+(const rank r1, const rank r2)
 {
 	return static_cast<rank>(static_cast<int>(r1) + static_cast<int>(r2));

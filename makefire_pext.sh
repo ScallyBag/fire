@@ -16,5 +16,5 @@
 arch_cpu=x86-64-bmi2
 make --no-print-directory -j profile-build ARCH=${arch_cpu} COMP=mingw
 strip fire.exe
-mv fire.exe Fire_8.1_x64_pext.exe 
+mv fire.exe Fire_8.11_x64_pext.exe 
 make clean 

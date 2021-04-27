@@ -1,4 +1,3 @@
-#include <string>
 /*
   Fire is a freeware UCI chess playing engine authored by Norman Schmidt.
 
@@ -16,5 +15,7 @@
 */
 
 #pragma once
+#include <string>
+
 void perft(int depth, std::string &fen);
 void divide(int depth, std::string &fen);

@@ -56,6 +56,10 @@ namespace util
 	std::string move_to_string(uint32_t move, const position& pos);
 	uint32_t move_from_string(const position& pos, std::string& str);
 
+	// xorshift64star Pseudo-Random Number Generator
+	// This class is based on original code written and dedicated
+	// to the public domain by Sebastiano Vigna (2014).
+  
 	class random
 	{
 		uint64_t s_;

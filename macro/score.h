@@ -16,7 +16,7 @@
 
 #pragma once
 
-// these macros specify basic arithmetic operations on enumerated values
+// these macros specify basic arithmetic operations on enumerated score values
 inline score operator+(const score s1, const score s2)
 {
 	return static_cast<score>(static_cast<int>(s1) + static_cast<int>(s2));

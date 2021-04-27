@@ -19,8 +19,8 @@ PGOBENCH = ./$(EXE) bench
 OBJS =
 	OBJS += util/bench.o bitboard.o chrono.o egtb/egtb.o endgame.o \
 	evaluate.o hash.o bitbase/kpk.o main.o material.o movegen.o \
-	movepick.o pawn.o util/perft.o position.o pst.o search.o sfactor.o \
-	egtb/tbprobe.o thread.o tune/tune.o uci.o util/util.o zobrist.o \
+	movepick.o pawn.o util/perft.o position.o pst.o random/random.o search.o \
+	sfactor.o egtb/tbprobe.o thread.o tune/tune.o uci.o util/util.o zobrist.o \
 	
 optimize = yes
 debug = no
@@ -296,6 +296,8 @@ gcc-profile-clean:
 	@rm -rf egtb/*.o	
 	@rm -rf macro/*.gcda
 	@rm -rf macro/*.o
+	@rm -rf random/*.gcda
+	@rm -rf random/*.o	
 	@rm -rf tune/*.gcda
 	@rm -rf tune/*.o
 	@rm -rf util/*.gcda

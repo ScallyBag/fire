@@ -246,8 +246,6 @@ namespace movegen
 
 			if (pos.enpassant_square() != no_square)
 			{
-				assert(rank(pos.enpassant_square()) == relative_rank(me, rank_6));
-
 				if (mg == evade_check && !(target & pos.enpassant_square() - straight_ahead))
 					return moves;
 

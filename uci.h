@@ -30,6 +30,7 @@ static bool uci_chess960 = false;
 static bool uci_syzygy_50_move_rule = false;
 static int uci_syzygy_probe_depth = 1;
 static int uci_syzygy_probe_limit = 6;
+static std::string uci_search = "alphabeta";
 static std::string uci_syzygy_path = "";
 
 inline bool bench_active = false;

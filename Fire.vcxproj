@@ -131,6 +131,7 @@
     <ClCompile Include="pawn.cpp" />
     <ClCompile Include="position.cpp" />
     <ClCompile Include="pst.cpp" />
+    <ClCompile Include="random\random.cpp" />
     <ClCompile Include="search.cpp" />
     <ClCompile Include="sfactor.cpp" />
     <ClCompile Include="thread.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="pawn.h" />
     <ClInclude Include="position.h" />
     <ClInclude Include="pragma.h" />
+    <ClInclude Include="random\random.h" />
     <ClInclude Include="search.h" />
     <ClInclude Include="thread.h" />
     <ClInclude Include="tune\tune.h" />

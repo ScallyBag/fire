@@ -24,9 +24,10 @@
 #include "evaluate.h"
 #include "fire.h"
 #include "hash.h"
-#include "util/perft.h"
+#include "random/random.h"
 #include "search.h"
 #include "thread.h"
+#include "util/perft.h"
 #include "util/util.h"
 #ifdef TUNER
 #include "tune.h"
@@ -92,6 +93,8 @@ void uci_loop(const int argc, char* argv[])
 			acout() << "option name Contempt type spin default 0 min -100 max 100" << std::endl;	
 			acout() << "option name SyzygyProbeDepth type spin default 1 min 0 max 64" << std::endl;
 			acout() << "option name SyzygyProbeLimit type spin default 6 min 0 max 6" << std::endl;
+			acout() << "option name SearchType type combo default alphabeta var alphabeta var random" << std::endl;
+			
 			acout() << "option name Ponder type check default false" << std::endl;
 			acout() << "option name UCI_Chess960 type check default false" << std::endl;
 			acout() << "option name ClearHash type button" << std::endl;			
@@ -248,6 +251,15 @@ void set_option(std::istringstream& input)
 				acout() << "info string SyzygyProbeLimit " << uci_syzygy_probe_limit << std::endl;
 				break;
 			}
+			if (token == "SearchType")
+			{
+				input >> token;
+				input >> token;
+				uci_search = token;
+				acout() << "info string SearchType " << uci_search << std::endl;
+				break;
+			}
+			
 			if (token == "Ponder")
 			{
 				input >> token;
@@ -343,7 +355,10 @@ void go(position& pos, std::istringstream& is)
 		else if (token == "infinite")
 			param.infinite = 1;
 	}
-	thread_pool.begin_search(pos, param);
+	if (uci_search == "random")
+		random(pos);
+	else			
+		thread_pool.begin_search(pos, param);
 }
 
 // convert fen to internal position representation

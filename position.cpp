@@ -262,7 +262,7 @@ bool position::give_check(const uint32_t move) const
 
 void position::init()
 {
-	util::random rng(19680708);
+	util::random rng(static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count()));
 
 	for (auto color = white; color <= black; ++color)
 		for (auto piece = pt_king; piece <= pt_queen; ++piece)
@@ -448,7 +448,7 @@ void position::play_move(const uint32_t move, const bool gives_check)
 				capture_square -= pawn_ahead(me);
 
 				assert(piece_type(piece) == pt_pawn);
-				assert(to == st_->enpassant_square);
+				assert(to == pos_info_->enpassant_square);
 				assert(relative_rank(me, to) == rank_6);
 				assert(piece_on_square(to) == no_piece);
 				assert(piece_on_square(capture_square) == make_piece(you, pt_pawn));
@@ -876,8 +876,8 @@ void position::take_move_back(const uint32_t move)
 	auto piece = piece_on_square(to);
 
 	assert(empty_square(from) || move_type(move) == castle_move);
-	assert(piece_type(st_->captured_piece) != pt_king);
-	assert(piece == st_->moved_piece);
+	assert(piece_type(pos_info_->captured_piece) != pt_king);
+	assert(piece == pos_info_->moved_piece);
 
 	if (move < static_cast<uint32_t>(castle_move))
 	{
@@ -916,10 +916,10 @@ void position::take_move_back(const uint32_t move)
 					capture_square -= pawn_ahead(me);
 
 					assert(piece_type(piece) == pt_pawn);
-					assert(to == (st_ - 1)->enpassant_square);
+					assert(to == (pos_info_ - 1)->enpassant_square);
 					assert(relative_rank(me, to) == rank_6);
 					assert(piece_on_square(capture_square) == no_piece);
-					assert(st_->captured_piece == make_piece(~me, pt_pawn));
+					assert(pos_info_->captured_piece == make_piece(~me, pt_pawn));
 				}
 
 				move_piece(~me, pos_info_->captured_piece, capture_square);

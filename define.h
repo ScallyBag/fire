@@ -21,7 +21,7 @@
 #endif
 
 constexpr auto program = "Fire";
-constexpr auto version= "8.1";
+constexpr auto version= "8.11";
 constexpr auto author = "N. Schmidt";
 constexpr auto platform = "x64";
 

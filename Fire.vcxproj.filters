@@ -87,6 +87,9 @@
     <ClCompile Include="util\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="random\random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitboard.h">
@@ -177,6 +180,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="macro\score.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="random\random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

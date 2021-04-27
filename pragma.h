@@ -20,7 +20,8 @@
 #pragma warning(disable: 4100) // 'piece': unreferenced formal parameter 
 #pragma warning(disable: 4127) // conditional expression is constant
 #pragma warning(disable: 4146) // Unary minus operator applied to unsigned type
-#pragma warning(disable: 4244) // '=': conversion from 'Move' to 'MoveCompact', possible loss of data 
+#pragma warning(disable: 4189) // local variable is initialized but not referenced
+#pragma warning(disable: 4244) // conversion from 'Move' to 'MoveCompact', possible loss of data 
 #pragma warning(disable: 4706) // assignment within conditional expression
 #else
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"

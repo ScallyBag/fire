@@ -22,7 +22,6 @@
 
 #include "../fire.h"
 #include "../position.h"
-#include "search.h"
 #include "../thread.h"
 #include "../uci.h"
 #include "util.h"
