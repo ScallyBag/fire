@@ -13,7 +13,13 @@
 # this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 
 UNAME = $(shell uname)
-EXE = fire.exe
+
+ifeq ($(COMP),mingw)
+	EXE = fire.exe
+else
+	EXE = fire
+endif
+
 PGOBENCH = ./$(EXE) bench
 
 OBJS =
