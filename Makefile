@@ -44,7 +44,7 @@ ifeq ($(ARCH),x86-64-popc)
 	sse = yes
 endif
 
-ifeq ($(ARCH),x86-64-bmi2)
+ifeq ($(ARCH),x86-64-pext)
 	arch = x86_64
 	bits = 64
 	prefetch = yes
@@ -188,17 +188,17 @@ help:
 	@echo ""
 	@echo "Supported architectures:"
 	@echo "x86-64-popc             > x86 64-bit with popcnt support"
-	@echo "x86-64-bmi2             > x86 64-bit with pext support"
+	@echo "x86-64-pext             > x86 64-bit with pext support"
 	@echo ""
 	@echo "Supported compilers:"
 	@echo "gcc                     > Gnu compiler (default)"
 	@echo "mingw                   > Gnu compiler with MinGW under Windows"
 	@echo ""	
 	@echo "make build ARCH=x86-64-popc
-	@echo "make build ARCH=x86-64-bmi2	
+	@echo "make build ARCH=x86-64-pext	
 	@echo ""
 	@echo "make profile-build ARCH=x86-64-popc"	
-	@echo "make profile-build ARCH=x86-64-bmi2"
+	@echo "make profile-build ARCH=x86-64-pext"
 	@echo ""
 
 .PHONY: build profile-build
