@@ -66,7 +66,7 @@ please see **http://chesslogik.wix.com/fire** for more info
 ## compile it yourself
 - **windows** (visual studio) use included project files: Fire.vcxproj or Fire.sln
 - **minGW** run one of the included bash shell scripts: makefire_pext.sh or makefire_popc.sh
-- **ubuntu** type 'make profile-build ARCH=x86-64-bmi2' or 'make profile-build ARCH=x86-64-popc'
+- **ubuntu** type 'make profile-build ARCH=x86-64-pext' or 'make profile-build ARCH=x86-64-popc'
 
 ## uci options
 - **Hash** size of the hash table. default is 64 MB.

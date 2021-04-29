@@ -258,8 +258,7 @@ void set_option(std::istringstream& input)
 				uci_search = token;
 				acout() << "info string SearchType " << uci_search << std::endl;
 				break;
-			}
-			
+			}	
 			if (token == "Ponder")
 			{
 				input >> token;
@@ -352,12 +351,22 @@ void go(position& pos, std::istringstream& is)
 			is >> param.depth;
 			param.infinite = 0;
 		}
+		else if (token == "nodes")
+		{
+			is >> param.nodes;
+			param.infinite = 0;
+		}
+		else if (token == "movetime")
+		{
+			is >> param.move_time;
+			param.infinite = 0;
+		}		
 		else if (token == "infinite")
 			param.infinite = 1;
 	}
 	if (uci_search == "random")
 		random(pos);
-	else			
+	else	
 		thread_pool.begin_search(pos, param);
 }
 
