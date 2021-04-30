@@ -20,7 +20,7 @@ void random(position& pos) {
     std::mt19937 gen(rd());
 	
 	// calculate a uniform distribution between 1 and num_moves + 1
-	const std::uniform_real_distribution<> distribution (1, static_cast<double>(num_moves) + static_cast<double>(1));
+	std::uniform_real_distribution<> distribution (1, num_moves + 1);
 	
 	// generate a random number using the distribution from above
     const int r = static_cast<int>(distribution(gen));
