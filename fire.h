@@ -64,7 +64,7 @@ enum rank
 constexpr int default_hash = 64;
 constexpr int max_hash = 1048576;
 constexpr int max_threads = 256;
-constexpr int max_moves = 220;
+constexpr int max_moves = 256;
 constexpr int max_ply = 128;
 constexpr int max_pv = 63;
 
