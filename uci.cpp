@@ -27,6 +27,7 @@
 #include "random/random.h"
 #include "search.h"
 #include "thread.h"
+#include "uci.h"
 #include "util/perft.h"
 #include "util/util.h"
 #ifdef TUNER
@@ -189,19 +190,19 @@ void uci_loop(const int argc, char* argv[])
 }
 
 // read input stream and parse for meaningful UCI options
-void set_option(std::istringstream& input)
+void set_option(std::istringstream& is)
 {
 	std::string token;
-	input >> token;
+	is >> token;
 
 	if (token == "name")
 	{
-		while (input >> token)
+		while (is >> token)
 		{
 			if (token == "Hash")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				uci_hash = stoi(token);
 				main_hash.init(uci_hash);
 				acout() << "info string Hash " << uci_hash << " MB" << std::endl;
@@ -209,8 +210,8 @@ void set_option(std::istringstream& input)
 			}
 			if (token == "Threads")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				uci_threads = stoi(token);
 				thread_pool.change_thread_count(uci_threads);
 				if (uci_threads == 1)
@@ -221,48 +222,48 @@ void set_option(std::istringstream& input)
 			}
 			if (token == "MultiPV")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				uci_multipv = stoi(token);
 				acout() << "info string MultiPV " << uci_multipv << std::endl;
 				break;
 			}
 			if (token == "Contempt")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				uci_contempt = stoi(token);
 				acout() << "info string Contempt " << uci_contempt << std::endl;
 				break;
 			}
 			if (token == "SyzygyProbeDepth")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				uci_syzygy_probe_depth = stoi(token);
 				acout() << "info string SyzygyProbeDepth " << uci_syzygy_probe_depth << std::endl;
 				break;
 			}
 			if (token == "SyzygyProbeLimit")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				uci_syzygy_probe_limit = stoi(token);
 				acout() << "info string SyzygyProbeLimit " << uci_syzygy_probe_limit << std::endl;
 				break;
 			}
 			if (token == "SearchType")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				uci_search = token;
 				acout() << "info string SearchType " << uci_search << std::endl;
 				break;
 			}	
 			if (token == "Ponder")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				if (token == "true")
 					uci_ponder = true;
 				else
@@ -272,8 +273,8 @@ void set_option(std::istringstream& input)
 			}
 			if (token == "UCI_Chess960")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				if (token == "true")
 					uci_chess960 = true;
 				else
@@ -289,8 +290,8 @@ void set_option(std::istringstream& input)
 			}
 			if (token == "Syzygy50MoveRule")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				if (token == "true")
 					uci_syzygy_50_move_rule = true;
 				else
@@ -300,13 +301,13 @@ void set_option(std::istringstream& input)
 			}
 			if (token == "SyzygyPath")
 			{
-				input >> token;
-				input >> token;
+				is >> token;
+				is >> token;
 				uci_syzygy_path = token;
 				egtb::syzygy_init(uci_syzygy_path);
 				acout() << "info string SyzygyPath " << uci_syzygy_path << std::endl;
 				break;
-			}			
+			}	
 		}
 	}
 }

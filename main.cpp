@@ -14,8 +14,6 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
-
 #include "util/util.h"
 #include "uci.h"
 
