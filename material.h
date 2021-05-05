@@ -60,7 +60,6 @@ namespace material
 	private:
 		CACHE_ALIGN entry mat_hash_mem_[Size];
 	};
-#ifdef TUNER
 	// pawn factors
 	inline auto p_base_score = 950;
 	inline auto p_q_factor = 90;
@@ -116,7 +115,7 @@ namespace material
 	inline auto max_phase = 32;
 	inline auto r_phase_factor = 3;
 	inline auto q_phase_factor = 6;
-#endif
+
 	// default material hash size = 16 MB;
 	const int material_hash_size = 16384;
 

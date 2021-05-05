@@ -28,112 +28,6 @@ namespace evaluate
 	// init arrays
 	void init()
 		{
-#ifndef TUNER
-		// init mobility mult values
-		constexpr auto mob_factor_p = 270;
-		constexpr auto mmrq_factor_p = 0;
-		constexpr auto mmfq_factor_p = 6;
-		constexpr auto mmc_factor_p = 2;
-		constexpr auto mmr_factor_p = 0;
-		constexpr auto mme_factor_p = 5;
-
-		constexpr auto mob_factor_b1 = 256;
-		constexpr auto mob_factor_b2 = 249;
-		constexpr auto mmrq_factor_b2 = 8;
-		constexpr auto mmfq_factor_b2 = 3;
-		constexpr auto mmc_factor_b2 = 0;
-		constexpr auto mmr_factor_b2 = 3;
-		constexpr auto mme_factor_b2 = 4;
-
-		constexpr auto mob_factor_r = 255;
-		constexpr auto mmrq_factor_r = 1;
-		constexpr auto mmfq_factor_r = 5;
-		constexpr auto mmc_factor_r = 6;
-		constexpr auto mmr_factor_r = 1;
-		constexpr auto mme_factor_r = 2;
-
-		constexpr auto mob_factor_q = 272;
-		constexpr auto mmrq_factor_q = 2;
-		constexpr auto mmfq_factor_q = 4;
-		constexpr auto mmc_factor_q = 1;
-		constexpr auto mmr_factor_q = 2;
-		constexpr auto mme_factor_q = 8;
-
-		// init pawn mobility values
-		constexpr auto pawn_mg_mult = 207.32;
-		constexpr auto pawn_mg_sub = 417.0;
-		constexpr auto pawn_eg_mult = 252.68;
-		constexpr auto pawn_eg_sub = 509.0;
-
-		// init bishop mobility values
-		constexpr auto b1_mg_mult = 92.43;
-		constexpr auto b1_mg_sub = 171.0;
-		constexpr auto b1_eg_mult = 104.75;
-		constexpr auto b1_eg_sub = 194.0;
-
-		constexpr auto b2_mg_mult = 221.48;
-		constexpr auto b2_mg_sub = 374.0;
-		constexpr auto b2_eg_mult = 203.99;
-		constexpr auto b2_eg_sub = 344.0;
-
-		// init rook mobility values
-		constexpr auto rook_mg_mult = 125.90;
-		constexpr auto rook_mg_sub = 190.0;
-		constexpr auto rook_eg_mult = 218.96;
-		constexpr auto rook_eg_sub = 331.0;
-		constexpr auto mob_r_mult = 7;
-		constexpr auto mob_r_div = 8;
-
-		// init queen mobility values
-		constexpr auto queen_mg_mult = 203.42;
-		constexpr auto queen_mg_sub = 616.0;
-		constexpr auto queen_eg_mult = 165.33;
-		constexpr auto queen_eg_sub = 555.0;
-
-		// init distance values
-		constexpr auto p_k_distance = 1114123;
-		constexpr auto p_k_distance_mult = 3;
-		constexpr auto b_k_distance = 65545;
-		constexpr auto b_k_distance_mult = 3;
-
-		// init pawn-bishop color values
-		constexpr auto pawn_on_bishop_color = -1769515;
-		constexpr auto pawn_on_other_bishop_color = 3014673;
-		constexpr auto pawn_file_width_mg = 0;
-		constexpr auto pawn_file_width_eg = 2;
-		constexpr auto threats_score = 14418116;
-
-		// init passed pawn values
-		constexpr auto pp_dvd_mgfactor = 46;
-		constexpr auto pp_dvd_egfactor = 33;
-		constexpr auto pp_ndvd_mgfactor = 49;
-		constexpr auto pp_ndvd_egfactor = 34;
-
-		constexpr auto pp_fp_base_mg = 1;
-		constexpr auto pp_fp_base_eg = 3;
-		constexpr auto pp_fp_mg = 10;
-		constexpr auto pp_fp_eg = 60;
-		constexpr auto pp_fp_mul = 272;
-		constexpr auto pp_fp_div = 256;
-
-		constexpr auto pp_as_base_mg = 1;
-		constexpr auto pp_as_base_eg = 3;
-		constexpr auto pp_as_mg = 10;
-		constexpr auto pp_as_eg = 36;
-		constexpr auto pp_as_mul = 304;
-		constexpr auto pp_as_div = 256;
-
-		constexpr auto pp_ab_base_mg = 1;
-		constexpr auto pp_ab_base_eg = 3;
-		
-		constexpr auto pp_support_proximity_factor = 30;
-		constexpr auto pp_mk_kdfp_factor = 40;
-		constexpr auto pp_yk_kdfp_factor = 76;
-		constexpr auto pp_mk_factor = 32;
-		constexpr auto pp_mk_div = 35;
-		constexpr auto pp_yk_factor = 32;
-		constexpr auto pp_yk_div = 35;		
-#endif
 		// init mobility mult arrays
 		for (auto n = 0; n < 64; n++)
 		{
@@ -243,10 +137,6 @@ namespace evaluate
 	// calculate scale factor based on material hash, opposite colored bishops, passed pawns, etc 
 	sfactor calculate_scale_factor(const position& pos, const material::mat_hash_entry* material_entry, const int value)
 	{
-#ifndef TUNER
-		const auto sf_mult = 3;
-		constexpr auto sf_div = 4;
-#endif
 		const auto strong_side = value > draw_eval ? white : black;
 		auto scale_factor = material_entry->scale_factor_from_function(pos, strong_side);
 
@@ -297,15 +187,6 @@ namespace evaluate
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
-
-#ifndef TUNER
-		constexpr auto k_zone_attack_bonus = 8;
-		constexpr auto bishop_in_front_of_king = 7602176;
-		constexpr auto bishop_in_corner = 6553753;
-		constexpr auto trapped_bishop_extra = 69731368;
-		constexpr auto trapped_bishop = 33030648;
-		constexpr auto bishop_dominates_pawn = 2097182;
-#endif
 		auto squares = pos.pieces(me, pt_bishop);
 		assert(squares);
 
@@ -390,9 +271,6 @@ namespace evaluate
 
 	inline int eval_initiative(const position& pos, const pawn::pawn_hash_entry* pawn_entry, const int eg)
 	{
-#ifndef TUNER
-		constexpr auto initiative_mult = 38;
-#endif
 		const auto k_distance = file_distance(pos.king(white), pos.king(black)) - rank_distance(pos.king(white), pos.king(black));
 		const auto initiative = (2 * pawn_entry->asymmetry + k_distance + 3 * pos.number(eg < 0 ? b_pawn : w_pawn) - 15) * initiative_mult;
 		const auto bonus = ((eg > 0) - (eg < 0)) * std::max(initiative, -abs(eg >> 1));
@@ -404,20 +282,6 @@ namespace evaluate
 	inline int eval_king_attack(const position& pos, const attack_info& ai, const int attack_score)
 	{
 		const auto you = me == white ? black : white;
-#ifndef TUNER
-		const auto k_attack_index_factor = 16;
-		const auto k_attack_pin_factor = 12;
-		const auto k_attack_sd_factor = 11;
-		const auto cspan_safe = 70;
-		const auto cspan = 30;
-		const auto csbab_safe = 54;
-		constexpr auto csbab = 22;
-		constexpr auto csrar_safe = 70;
-		constexpr auto csrar = 30;
-		constexpr auto qcayk_all = 86;
-		constexpr auto qcayk = 38;
-		constexpr auto queen_check_bonus = 120;
-#endif
 		auto attack_index = attack_score;
 		attack_index += k_attack_index_factor * popcnt(ai.attack[you][pt_king] & ai.attack[me][all_pieces] & ~ai.attack[you][pieces_without_king]);
 
@@ -484,11 +348,6 @@ namespace evaluate
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
-#ifndef TUNER
-		constexpr auto knight_attack_king = 24;
-		constexpr auto p_mobility_add = 16;
-		constexpr auto p_mobility_div = 32;	
-#endif
 		auto squares = pos.pieces(me, pt_knight);
 		assert(squares);
 		do
@@ -521,17 +380,6 @@ namespace evaluate
 	{
 		assert(bb_passed_pawns != 0);
 		constexpr auto you = me == white ? black : white;
-#ifndef TUNER		
-		constexpr auto passed_pawn_mk_mult = 3;
-		constexpr auto passed_pawn_mk_div = 4;
-		constexpr auto passed_pawn_yk_mult = 3;
-		constexpr auto passed_pawn_yk_div = 4;
-		constexpr auto passed_pawn_mk_md_mul = 2;
-		constexpr auto passed_pawn_mk_md_div = 4;
-		constexpr auto passed_pawn_yk_md_mul = 2;
-		constexpr auto passed_pawn_yk_md_div = 4;
-		constexpr auto bb_behind_passed_pawn_bonus = 6488502;
-#endif	
 		auto score = 0;
 		while (bb_passed_pawns)
 		{
@@ -597,12 +445,6 @@ namespace evaluate
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
-#ifndef TUNER
-		constexpr auto queen_attack_king = 24;
-		constexpr auto queen_attack_king_zone = 8;
-		constexpr auto q_mobility_add = 32;
-		constexpr auto q_mobility_div = 64;
-#endif
 		auto squares = pos.pieces(me, pt_queen);
 		assert(squares);
 
@@ -640,16 +482,6 @@ namespace evaluate
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
-#ifndef TUNER
-		constexpr auto uncastled_penalty = 29556897;
-		constexpr auto rook_attacks_king = 8;
-		constexpr auto rook_traps_king_on_7th = 6684932;
-		constexpr auto no_pawn = 19398907;
-		constexpr auto pawn_attacks = 2097222;
-		constexpr auto pawn_no_attack = 11731094;
-		constexpr auto r_mobility_add = 16;
-		constexpr auto r_mobility_div = 32;
-#endif
 		auto squares = pos.pieces(me, pt_rook);
 		assert(squares);
 
@@ -696,10 +528,6 @@ namespace evaluate
 	inline int eval_space(const position& pos, const attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
-#ifndef TUNER
-		constexpr auto space_weight_mult = 3;
-		constexpr auto space_weight_div = 16;
-#endif
 		constexpr uint64_t center_zone = me == white ? 0x000000003c3c3c00 : 0x003c3c3c00000000;
 		const auto safe = center_zone & ~(pos.pieces(me, pt_pawn) | ai.attack[you][pt_pawn] | (ai.attack[you][all_pieces] & ~ai.attack[me][all_pieces]));
 
@@ -719,14 +547,6 @@ namespace evaluate
 	{
 		constexpr auto you = me == white ? black : white;
 		constexpr uint64_t rank456 = me == white ? 0x3C3C3C000000 : 0x3C3C3C0000;
-#ifndef TUNER
-		constexpr auto safety_for_pawn_rbp = 3670059;
-		constexpr auto strong_p_in_front_of_pawn = 1441846;
-		constexpr auto strong_square_pb = 6488176;
-		constexpr auto strong_square_pb_extra = 16318582;
-		constexpr auto pb_behind_pawn = 3342348;
-		constexpr auto protected_piece = 5767214;
-#endif
 		auto score = 0;
 		score += safety_for_pawn_rbp * popcnt(pawn_entry->safe_for_pawn(you) & pos.pieces(me, pt_knight, pt_bishop, pt_rook));
 		score += strong_p_in_front_of_pawn * popcnt(
@@ -760,13 +580,6 @@ namespace evaluate
 		constexpr auto you = me == white ? black : white;
 		constexpr auto rank2 = me == white ? rank_2_bb : rank_7_bb;
 		constexpr auto rank7 = me == white ? rank_7_bb : rank_2_bb;
-#ifndef TUNER
-		constexpr auto hanging_pawn_threat = 26083619;
-		constexpr auto hanging_pieces = 17498230;
-		constexpr auto king_threat_single = 2490697;
-		constexpr auto king_threat_multiple = 6488796;
-		constexpr auto pawn_advance = 11272272;
-#endif
 		auto score = 0;
 		ai.strong_threat[me] = false;
 
@@ -833,27 +646,6 @@ namespace evaluate
 	{
 		if (pos.is_in_check())
 			return score_0;
-#ifndef TUNER
-	constexpr auto mg_mgvalue_mult = 106;
-	constexpr auto mg_egvalue_mult = 6;
-	constexpr auto eg_mgvalue_mult = 13;
-	constexpr auto eg_egvalue_mult = 87;
-	constexpr auto eval_mult = 35;
-	constexpr auto conversion_mult = 115;
-	constexpr auto conversion_div = 128;
-	constexpr auto eval_div = 32;
-	constexpr auto eval_value_div = 8;
-	constexpr auto blocked_pawns_mg = 43;
-	constexpr auto blocked_pawns_eg = 167;
-	constexpr auto flank_double_attack = 1835008;
-	constexpr auto pawn_contempt_mult = 2;
-	constexpr auto knight_contempt_mult = 2;
-	constexpr auto bishop_contempt_mult = 3;
-	constexpr auto rook_contempt_mult = 4;
-	constexpr auto queen_contempt_mult = 8;
-	constexpr auto contempt_mult = 4;
-
-#endif
 		const auto blocked_pawns = mul_div(make_score(blocked_pawns_mg, blocked_pawns_eg), 128, 256);
 
 		auto* const material_entry = material::probe(pos);

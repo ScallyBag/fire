@@ -45,7 +45,6 @@ namespace pawn
 		return x * 2;
 	}
 
-#ifdef TUNER
 	// 	eval_pawns
 	inline auto center_bind = 4259831;
 	inline auto multiple_passed_pawns = 3408076;
@@ -68,9 +67,9 @@ namespace pawn
 	inline auto safe_bonus_mult = 8;
 	inline auto safe_bonus_mult_r34 = 16;
 	inline auto safe_bonus_mult_r5 = 8;
-	inline auto king_1st_rank = static_cast<int>(-6553876);
-	inline auto king_near_enemy_pawns = static_cast<int>(43);
-#endif
+	inline score king_1st_rank = static_cast<score>(-6553876);
+	inline score king_near_enemy_pawns = static_cast<score>(43);
+
 	//ps factors
 	inline auto mg_mg_mult = 15399;
 	inline auto mg_eg_mult = 852;

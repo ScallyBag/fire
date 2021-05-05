@@ -71,7 +71,6 @@ namespace evaluate
 
 	inline auto space_threshold = 592; // 2 * mat_queen + 4 * mat_rook + 2 * mat_knight // sf 12222 (* 100 / 256 = 4775) 
 
-#ifdef TUNER
 	// init mobility mult
 	inline auto mob_factor_p = 270;
 	inline auto mmrq_factor_p = 0;
@@ -276,7 +275,6 @@ namespace evaluate
 	inline auto rook_contempt_mult = 4;
 	inline auto queen_contempt_mult = 8;
 	inline auto contempt_mult = 4;
-#endif // TUNER
 
 	inline int passed_pawn_proximity[8] =
 	{
