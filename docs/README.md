@@ -26,6 +26,7 @@ by Norman Schmidt
 - timestamped bench, perft/divide, and tuner logs
 - asychronous cout (acout) class using std::unique_lock<std::mutex>
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
+- reads engine.conf on startup for search, eval, pawn, and material parameters
 
 Fire 8 has undergone months of meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
