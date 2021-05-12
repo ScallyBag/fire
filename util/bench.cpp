@@ -21,7 +21,7 @@
 #include "search.h"
 #include "../thread.h"
 #include "../uci.h"
-#include "util.h"
+#include "misc.h"
 
 // search 64 positions (startposition, 21 openings from ECO, 21 middlegame, 21 endgames from ECE)
 // to depth 16 and write a time-stamped results file to disk

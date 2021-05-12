@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -18,6 +18,7 @@
 #include <ostream>
 #include <iostream>
 #include <mutex>
+#include <vector>
 
 #include "../position.h"
 
@@ -59,7 +60,7 @@ namespace util
 	// xorshift64star Pseudo-Random Number Generator
 	// This class is based on original code written and dedicated
 	// to the public domain by Sebastiano Vigna (2014).
-  
+
 	class random
 	{
 		uint64_t s_;
@@ -82,5 +83,19 @@ namespace util
 			return t(rand64());
 		}
 	};
+	// std::make_unique is part of c++14
+	template<typename T, typename... Args>
+	std::unique_ptr<T> make_unique(Args&&... args) {
+		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+	}
+
+	inline std::vector<std::string> split(std::string& s, char delimiter) {
+		std::vector<std::string> tokens;
+		std::stringstream ss(s);
+		std::string t;
+		while (getline(ss, t, delimiter)) { tokens.push_back(t); }
+		return tokens;
+	}
+
 }
 std::ostream& operator<<(std::ostream& os, const position& pos);

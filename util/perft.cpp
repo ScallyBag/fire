@@ -24,7 +24,7 @@
 #include "../position.h"
 #include "../thread.h"
 #include "../uci.h"
-#include "util.h"
+#include "misc.h"
 
 // count leaf nodes for all legal moves at a specific depth
 static uint64_t perft(position& pos, const int depth) {

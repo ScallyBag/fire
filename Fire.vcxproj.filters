@@ -84,7 +84,7 @@
     <ClCompile Include="util\perft.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="util\util.cpp">
+    <ClCompile Include="util\misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="random\random.cpp">
@@ -176,13 +176,16 @@
     <ClInclude Include="util\perft.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="util\util.h">
+    <ClInclude Include="util\misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="macro\score.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="random\random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

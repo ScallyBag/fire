@@ -28,7 +28,7 @@
 #include "../position.h"
 #include "../movegen.h"
 #include "../macro/rank.h"
-#include "../util/util.h"
+#include "../util/misc.h"
 
 namespace util
 {

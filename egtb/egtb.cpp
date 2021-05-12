@@ -18,7 +18,7 @@
 
 #include "../hash.h"
 #include "tbprobe.h"
-#include "../util/util.h"
+#include "../util/misc.h"
 
 
 // syzygy initialization and probe functions

@@ -29,7 +29,7 @@
 #include "thread.h"
 #include "uci.h"
 #include "util/perft.h"
-#include "util/util.h"
+#include "util/misc.h"
 #ifdef TUNER
 #include "tune.h"
 #endif
@@ -101,6 +101,17 @@ void uci_loop(const int argc, char* argv[])
 			acout() << "option name ClearHash type button" << std::endl;			
 			acout() << "option name Syzygy50MoveRule type check default true" << std::endl;
 			acout() << "option name SyzygyPath type string default <empty>" << std::endl;
+			
+			acout() << "option name razor_margin type spin default 384 min 0 max 800" << std::endl;
+			acout() << "option name futility_value_0 type spin default 0 min 0 max 1000" << std::endl;
+			acout() << "option name futility_value_1 type spin default 112 min 0 max 1000" << std::endl;
+			acout() << "option name futility_value_2 type spin default 243 min 0 max 1000" << std::endl;
+			acout() << "option name futility_value_3 type spin default 376 min 0 max 1000" << std::endl;
+			acout() << "option name futility_value_4 type spin default 510 min 0 max 1000" << std::endl;
+			acout() << "option name futility_value_5 type spin default 646 min 0 max 1000" << std::endl;			
+			acout() << "option name futility_value_6 type spin default 784 min 0 max 1000" << std::endl;
+			acout() << "option name futility_margin_ext_base type spin default 160 min 0 max 1000" << std::endl;			
+			acout() << "option name futility_margin_ext_mult type spin default 204 min 0 max 1000" << std::endl;			
 
 			acout() << "uciok" << std::endl;
 		}
@@ -306,6 +317,76 @@ void set_option(std::istringstream& is)
 				uci_syzygy_path = token;
 				egtb::syzygy_init(uci_syzygy_path);
 				acout() << "info string SyzygyPath " << uci_syzygy_path << std::endl;
+				break;
+			}	
+			if (token == "razor_margin")
+			{
+				is >> token;
+				is >> token;
+				search::razor_margin = stoi(token);
+				break;
+			}
+			if (token == "futility_value_0")
+			{
+				is >> token;
+				is >> token;
+				search::futility_value_0 = stoi(token);
+				break;
+			}
+			if (token == "futility_value_1")
+			{
+				is >> token;
+				is >> token;
+				search::futility_value_1 = stoi(token);
+				break;
+			}
+			if (token == "futility_value_2")
+			{
+				is >> token;
+				is >> token;
+				search::futility_value_2 = stoi(token);
+				break;
+			}
+			if (token == "futility_value_3")
+			{
+				is >> token;
+				is >> token;
+				search::futility_value_3 = stoi(token);
+				break;
+			}
+			if (token == "futility_value_4")
+			{
+				is >> token;
+				is >> token;
+				search::futility_value_4 = stoi(token);
+				break;
+			}
+			if (token == "futility_value_5")
+			{
+				is >> token;
+				is >> token;
+				search::futility_value_5 = stoi(token);
+				break;
+			}
+			if (token == "futility_value_6")
+			{
+				is >> token;
+				is >> token;
+				search::futility_value_6 = stoi(token);
+				break;
+			}
+			if (token == "futility_margin_ext_base")
+			{
+				is >> token;
+				is >> token;
+				search::futility_margin_ext_base = stoi(token);
+				break;
+			}
+			if (token == "futility_margin_ext_mult")
+			{
+				is >> token;
+				is >> token;
+				search::futility_margin_ext_mult = stoi(token);
 				break;
 			}	
 		}

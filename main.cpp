@@ -14,8 +14,11 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "util/util.h"
+#include "options.h"
+#include "util/misc.h"
 #include "uci.h"
+
+std::unique_ptr<options> opts;
 
 int main(const int argc, char* argv[])
 {
@@ -24,7 +27,12 @@ int main(const int argc, char* argv[])
 	
 	// display logical cores	
 	acout() << util::core_info();
-	
+
+	// read parameters from disk
+	opts = std::make_unique<options>(argc, argv);
+	auto o = opts->value<std::string>("param");
+	opts->read_param_file(o);
+
 	// initialize using default hash (64 MB)
 	init(default_hash);
 	

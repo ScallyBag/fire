@@ -2,7 +2,7 @@
 #include "../position.h"
 #include "../movepick.h"
 #include "../pragma.h"
-#include "../util/util.h"
+#include "../util/misc.h"
 
 // use uniform_real_distribution to generate all possible value and avoid statistical bias
 void random(position& pos) {

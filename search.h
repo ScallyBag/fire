@@ -115,24 +115,24 @@ namespace search
 	
 	inline uint8_t lm_reductions[2][2][64 * static_cast<int>(plies)][64];
 	
-	constexpr int razor_margin = 384;
+	inline int razor_margin = 384;
 	
 	// futility pruning values
-	constexpr auto futility_value_0 = 0;
-	constexpr auto futility_value_1 = 112;
-	constexpr auto futility_value_2 = 243;
-	constexpr auto futility_value_3 = 376;
-	constexpr auto futility_value_4 = 510;
-	constexpr auto futility_value_5 = 646;
-	constexpr auto futility_value_6 = 784;
-	constexpr auto futility_margin_ext_mult = 160;
-	constexpr auto futility_margin_ext_base = 204;
+	inline auto futility_value_0 = 0;
+	inline auto futility_value_1 = 112;
+	inline auto futility_value_2 = 243;
+	inline auto futility_value_3 = 376;
+	inline auto futility_value_4 = 510;
+	inline auto futility_value_5 = 646;
+	inline auto futility_value_6 = 784;
+	inline auto futility_margin_ext_mult = 160;
+	inline auto futility_margin_ext_base = 204;
 
 	const int futility_values[7] =
 	{
-		static_cast<int>(futility_value_0), static_cast<int>(futility_value_1), static_cast<int>(futility_value_2),
-		static_cast<int>(futility_value_3), static_cast<int>(futility_value_4), static_cast<int>(futility_value_5),
-		static_cast<int>(futility_value_6)
+		futility_value_0, futility_value_1, futility_value_2,
+		futility_value_3, futility_value_4, futility_value_5,
+		futility_value_6
 	};
 
 	inline int futility_margin(const int d)

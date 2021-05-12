@@ -139,7 +139,7 @@
     <ClCompile Include="uci.cpp" />
     <ClCompile Include="util\bench.cpp" />
     <ClCompile Include="util\perft.cpp" />
-    <ClCompile Include="util\util.cpp" />
+    <ClCompile Include="util\misc.cpp" />
     <ClCompile Include="zobrist.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +162,7 @@
     <ClInclude Include="movegen.h" />
     <ClInclude Include="movepick.h" />
     <ClInclude Include="mutex.h" />
+    <ClInclude Include="options.h" />
     <ClInclude Include="pawn.h" />
     <ClInclude Include="position.h" />
     <ClInclude Include="pragma.h" />
@@ -172,7 +173,7 @@
     <ClInclude Include="uci.h" />
     <ClInclude Include="util\bench.h" />
     <ClInclude Include="util\perft.h" />
-    <ClInclude Include="util\util.h" />
+    <ClInclude Include="util\misc.h" />
     <ClInclude Include="zobrist.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
