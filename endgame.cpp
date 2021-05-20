@@ -30,8 +30,6 @@ namespace endgame
 {
 	square normalize_pawn_side(const position& pos, const side strong_side, square sq)
 	{
-		assert(pos.number(strong_side, pt_pawn) == 1);
-
 		if (file_of(pos.piece_square(strong_side, pt_pawn)) >= file_e)
 			sq = static_cast<square>(sq ^ 7);
 

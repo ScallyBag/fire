@@ -513,7 +513,6 @@ inline ptype position::piece_on_square(const square sq) const
 
 inline square position::piece_square(const side color, const uint8_t piece) const
 {
-	assert(piece_number_[make_piece(color, piece)] == 1);
 	return piece_list_[make_piece(color, piece)][0];
 }
 

@@ -293,9 +293,6 @@ template <side strong>
 sfactor endgame_kpk(const position& pos)
 {
 	const auto weak = ~strong;
-	assert(pos.non_pawn_material(strong) == mat_0);
-	assert(pos.number(strong, pt_pawn) >= 2);
-
 	const auto square_k = pos.king(weak);
 
 	if (const auto pawns = pos.pieces(strong, pt_pawn); !(pawns & ~bb_ranks_forward(weak, rank_of(square_k)))
@@ -573,7 +570,7 @@ template <side strong>
 sfactor endgame_kqkrp(const position& pos)
 {
 	const auto weak = ~strong;
-	assert(pos.number(weak, pt_rook) == 1);
+
 	assert(pos.number(weak, pt_pawn) >= 1);
 
 	const auto king_sq = pos.king(weak);

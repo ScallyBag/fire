@@ -875,9 +875,7 @@ void position::take_move_back(const uint32_t move)
 	const auto to = to_square(move);
 	auto piece = piece_on_square(to);
 
-	assert(empty_square(from) || move_type(move) == castle_move);
 	assert(piece_type(pos_info_->captured_piece) != pt_king);
-	assert(piece == pos_info_->moved_piece);
 
 	if (move < static_cast<uint32_t>(castle_move))
 	{
