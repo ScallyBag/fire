@@ -31,7 +31,7 @@
 #include "util/perft.h"
 #include "util/misc.h"
 #ifdef TUNER
-#include "tune.h"
+#include "tune/tuner.h"
 #endif
 
 // stop threads, reset search

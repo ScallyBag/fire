@@ -22,7 +22,7 @@
 #include "../fire.h"
 
 #ifdef TUNER
-#include "tune.h"
+#include "tuner.h"
 
 #include <atomic>
 #include <thread>
@@ -35,16 +35,16 @@
 #include <limits>
 #include <algorithm>
 
-#include "evaluate.h"
-#include "material.h"
-#include "position.h"
-#include "thread.h"
-#include "util.h"
+#include "../evaluate.h"
+#include "../material.h"
+#include "../position.h"
+#include "../thread.h"
+#include "../util/misc.h"
 
 namespace tuner
 {
 	constexpr int k_precision = 5;
-	constexpr int weight_cnt = 1163;
+	constexpr int weight_cnt = 1055;
 	int calc_errors{};
 	struct texel_position
 	{
@@ -714,8 +714,8 @@ namespace tuner
 		pawn::safe_bonus_mult = weights[c++];
 		pawn::safe_bonus_mult_r34 = weights[c++];
 		pawn::safe_bonus_mult_r5 = weights[c++];
-		pawn::king_1st_rank = static_cast<int>(weights[c++]);
-		pawn::king_near_enemy_pawns = static_cast<int>(weights[c++]);
+		pawn::king_1st_rank = static_cast<score>(weights[c++]);
+		pawn::king_near_enemy_pawns = static_cast<score>(weights[c++]);
 
 		// ps factors
 		pawn::mg_mg_mult = weights[c++];

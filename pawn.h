@@ -136,9 +136,9 @@ namespace pawn
 	};
 
 	// doubled/isolated pawn
-	inline score doubled_pawn[4] =
+	inline int doubled_pawn[4] =
 	{
-		static_cast<score>(4063396), static_cast<score>(6029492), static_cast<score>(6881459), static_cast<score>(6881459)
+		4063396, 6029492, 6881459, 6881459
 	};
 
 	inline int isolated_pawn[2][num_files] =

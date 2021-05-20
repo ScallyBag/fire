@@ -135,7 +135,7 @@
     <ClCompile Include="search.cpp" />
     <ClCompile Include="sfactor.cpp" />
     <ClCompile Include="thread.cpp" />
-    <ClCompile Include="tune\tune.cpp" />
+    <ClCompile Include="tune\tuner.cpp" />
     <ClCompile Include="uci.cpp" />
     <ClCompile Include="util\bench.cpp" />
     <ClCompile Include="util\perft.cpp" />
@@ -169,7 +169,7 @@
     <ClInclude Include="random\random.h" />
     <ClInclude Include="search.h" />
     <ClInclude Include="thread.h" />
-    <ClInclude Include="tune\tune.h" />
+    <ClInclude Include="tune\tuner.h" />
     <ClInclude Include="uci.h" />
     <ClInclude Include="util\bench.h" />
     <ClInclude Include="util\perft.h" />

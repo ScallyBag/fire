@@ -1,0 +1,341 @@
+Fire 8.11 x64 pext
+
+init mobility mult
+mob_factor_p: 271
+mmrq_factor_p: 1
+mmfq_factor_p: 7
+mmc_factor_p: 3
+mmr_factor_p: 1
+mme_factor_p: 6
+mob_factor_b1: 257
+mob_factor_b2: 250
+mmrq_factor_b2: 9
+mmfq_factor_b2: 4
+mmc_factor_b2: 1
+mmr_factor_b2: 4
+mme_factor_b2: 4
+mob_factor_r: 256
+mmrq_factor_r: 2
+mmfq_factor_r: 6
+mmc_factor_r: 7
+mmr_factor_r: 2
+mme_factor_r: 3
+mob_factor_q: 273
+mmrq_factor_q: 3
+mmfq_factor_q: 5
+mmc_factor_q: 2
+mmr_factor_q: 3
+mme_factor_q: 9
+
+pawn_mg_mult: 208
+pawn_mg_sub: 418
+pawn_eg_mult: 253
+pawn_eg_sub: 510
+
+init bishop mobility values
+b1_mg_mult: 93
+b1_mg_sub: 172
+b1_eg_mult: 105
+b1_eg_sub: 195
+b2_mg_mult: 222
+b2_mg_sub: 375
+b2_eg_mult: 204
+b2_eg_sub: 345
+
+init rook mobility values
+rook_mg_mult: 126
+rook_mg_sub: 191
+rook_eg_mult: 219
+rook_eg_sub: 332
+mob_r_mult: 8
+mob_r_div: 9
+
+init queen mobility values
+queen_mg_mult: 204
+queen_mg_sub: 617
+queen_eg_mult: 166
+queen_eg_sub: 556
+
+distance
+p_k_distance: 1114124
+p_k_distance_mult: 4
+b_k_distance: 65546
+b_k_distance_mult: 4
+
+pawn
+pawn_on_bishop_color: -1769514
+pawn_on_other_bishop_color: 3014674
+pawn_file_width_mg: 1
+pawn_file_width_eg: 3
+threats_score: 14418117
+init passed pawn arrays
+pp_dvd_mgfactor: 47
+pp_dvd_egfactor: 34
+pp_ndvd_mgfactor: 50
+pp_ndvd_egfactor: 35
+pp_fp_base_mg: 2
+pp_fp_base_eg: 4
+pp_fp_mg: 11
+pp_fp_eg: 61
+pp_fp_mul: 273
+pp_fp_div: 257
+pp_as_base_mg: 2
+pp_as_base_eg: 4
+pp_as_mg: 11
+pp_as_eg: 37
+pp_as_mul: 305
+pp_as_div: 257
+pp_ab_base_mg: 2
+pp_ab_base_eg: 4
+passed_pawn_proximity: {14,10,7,5,4,3,2,1,}
+pp_support_proximity_factor: 31
+pp_mk_kdfp_factor: 41
+pp_yk_kdfp_factor: 77
+pp_mk_factor: 33
+pp_mk_div: 36
+pp_yk_factor: 33
+pp_yk_div: 36
+
+calculate_scale_factor
+sf_mult: 4
+sf_div: 5
+
+eval_bishops
+bishop_in_front_of_king: 7602177
+bishop_in_corner: 6553754
+trapped_bishop_extra: 69731369
+trapped_bishop: 33030649
+bishop_dominates_pawn: 2097183
+k_zone_attack_bonus: 9
+
+eval_initiative
+initiative_mult: 39
+
+eval_king_attack
+k_attack_index_factor: 17
+k_attack_pin_factor: 13
+k_attack_sd_factor: 12
+cspan_safe: 71
+cspan: 31
+csbab_safe: 23
+csbab: 22
+csrar_safe: 71
+csrar: 31
+qcayk_all: 87
+qcayk: 39
+queen_check_bonus: 121
+
+eval_knights
+knight_attack_king: 25
+p_mobility_add: 17
+p_mobility_div: 33
+
+eval_passed_pawns
+passed_pawn_mk_mult: 4
+passed_pawn_mk_div: 5
+passed_pawn_yk_mult: 4
+passed_pawn_yk_div 5
+passed_pawn_mk_md_mul: 3
+passed_pawn_mk_md_div: 5
+passed_pawn_yk_md_mul: 3
+passed_pawn_yk_md_div: 5
+bb_behind_passed_pawn_bonus: 6488503
+
+eval_queens
+queen_attack_king: 25
+queen_attack_king_zone: 9
+q_mobility_add: 17
+q_mobility_div: 33
+
+eval_rooks
+uncastled_penalty: 29556898
+rook_attacks_king: 9
+rook_traps_king_on_7th: 6684933
+no_pawn: 19398908
+pawn_attacks: 2097223
+pawn_no_attack: 11731095
+r_mobility_add: 33
+r_mobility_div: 65
+
+eval_space
+space_threshold: 593
+space_weight_mult: 4
+space_weight_div: 17
+
+eval_strong_squares
+safety_for_pawn_rbp: 3670060
+strong_p_in_front_of_pawn: 1441847
+strong_square_pb: 6488177
+strong_square_pb_extra: 16318583
+pb_behind_pawn: 3342349
+protected_piece: 5767215
+
+eval_threats
+hanging_pawn_threat: 26083620
+hanging_pieces: 17498231
+king_threat_single: 2490698
+king_threat_multiple: 6488797
+pawn_advance: 11272273
+
+eval
+blocked_pawns_mg: 44
+blocked_pawns_eg: 168
+mg_mgvalue_mult: 107
+mg_egvalue_mult: 7
+eg_mgvalue_mult: 14
+eg_egvalue_mult: 88
+eval_mult: 36
+conversion_mult: 116
+conversion_div: 129
+eval_div: 33
+eval_value_div: 9
+flank_double_attack: 1835009
+pawn_contempt_mult: 3
+knight_contempt_mult: 3
+bishop_contempt_mult: 4
+rook_contempt_mult: 5
+queen_contempt_mult: 9
+contempt_mult: 5
+
+piece_threat
+piece_threat: {1,1,721073,16842953,17301725,27853325,19661401,}
+rook_threat: {1,1,524421,15466802,15466786,721077,13369578,}
+pawn_threat: {1,1,1,65274485,49152594,81789953,76743674,}
+
+bishop pin
+bishop pin white: {1,1,1,9437329,1,6291553,6291553,1,}
+bishop pin black: {1,1,1,12583105,1,23593369,23593369,1,}
+
+mobility tables
+mob_mult_const: {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,}
+mob_mult_rank_quad: {-8,-8,-8,-8,-8,-8,-8,-8,-2,-2,-2,-2,-2,-2,-2,-2,2,2,2,2,2,2,2,2,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,2,2,2,2,2,2,2,2,-2,-2,-2,-2,-2,-2,-2,-2,-8,-8,-8,-8,-8,-8,-8,-8,}
+mob_mult_file_quad: {-8,-2,2,4,4,2,-2,-8,-8,-2,2,4,4,2,-2,-10,-8,-2,2,4,4,2,-2,-8,-8,-2,2,4,4,2,-2,-8,-8,-2,2,4,4,2,-2,-8,-8,-2,2,4,4,2,-2,-8,-8,-2,2,4,4,2,-2,-8,-8,-2,2,4,4,2,-2,-8,}
+mob_mult_center: {5,4,3,2,2,3,4,5,4,3,2,1,1,2,3,4,3,2,1,0,0,1,2,3,2,1,0,-1,-1,0,1,2,2,1,0,-1,-1,0,1,2,3,2,1,0,0,1,2,3,4,3,2,1,1,2,3,4,5,4,3,2,2,3,4,5,}
+mob_mult_rank: {-2,-2,-2,-2,-2,-2,-2,-2,-1,-1,-1,-1,-1,-1,-1,-1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,}
+mob_mult_edge: {-2,-2,-2,-2,-2,-2,-2,-2,-2,0,0,0,0,0,0,-2,-2,0,2,2,2,2,0,-2,-2,0,2,4,4,2,0,-2,-2,0,2,4,4,2,0,-2,-2,0,2,2,2,2,0,-2,-2,0,0,0,0,0,0,-2,-2,-2,-2,-2,-2,-2,-2,-2,}
+
+king danger table
+king_danger: {1,7,20,40,72,111,163,222,287,358,443,527,625,729,839,956,1080,1203,1333,1476,1613,1756,1905,2061,2211,2367,2523,2685,2848,3010,3166,3329,3491,3654,3816,3972,4135,4291,4447,4603,4752,4902,5051,5194,5337,5474,5610,5747,5877,6007,6130,6254,6371,6488,6605,6715,6819,6923,7027,7125,7222,7313,7404,7489,7573,7658,7736,7807,7885,7957,8022,8093,8152,8217,8275,8334,8392,8444,8496,8542,8594,8639,8685,8724,8769,8808,8841,8880,8912,8951,8984,9016,9042,9075,9101,9127,9153,9179,9198,9224,9244,9263,9283,9302,9322,9341,9354,9374,9387,9406,9419,9432,9445,9458,9471,9484,9491,9504,9517,9523,9536,9543,9549,9562,9569,9575,9582,9588,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,9595,}
+
+eval_pawns
+center_bind: 4259832
+multiple_passed_pawns: 3408077
+second_row_fixed: 1114132
+
+init
+max_safety_bonus: 517
+pawn_unsupported: 5505052
+chain_mult: 4
+chain_div: 3
+king_1st_rank: -6553875
+king_near_enemy_pawns: 44
+file_factor_mult: 65
+
+eval_shelter_storm
+ss_base: 101
+ss_safety_factor: 4
+ss_danger_factor: 4
+
+calculate_king_safety
+safe_bonus_div: 221
+safe_bonus_mult: 9
+safe_bonus_mult_r34: 17
+safe_bonus_mult_r5: 9
+king_1st_rank: -6553875
+king_near_enemy_pawns: 44
+
+ps factors
+mg_mg_mult: 15400
+mg_eg_mult: 853
+eg_mg_mult: 2302
+eg_eg_mult: 15053
+ps_div: 5953
+
+pawn shield/storm
+shield_factor: {75,70,65,}
+storm_factor: {65,49,65,}
+pawn_storm_constants: {-1,1,1,-5,-12,-39,1,1,}
+
+pawn phalanx
+phalanx_seed: {1,11,14,34,67,106,197,1,}
+seed: {1,1,16,11,58,76,136,1,}
+remaining_score: {18743425,13631554,}
+un_supported_pawn: {8257575,5505052,}
+pawn_attacker_score: {1,1,1,1,5636164,11403401,1,1,}
+
+passed pawn
+passed_pawn_values: {1,720914,720914,3211340,8454332,16253285,26608199,1,}
+passed_pawn_values_2: {1,1441829,1441829,6553751,16974201,32572106,53347469,1,}
+
+doubled_pawn: {4063397,6029493,6881460,6881460,}
+isolated pawn white: {10682527,15401137,16973997,16973997,16973997,16973997,15401137,10682527,}
+isolated pawn black: {7077994,10223735,11272309,11272309,11272309,11272309,10223735,7077994,}
+
+shelter_weakness
+shelter weakness: {97,21,27,51,87,89,99,1,}
+shelter weakness: {121,1,29,77,89,103,105,1,}
+shelter weakness: {101,7,55,79,77,93,101,1,}
+shelter weakness: {81,11,45,69,87,91,119,1,}
+
+storm_danger
+storm danger: {1,67,135,39,33,1,1,1,}
+storm danger: {1,57,139,37,23,1,1,1,}
+storm danger: {1,43,115,43,27,1,1,1,}
+storm danger: {1,69,125,57,33,1,1,1,}
+
+pawn factors
+p_base_score: 951
+p_q_factor: 91
+p_r_factor: 29
+p_b_factor: 18
+p_n_factor: 17
+
+knight factors
+n_base_score: 3511
+n_q_factor: 51
+n_r_factor: 36
+n_b_factor: 8
+n_n_factor: 9
+n_p_factor: 23
+
+bishop factors
+b_base_score: 3776
+b_q_factor: 56
+b_r_factor: 28
+b_b_factor: 10
+b_n_factor: 7
+b_p_factor: 7
+
+rook factors
+r_base_score: 6296
+r_q_factor: 262
+r_r_factor: 218
+r_b_factor: 35
+r_n_factor: 41
+r_p_factor: 11
+
+queen factors
+q_base_score: 11716
+q_q_factor: 339
+q_r_factor: 170
+q_b_factor: 38
+q_n_factor: 26
+q_p_factor: 7
+
+bishop pair factors
+bp_base_score: 516
+bp_q_factor: 42
+bp_r_factor: 22
+bp_b_factor: 8
+bp_n_factor: 8
+
+material imbalance
+more_knights_bonus: 18
+more_bishops_bonus: 18
+more_knights_bonus: 18
+
+phase factors
+max_phase: 33
+r_phase_factor: 4
+q_phase_factor: 7
+
