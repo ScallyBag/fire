@@ -26,7 +26,7 @@ OBJS =
 	OBJS += util/bench.o bitboard.o chrono.o egtb/egtb.o endgame.o \
 	evaluate.o hash.o bitbase/kpk.o main.o material.o movegen.o \
 	movepick.o pawn.o util/perft.o position.o pst.o random/random.o search.o \
-	sfactor.o egtb/tbprobe.o thread.o tune/tune.o uci.o util/misc.o zobrist.o \
+	sfactor.o egtb/tbprobe.o thread.o tune/tuner.o uci.o util/misc.o zobrist.o \
 	
 optimize = yes
 debug = no
