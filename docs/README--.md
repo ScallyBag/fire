@@ -57,61 +57,9 @@ Fire appears to be superior to Ethereal and really shines at ultra-fast TCs like
 - **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set)
 - **x64 pext** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set) if you own a Intel Haswell or newer cpu, this compile should be faster.
 
-- **windows** : Fire_8.HN_x64_bmi2.exe, Fire_8.HN_x64_avx2.exe, or Fire_8.HN_x64_popc.exe
-- **linux** :   Fire_8.HN_x64_avx2 or Fire_8.HN_x64_popc
+- **windows** : Fire_8.HN_x64_popc.exe or Fire_8.HN_x64_pext.exe
+- **linux** :   Fire_8.HN_x64_popc or Fire_8.HN_x64_pext
 
-Be aware that, due to lack of avx2 instruction set, the popc binaries are considerably slower than the bmi2 and/or avx2 binaries.
-
-Here is a complete list of recommended processors for Fire 8.HN x64:
-**Advanced Vector Extensions 2 5also known as Haswell New Instructions**
-CPUs with AVX2:
-Intel
-- Haswell processor (only Core and Xeon branded), Q2 2013
-- Haswell E processor, Q3 2014
-- Broadwell processor, Q4 2014
-- Broadwell E processor, Q3 2016
-- Skylake processor (only Core and Xeon branded), Q3 2015
-- Kaby Lake processor (only Core and Xeon branded), Q3 2016 (ULV mobile)/Q1 2017 (desktop/mobile)
-- Skylake-X processor, Q2 2017
-- Coffee Lake processor (only Core and Xeon branded), Q4 2017
-- Cannon Lake processor, Q2 2018
-- Cascade Lake processor, Q2 2019
-- Ice Lake processor, Q3 2019
-- Comet Lake processor (only Core and Xeon branded), Q3 2019
-- Tiger Lake (Core, Pentium and Celeron branded[11]) processor, Q3 2020
-- Rocket Lake processor, 2021
-- Alder Lake processor, 2021
-- Gracemont processors, 2021
-
-AMD
-- Excavator processor and newer, Q2 2015
-- Zen processor, Q1 2017
-- Zen+ processor, Q2 2018
-- Zen 2 processor, Q3 2019
-- Zen 3 processor, 2020
-VIA:
-- Nano QuadCore
-- Eden X4
-
-**BMI2 (Bit Manipulation Instruction Set 2)**
-CPUs with BMI2:
-Intel
-- Intel Nehalem processors and newer (like Sandy Bridge, Ivy Bridge) (POPCNT supported)
-- Intel Silvermont processors (POPCNT supported)
-- Intel Haswell processors and newer (like Skylake, Broadwell) (ABM, BMI1 and BMI2 supported)[6]
-AMD
-K10-based processors (ABM supported)
-- "Cat" low-power processors
-- Bobcat-based processors (ABM supported)[14]
-- Jaguar-based processors and newer (ABM and BMI1 supported)[4]
-- Puma-based processors and newer (ABM and BMI1 supported)[4]
-"Heavy Equipment" processors
-- Bulldozer-based processors (ABM supported)
-- Piledriver-based processors (ABM, BMI1 and TBM supported)[1]
-- Steamroller-based processors (ABM, BMI1 and TBM supported)
-- Excavator-based processors and newer (ABM, BMI1, BMI2 and TBM supported; microcoded PEXT and PDEP)[9]
-- Zen-based, Zen+-based, and processors (ABM, BMI1 and BMI2 supported; microcoded PEXT and PDEP)
-- Zen 3 processors and newer (ABM, BMI1 and BMI2 supported; full hardware implementation)
 
 run 'bench' at command line to determine which binary runs best/fastest on your system. for greater accuracy, run it twice and calculate the average of both results.
 
