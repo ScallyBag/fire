@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -151,7 +151,7 @@ namespace search
 
 		if (my_thread == thread_pool.main())
 		{
-			if (auto * main_thread = static_cast<mainthread*>(my_thread); ++main_thread->interrupt_counter >= 4096)
+			if (auto* main_thread = static_cast<mainthread*>(my_thread); ++main_thread->interrupt_counter >= 4096)
 			{
 				if (main_thread->quick_move_evaluation_busy)
 				{
@@ -398,7 +398,7 @@ namespace search
 			auto s_limit = depth >= limit_depth_min * plies
 				? position::see_values()[pi->captured_piece]
 				: std::max(see_0, (pc_beta - pi->position_value) / 2);
-			
+
 			movepick::init_prob_cut(pos, hash_move, s_limit);
 
 			while ((move = movepick::pick_move(pos)) != no_move)
@@ -652,7 +652,7 @@ namespace search
 			{
 				auto move_index = my_thread->root_moves.find(move);
 
-				if (auto & root_move = my_thread->root_moves.moves[move_index]; move_number == 1 || value > alpha)
+				if (auto& root_move = my_thread->root_moves.moves[move_index]; move_number == 1 || value > alpha)
 				{
 					root_move.score = value;
 					root_move.pv.resize(1);
@@ -1482,7 +1482,7 @@ NO_ANALYSIS:
 	{
 		for (auto i = 1; i < thread_pool.active_thread_count; ++i)
 		{
-			if (auto * th = thread_pool.threads[i]; th->root_moves[0].score > best_thread->root_moves[0].score
+			if (auto* th = thread_pool.threads[i]; th->root_moves[0].score > best_thread->root_moves[0].score
 				&& th->completed_depth > best_thread->completed_depth)
 				best_thread = th;
 		}
@@ -1576,7 +1576,7 @@ void thread::begin_search()
 	if (main_thread && !tb_root_in_tb && !search::param.ponder && !thread_pool.analysis_mode
 		&& main_thread->quick_move_allow && main_thread->previous_root_depth >= 12 * plies && thread_pool.multi_pv == 1)
 	{
-		if (auto * const hash_entry = main_hash.probe(root_position->key()); hash_entry && hash_entry->bounds() == exact_value)
+		if (auto* const hash_entry = main_hash.probe(root_position->key()); hash_entry && hash_entry->bounds() == exact_value)
 		{
 			const auto hash_value = search::value_from_hash(hash_entry->value(), pi->ply);
 			const auto hash_move = hash_entry->move();
@@ -1751,8 +1751,8 @@ void thread::begin_search()
 				const auto unstable_factor = 1024 + main_thread->best_move_changed;
 
 				if (const auto play_easy_move = root_moves[0].pv[0] == fast_move
-						&& main_thread->best_move_changed < 31
-						&& time_control.elapsed() > time_control.optimum() * 124 / 1024; root_moves.move_number == 1 && search_iteration > 10
+					&& main_thread->best_move_changed < 31
+					&& time_control.elapsed() > time_control.optimum() * 124 / 1024; root_moves.move_number == 1 && search_iteration > 10
 					|| time_control.elapsed() > time_control.optimum() * unstable_factor / 1024 * improvement_factor / 1024
 					|| ((main_thread->quick_move_played = play_easy_move)))
 				{
@@ -1812,7 +1812,7 @@ bool rootmove::ponder_move_from_hash(position& pos)
 
 	pos.play_move(pv[0]);
 
-	if (auto * const hash_entry = main_hash.probe(pos.key() ^ pos.draw50_key()); hash_entry)
+	if (auto* const hash_entry = main_hash.probe(pos.key() ^ pos.draw50_key()); hash_entry)
 	{
 		if (const auto move = hash_entry->move(); legal_moves_list_contains_move(pos, move))
 			pv.add(move);
