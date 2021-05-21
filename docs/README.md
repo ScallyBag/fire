@@ -63,7 +63,8 @@ Fire appears to be superior to Ethereal and really shines at ultra-fast TCs like
 Be aware that, due to lack of avx2 instruction set, the popc binaries are considerably slower than the bmi2 and/or avx2 binaries.
 
 Here is a complete list of recommended processors for Fire 8.HN x64:
-**Advanced Vector Extensions 2 5also known as Haswell New Instructions**
+
+**AVX2 (Advanced Vector Extensions 2)** (also known as Haswell New Instructions)
 CPUs with AVX2:
 Intel
 - Haswell processor (only Core and Xeon branded), Q2 2013
@@ -94,7 +95,6 @@ VIA:
 - Eden X4
 
 **BMI2 (Bit Manipulation Instruction Set 2)**
-CPUs with BMI2:
 Intel
 - Intel Nehalem processors and newer (like Sandy Bridge, Ivy Bridge) (POPCNT supported)
 - Intel Silvermont processors (POPCNT supported)
