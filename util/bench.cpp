@@ -20,7 +20,7 @@
 #include "search.h"
 #include "../thread.h"
 #include "../uci.h"
-#include "misc.h"
+#include "util.h"
 
 // search 64 positions (startposition, 21 openings from ECO, 21 middlegame, 21 endgames from ECE)
 // to depth 16 and write a time-stamped results file to disk
@@ -44,11 +44,11 @@ void bench(const int depth)
 		pos_num++;
 		search::reset();
 		auto s_depth = "depth " + std::to_string(depth);
-		std::istringstream iss(s_depth);
+		std::istringstream is(s_depth);
 		pos.set(bench_position, false, thread_pool.main());
 		acout() << "position " << pos_num << '/' << num_positions << " " << pos.fen() << std::endl;
 		acout() << pos << std::endl;
-		go(pos, iss);
+		go(pos, is);
 		thread_pool.main()->wait_for_search_to_end();
 		nodes += thread_pool.visited_nodes();
 	}

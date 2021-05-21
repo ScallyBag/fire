@@ -14,8 +14,6 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "uci.h"
-
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -24,12 +22,13 @@
 #include "evaluate.h"
 #include "fire.h"
 #include "hash.h"
+#include "nnue/nnue.h"
 #include "random/random.h"
 #include "search.h"
 #include "thread.h"
 #include "uci.h"
 #include "util/perft.h"
-#include "util/misc.h"
+#include "util/util.h"
 #ifdef TUNER
 #include "tune/tuner.h"
 #endif
@@ -55,6 +54,7 @@ void init(const int hash_size)
 	thread_pool.init();
 	search::reset();
 	main_hash.init(hash_size);
+	nnue_init("nn.bin");	
 }
 
 // create infinite loop while parsing for UCI input stream tokens (words)
@@ -94,8 +94,7 @@ void uci_loop(const int argc, char* argv[])
 			acout() << "option name Contempt type spin default 0 min -100 max 100" << std::endl;	
 			acout() << "option name SyzygyProbeDepth type spin default 1 min 0 max 64" << std::endl;
 			acout() << "option name SyzygyProbeLimit type spin default 6 min 0 max 6" << std::endl;
-			acout() << "option name SearchType type combo default alphabeta var alphabeta var random" << std::endl;
-			
+			acout() << "option name EngineMode type combo default nnue var classic var hybrid var nnue var random" << std::endl;
 			acout() << "option name Ponder type check default false" << std::endl;
 			acout() << "option name UCI_Chess960 type check default false" << std::endl;
 			acout() << "option name ClearHash type button" << std::endl;			
@@ -241,12 +240,12 @@ void set_option(std::istringstream& is)
 				acout() << "info string SyzygyProbeLimit " << uci_syzygy_probe_limit << std::endl;
 				break;
 			}
-			if (token == "SearchType")
+			if (token == "EngineMode")
 			{
 				is >> token;
 				is >> token;
-				uci_search = token;
-				acout() << "info string SearchType " << uci_search << std::endl;
+				engine_mode = token;
+				acout() << "info string EngineMode " << engine_mode << std::endl;
 				break;
 			}
 			if (token == "Ponder")
@@ -296,77 +295,7 @@ void set_option(std::istringstream& is)
 				egtb::syzygy_init(uci_syzygy_path);
 				acout() << "info string SyzygyPath " << uci_syzygy_path << std::endl;
 				break;
-			}	
-			if (token == "razor_margin")
-			{
-				is >> token;
-				is >> token;
-				search::razor_margin = stoi(token);
-				break;
 			}
-			if (token == "futility_value_0")
-			{
-				is >> token;
-				is >> token;
-				search::futility_value_0 = stoi(token);
-				break;
-			}
-			if (token == "futility_value_1")
-			{
-				is >> token;
-				is >> token;
-				search::futility_value_1 = stoi(token);
-				break;
-			}
-			if (token == "futility_value_2")
-			{
-				is >> token;
-				is >> token;
-				search::futility_value_2 = stoi(token);
-				break;
-			}
-			if (token == "futility_value_3")
-			{
-				is >> token;
-				is >> token;
-				search::futility_value_3 = stoi(token);
-				break;
-			}
-			if (token == "futility_value_4")
-			{
-				is >> token;
-				is >> token;
-				search::futility_value_4 = stoi(token);
-				break;
-			}
-			if (token == "futility_value_5")
-			{
-				is >> token;
-				is >> token;
-				search::futility_value_5 = stoi(token);
-				break;
-			}
-			if (token == "futility_value_6")
-			{
-				is >> token;
-				is >> token;
-				search::futility_value_6 = stoi(token);
-				break;
-			}
-			if (token == "futility_margin_ext_base")
-			{
-				is >> token;
-				is >> token;
-				search::futility_margin_ext_base = stoi(token);
-				break;
-			}
-			if (token == "futility_margin_ext_mult")
-			{
-				is >> token;
-				is >> token;
-				search::futility_margin_ext_mult = stoi(token);
-				break;
-			}	
 		}
 	}
 }
@@ -424,7 +353,7 @@ void go(position& pos, std::istringstream& is)
 		else if (token == "infinite")
 			param.infinite = 1;
 	}
-	if (uci_search == "random")
+	if (engine_mode == "random")
 		random(pos);
 	else	
 		thread_pool.begin_search(pos, param);

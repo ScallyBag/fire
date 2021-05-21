@@ -14,11 +14,9 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
-
 #include "../hash.h"
 #include "tbprobe.h"
-#include "../util/misc.h"
+#include "../util/util.h"
 
 
 // syzygy initialization and probe functions

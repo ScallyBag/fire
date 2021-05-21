@@ -31,7 +31,7 @@
 #include "pragma.h"
 #include "thread.h"
 #include "uci.h"
-#include "util/misc.h"
+#include "util/util.h"
 #include "zobrist.h"
 
 // position functions

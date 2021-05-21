@@ -22,6 +22,8 @@
 #include "pawn.h"
 #include "macro/score.h"
 #include "thread.h"
+#include "uci.h"
+#include "nnue/nnue.h"
 
 namespace evaluate
 {
@@ -644,6 +646,16 @@ namespace evaluate
 
 	int eval(const position& pos, const int alpha, const int beta)
 	{
+		int nnue_score = 0;
+		if (engine_mode == "hybrid" || engine_mode == "nnue")
+		{
+			const std::string fenstr = pos.fen();
+			const char* c = fenstr.c_str();
+			nnue_score = nnue_evaluate_fen(c);
+			if (engine_mode == "nnue")
+				return nnue_score;
+		}
+
 		if (pos.is_in_check())
 			return score_0;
 		const auto blocked_pawns = mul_div(make_score(blocked_pawns_mg, blocked_pawns_eg), 128, 256);
@@ -825,6 +837,8 @@ namespace evaluate
 				pi->eval_is_exact = true;
 			}
 		}
+		if (engine_mode == "hybrid")
+			return (result + nnue_score) / 2;
 		return result;
 	}
 

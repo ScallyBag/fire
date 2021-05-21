@@ -84,10 +84,16 @@
     <ClCompile Include="util\perft.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="util\misc.cpp">
+    <ClCompile Include="util\util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="random\random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nnue\misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nnue\nnue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,7 +182,7 @@
     <ClInclude Include="util\perft.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="util\misc.h">
+    <ClInclude Include="util\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="macro\score.h">
@@ -186,6 +192,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nnue\misc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nnue\nnue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

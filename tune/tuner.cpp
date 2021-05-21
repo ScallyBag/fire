@@ -39,7 +39,7 @@
 #include "../material.h"
 #include "../position.h"
 #include "../thread.h"
-#include "../util/misc.h"
+#include "../util/util.h"
 
 namespace tuner
 {

@@ -13,8 +13,8 @@
 # cpu architecture set to x86 64-bit w/ Intel's bmi2 (2nd gen bit manipulation
 #  instruction set, including parallel bits extract PEXT)
 
-arch_cpu=x86-64-pext
+arch_cpu=x86-64-bmi2
 make --no-print-directory -j profile-build ARCH=${arch_cpu} COMP=mingw
 strip fire.exe
-mv fire.exe Fire_8.11_x64_pext.exe 
+mv fire.exe Fire_8.11_x64_bmi2.exe 
 make clean 

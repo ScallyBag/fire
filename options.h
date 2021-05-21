@@ -46,9 +46,10 @@ initialized template vars
 
 #include "evaluate.h"
 #include "search.h"
-#include "util/misc.h"
+#include "util/util.h"
 
-class options {
+class options
+{
 	std::mutex m;
 	std::map<std::string, std::string> opts;
 	void load_args(int argc, char* argv[]);
@@ -60,12 +61,16 @@ public:
 	options& operator=(const options&) = delete;
 	options& operator=(const options&&) = delete;
 
-	options(const int argc, char* argv[]) { load_args(argc, argv); }
+	options(const int argc, char* argv[])
+	{
+		load_args(argc, argv);
+	}
 	~options() = default;
 
 	template<typename T>
-	T value(const char* s) {
-		std::unique_lock<std::mutex> lock(m);
+	T value(const char* s)
+	{
+		std::unique_lock lock(m);
 		std::istringstream ss{ opts[std::string{s}] };
 		T v{};
 		ss >> v;
@@ -73,10 +78,12 @@ public:
 	}
 
 	template<typename T>
-	void set(const std::string key, const T value) {
+	void set(const std::string key, const T value)
+	{
 		std::unique_lock lock(m);
 		
-		if (std::string vs = std::to_string(value); opts.find(key) == opts.end()) {
+		if (std::string vs = std::to_string(value); opts.find(key) == opts.end())
+		{
 			opts.emplace(key, vs);
 		}
 		else opts[key] = vs;
@@ -87,12 +94,14 @@ public:
 	void set_engine_params();
 };
 
-inline void options::load_args(int argc, char* argv[]) {
+inline void options::load_args(const int argc, char* argv[])
+{
 
 	auto matches = [](std::string& s1, const char* s2) { return strcmp(s1.c_str(), s2) == 0; };
 	auto set = [this](std::string& k, std::string& v) { this->opts.emplace(k.substr(1), v); };
 
-	for (int j = 1; j < argc - 1; j += 2) {
+	for (int j = 1; j < argc - 1; j += 2)
+	{
 		std::string key = argv[j];
 		if (std::string val = argv[j + 1]; matches(key, "-threads")) set(key, val);
 		else if (matches(key, "-book")) set(key, val);
@@ -103,12 +112,15 @@ inline void options::load_args(int argc, char* argv[]) {
 	}
 }
 
-inline bool options::read_param_file(std::string& filename) {
+inline bool options::read_param_file(std::string& filename)
+{
 	std::string line;
 
-	if (filename.empty()) {
+	if (filename.empty())
+	{
 		filename = value<std::string>("param");
-		if (filename.empty()) {
+		if (filename.empty())
+		{
 			filename = "engine.conf";
 		}
 	}
@@ -117,27 +129,30 @@ inline bool options::read_param_file(std::string& filename) {
 	std::ifstream param_file(filename);
 	auto set = [this](std::string& k, std::string& v) { this->opts.emplace(k, v); };
 
-	while (std::getline(param_file, line)) {
+	while (std::getline(param_file, line))
+	{
 
 	// assumed format "param-tag:param-value"
-    std::vector<std::string> tokens = util::split(line, ':');
+    std::vector<std::string> tokens = util::split(line, ' ');
 
-		if (tokens.size() != 2) {
-			acout() << "info string...skipping invalid line" << line << std::endl;
+		if (tokens.size() != 2)
+		{
 			continue;
 		}
 
 		set(tokens[0], tokens[1]);
-		//acout() << "stored param: " << tokens[0] << " value: " << tokens[1] << std::endl;
+		acout() << "loaded param: " << tokens[0] << " value: " << tokens[1] << std::endl;
 	}
 
 	set_engine_params();
 	return true;
 }
 
-inline bool options::save_param_file(std::string& filename) {
+inline bool options::save_param_file(std::string& filename)
+{
 
-	if (filename.empty()) {
+	if (filename.empty())
+	{
 		filename = value<std::string>("param");
 		if (filename.empty()) {
 			filename = "engine.conf"; // default
@@ -146,7 +161,8 @@ inline bool options::save_param_file(std::string& filename) {
 
 	std::ofstream param_file(filename, std::ofstream::out);
 
-	for (const auto& p : opts) {
+	for (const auto& p : opts)
+	{
 		std::string line = p.first + ":" + p.second + "\n";
 		param_file << line;
 		//acout() << "saved " << line << " into engine.conf " << std::endl;
@@ -155,24 +171,76 @@ inline bool options::save_param_file(std::string& filename) {
 	return true;
 }
 
-inline void options::set_engine_params() {
+inline void options::set_engine_params()
+{
 	auto matches = [](const std::string& s1, const char* s2) { return strcmp(s1.c_str(), s2) == 0; };
 
-	for (const auto& p : opts) {
-		if (matches(p.first, "razor_margin")) {search::razor_margin = value<int>("razor_margin"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_value_0")) {search::futility_value_0 = value<int>("futility_value_0"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_value_1")) {search::futility_value_1 = value<int>("futility_value_1"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_value_2")) {search::futility_value_2 = value<int>("futility_value_2"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_value_3")) {search::futility_value_3 = value<int>("futility_value_3"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_value_4")) {search::futility_value_4 = value<int>("futility_value_4"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_value_5")) {search::futility_value_5 = value<int>("futility_value_5"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_value_6")) {search::futility_value_6 = value<int>("futility_value_6"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_margin_ext_base")) {search::futility_margin_ext_base = value<int>("futility_margin_ext_base"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-		else if (matches(p.first, "futility_margin_ext_mult")) {search::futility_margin_ext_mult = value<int>("futility_margin_ext_mult"); acout() << "info string " << p.first << " = " << p.second << std::endl;}
-			
+	for (const auto& p : opts)
+	{
+		if (matches(p.first, "counter_move_bonus_min_depth")) {search::counter_move_bonus_min_depth = value<int>("counter_move_bonus_min_depth");}
+		else if (matches(p.first, "dummy_null_move_threat_min_depth_mult")) {search::dummy_null_move_threat_min_depth_mult = value<int>("dummy_null_move_threat_min_depth_mult");}
+		else if (matches(p.first, "excluded_move_hash_depth_reduction")) {search::excluded_move_hash_depth_reduction = value<int>("excluded_move_hash_depth_reduction");}		
+		else if (matches(p.first, "excluded_move_min_depth")) {search::excluded_move_min_depth = value<int>("excluded_move_min_depth");}		
+		else if (matches(p.first, "excluded_move_r_beta_hash_value_margin_div")) {search::excluded_move_r_beta_hash_value_margin_div = value<int>("excluded_move_r_beta_hash_value_margin_div");}		
+		else if (matches(p.first, "excluded_move_r_beta_hash_value_margin_mult")) {search::excluded_move_r_beta_hash_value_margin_mult = value<int>("excluded_move_r_beta_hash_value_margin_mult");}		
+		else if (matches(p.first, "fail_low_counter_move_bonus_min_depth")) {search::fail_low_counter_move_bonus_min_depth = value<int>("fail_low_counter_move_bonus_min_depth");}		
+		else if (matches(p.first, "fail_low_counter_move_bonus_min_depth_margin")) {search::fail_low_counter_move_bonus_min_depth_margin = value<int>("fail_low_counter_move_bonus_min_depth_margin");}		
+		else if (matches(p.first, "fail_low_counter_move_bonus_min_depth_mult")) {search::fail_low_counter_move_bonus_min_depth_mult = value<int>("fail_low_counter_move_bonus_min_depth_mult");}
+		else if (matches(p.first, "futility_min_depth")) {search::futility_min_depth = value<int>("futility_min_depth");}
+		else if (matches(p.first, "futility_value_0")) {search::futility_value_0 = value<int>("futility_value_0");}
+		else if (matches(p.first, "futility_value_1")) {search::futility_value_1 = value<int>("futility_value_1");}
+		else if (matches(p.first, "futility_value_2")) {search::futility_value_2 = value<int>("futility_value_2");}
+		else if (matches(p.first, "futility_value_3")) {search::futility_value_3 = value<int>("futility_value_3");}
+		else if (matches(p.first, "futility_value_4")) {search::futility_value_4 = value<int>("futility_value_4");}
+		else if (matches(p.first, "futility_value_5")) {search::futility_value_5 = value<int>("futility_value_5");}
+		else if (matches(p.first, "futility_value_6")) {search::futility_value_6 = value<int>("futility_value_6");}
+		else if (matches(p.first, "futility_margin_ext_base")) {search::futility_margin_ext_base = value<int>("futility_margin_ext_base");}
+		else if (matches(p.first, "futility_margin_ext_mult")) {search::futility_margin_ext_mult = value<int>("futility_margin_ext_mult");}
+		else if (matches(p.first, "late_move_count_max_depth")) {search::late_move_count_max_depth = value<int>("late_move_count_max_depth");}
+		else if (matches(p.first, "limit_depth_min")) {search::limit_depth_min = value<int>("limit_depth_min");}		
+		else if (matches(p.first, "lmr_min_depth")) {search::lmr_min_depth = value<int>("lmr_min_depth");}		
+		else if (matches(p.first, "lmr_reduction_min")) {search::lmr_reduction_min = value<int>("lmr_reduction_min");}		
+		else if (matches(p.first, "max_gain_value")) {search::max_gain_value = value<int>("max_gain_value");}		
+		else if (matches(p.first, "no_early_pruning_min_depth")) {search::no_early_pruning_min_depth = value<int>("no_early_pruning_min_depth");}		
+		else if (matches(p.first, "no_early_pruning_non_pv_node_depth_min")) {search::no_early_pruning_non_pv_node_depth_min = value<int>("no_early_pruning_non_pv_node_depth_min");}		
+		else if (matches(p.first, "no_early_pruning_position_value_margin")) {search::no_early_pruning_position_value_margin = value<int>("no_early_pruning_position_value_margin");}
+		else if (matches(p.first, "no_early_pruning_pv_node_depth_min")) {search::no_early_pruning_pv_node_depth_min = value<int>("no_early_pruning_pv_node_depth_min");}	
+		else if (matches(p.first, "no_early_pruning_strong_threat_min_depth")) {search::no_early_pruning_strong_threat_min_depth = value<int>("no_early_pruning_strong_threat_min_depth");}
+		else if (matches(p.first, "non_root_node_max_depth")) {search::non_root_node_max_depth = value<int>("non_root_node_max_depth");}		
+		else if (matches(p.first, "non_root_node_see_test_base")) {search::non_root_node_see_test_base = value<int>("non_root_node_see_test_base");}		
+		else if (matches(p.first, "non_root_node_see_test_mult")) {search::non_root_node_see_test_mult = value<int>("non_root_node_see_test_mult");}		
+		else if (matches(p.first, "null_move_depth_greater_than_cut_node_mult")) {search::null_move_depth_greater_than_cut_node_mult = value<int>("null_move_depth_greater_than_cut_node_mult");}		
+		else if (matches(p.first, "null_move_depth_greater_than_div")) {search::null_move_depth_greater_than_div = value<int>("null_move_depth_greater_than_div");}		
+		else if (matches(p.first, "null_move_depth_greater_than_mult")) {search::null_move_depth_greater_than_mult = value<int>("null_move_depth_greater_than_mult");}		
+		else if (matches(p.first, "null_move_depth_greater_than_sub")) {search::null_move_depth_greater_than_sub = value<int>("null_move_depth_greater_than_sub");}
+		else if (matches(p.first, "null_move_max_depth")) {search::null_move_max_depth = value<int>("null_move_max_depth");}	
+		else if (matches(p.first, "null_move_min_depth")) {search::null_move_min_depth = value<int>("null_move_min_depth");}
+		else if (matches(p.first, "null_move_pos_val_less_than_beta_mult")) {search::null_move_pos_val_less_than_beta_mult = value<int>("null_move_pos_val_less_than_beta_mult");}		
+		else if (matches(p.first, "null_move_strong_threat_mult")) {search::null_move_strong_threat_mult = value<int>("null_move_strong_threat_mult");}		
+		else if (matches(p.first, "null_move_tempo_mult")) {search::null_move_tempo_mult = value<int>("null_move_tempo_mult");}		
+		else if (matches(p.first, "null_move_tm_base")) {search::null_move_tm_base = value<int>("null_move_tm_base");}		
+		else if (matches(p.first, "null_move_tm_mult")) {search::null_move_tm_mult = value<int>("null_move_tm_mult");}		
+		else if (matches(p.first, "only_quiet_check_moves_max_depth")) {search::only_quiet_check_moves_max_depth = value<int>("only_quiet_check_moves_max_depth");}		
+		else if (matches(p.first, "pc_beta_depth_margin")) {search::pc_beta_depth_margin = value<int>("pc_beta_depth_margin");}
+		else if (matches(p.first, "pc_beta_margin")) {search::pc_beta_margin = value<int>("pc_beta_margin");}	
+		else if (matches(p.first, "predicted_depth_max_depth")) {search::predicted_depth_max_depth = value<int>("predicted_depth_max_depth");}
+		else if (matches(p.first, "predicted_depth_see_test_base")) {search::predicted_depth_see_test_base = value<int>("predicted_depth_see_test_base");}		
+		else if (matches(p.first, "predicted_depth_see_test_mult")) {search::predicted_depth_see_test_mult = value<int>("predicted_depth_see_test_mult");}		
+		else if (matches(p.first, "quiet_moves_max_depth")) {search::quiet_moves_max_depth = value<int>("quiet_moves_max_depth");}		
+		else if (matches(p.first, "quiet_moves_max_gain_base")) {search::quiet_moves_max_gain_base = value<int>("quiet_moves_max_gain_base");}		
+		else if (matches(p.first, "quiet_moves_max_gain_mult")) {search::quiet_moves_max_gain_mult = value<int>("quiet_moves_max_gain_mult");}		
+		else if (matches(p.first, "r_stats_value_div")) {search::r_stats_value_div = value<int>("r_stats_value_div");}		
+		else if (matches(p.first, "r_stats_value_mult_div")) {search::r_stats_value_mult_div = value<int>("r_stats_value_mult_div");}
+		else if (matches(p.first, "razor_margin")) {search::razor_margin = value<int>("razor_margin");}	
+		else if (matches(p.first, "razoring_min_depth")) {search::razoring_min_depth = value<int>("razoring_min_depth");}	
+		else if (matches(p.first, "razoring_qs_min_depth")) {search::razoring_qs_min_depth = value<int>("razoring_qs_min_depth");}	
+		else if (matches(p.first, "sort_cmp_sort_value")) {search::sort_cmp_sort_value = value<int>("sort_cmp_sort_value");}	
+		else if (matches(p.first, "stats_value_sort_value_add")) {search::stats_value_sort_value_add = value<int>("stats_value_sort_value_add");}	
+		else if (matches(p.first, "value_greater_than_beta_max_depth")) {search::value_greater_than_beta_max_depth = value<int>("value_greater_than_beta_max_depth");}
+		else if (matches(p.first, "value_less_than_beta_margin")) {search::value_less_than_beta_margin = value<int>("value_less_than_beta_margin");}	
 	}
 }
 
-extern std::unique_ptr<options> opts;
+extern std::unique_ptr<options> params;
 
 #endif

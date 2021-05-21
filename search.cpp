@@ -27,7 +27,7 @@
 #include "pragma.h"
 #include "thread.h"
 #include "uci.h"
-#include "util/misc.h"
+#include "util/util.h"
 
 namespace search
 {
@@ -43,74 +43,7 @@ namespace search
 	template <nodetype nt>
 	int alpha_beta(position& pos, int alpha, int beta, int depth, bool cut_node)
 	{
-		// search constants (can be easily convert int global variables for tuning w/ CLOP, etc.)
-		// these values have only been roughly hand tuned
-		constexpr auto max_gain_value = 500;
-		constexpr auto razoring_min_depth = 4;
-		constexpr auto razoring_qs_min_depth = 2;
-		constexpr auto futility_min_depth = 7;
-
-		constexpr auto null_move_min_depth = 2;
-		constexpr auto null_move_tempo_mult = 2;
-		constexpr auto null_move_strong_threat_mult = 8;
-		constexpr auto null_move_pos_val_less_than_beta_mult = 12;
-		constexpr auto null_move_max_depth = 8;
-
-		constexpr auto null_move_tm_base = 540;
-		constexpr auto null_move_tm_mult = 66;
-
-		constexpr auto null_move_depth_greater_than_mult = 310;
-		constexpr auto null_move_depth_greater_than_div = 204;
-		constexpr auto null_move_depth_greater_than_sub = 20;
-		constexpr auto null_move_depth_greater_than_cut_node_mult = 15;
-
-		constexpr auto value_less_than_beta_margin = 100;
-		constexpr auto value_greater_than_beta_max_depth = 12;
-		constexpr auto dummy_null_move_threat_min_depth_mult = 6;
-
-		constexpr auto no_early_pruning_min_depth = 5;
-		constexpr auto no_early_pruning_strong_threat_min_depth = 8;
-		constexpr auto pc_beta_margin = 160;
-		constexpr auto pc_beta_depth_margin = 4;
-		constexpr auto limit_depth_min = 8;
-		constexpr auto no_early_pruning_pv_node_depth_min = 5;
-		constexpr auto no_early_pruning_non_pv_node_depth_min = 8;
-		constexpr auto no_early_pruning_position_value_margin = 102;
-
-		constexpr auto only_quiet_check_moves_max_depth = 8;
-		constexpr auto excluded_move_min_depth = 8;
-		constexpr auto excluded_move_hash_depth_reduction = 3;
-		constexpr auto excluded_move_r_beta_hash_value_margin_mult = 8;
-		constexpr auto excluded_move_r_beta_hash_value_margin_div = 5;
-
-		constexpr auto late_move_count_max_depth = 16;
-
-		constexpr auto quiet_moves_max_depth = 6;
-		constexpr auto quiet_moves_max_gain_base = -44;
-		constexpr auto quiet_moves_max_gain_mult = 12;
-		constexpr auto sort_cmp_sort_value = -200;
-
-		constexpr auto predicted_depth_max_depth = 7;
-		constexpr auto predicted_depth_see_test_base = 300;
-		constexpr auto predicted_depth_see_test_mult = 20;
-
-		constexpr auto non_root_node_max_depth = 7;
-		constexpr auto non_root_node_see_test_base = 150;
-		constexpr auto non_root_node_see_test_mult = 20;
-
-		constexpr auto lmr_min_depth = 3;
-		constexpr auto stats_value_sort_value_add = 2000;
-		constexpr auto r_stats_value_div = 2048;
-		constexpr auto r_stats_value_mult_div = 8;
-		constexpr auto lmr_reduction_min = 5;
-
-		constexpr auto fail_low_counter_move_bonus_min_depth_mult = 3;
-		constexpr auto fail_low_counter_move_bonus_min_depth_margin = 30;
-		constexpr auto fail_low_counter_move_bonus_min_depth = 3;
-		constexpr auto counter_move_bonus_min_depth = 18;
-
 		constexpr auto info_currmove_interval = 4000;
-
 		const auto pv_node = nt == PV;
 		constexpr auto max_quiet_moves = 64;
 
@@ -284,7 +217,7 @@ namespace search
 			&& (pi - 1)->position_value != no_score
 			&& pi->material_key == (pi - 1)->material_key)
 		{
-			const auto max_gain = static_cast<int>(max_gain_value);
+			const auto max_gain = max_gain_value;
 			auto gain = -pi->position_value - (pi - 1)->position_value + 2 * value_tempo;
 			gain = std::min(max_gain, std::max(-max_gain, gain));
 			pos.thread_info()->max_gain_table.update(pi->moved_piece, pi->previous_move, gain);
@@ -326,7 +259,7 @@ namespace search
 
 			auto R = no_depth;
 			R = depth < 4 * plies ? depth : (null_move_tm_base + null_move_tm_mult * (static_cast<uint32_t>(depth) / plies)
-				+ std::max(std::min(null_move_depth_greater_than_mult * (eval - beta) / static_cast<int>(null_move_depth_greater_than_div)
+				+ std::max(std::min(null_move_depth_greater_than_mult * (eval - beta) / null_move_depth_greater_than_div
 				- null_move_depth_greater_than_sub - null_move_depth_greater_than_cut_node_mult
 				* cut_node - null_move_depth_greater_than_cut_node_mult * (hash_move != no_move), 3 * 256), 0)) / 256 * plies;
 
@@ -339,7 +272,7 @@ namespace search
 			(pi + 1)->no_early_pruning = false;
 			pos.take_null_back();
 
-			if ((pi - 1)->lmr_reduction && (value < beta - static_cast<int>(value_less_than_beta_margin) || value < -longest_mate_score))
+			if ((pi - 1)->lmr_reduction && (value < beta - value_less_than_beta_margin || value < -longest_mate_score))
 			{
 				if ((pi - 1)->lmr_reduction <= 2 * plies)
 					return beta - score_1;
@@ -389,7 +322,7 @@ namespace search
 			&& (depth >= no_early_pruning_strong_threat_min_depth * plies || pi->strong_threat & pos.on_move() + 1)
 			&& abs(beta) < longest_mate_score)
 		{
-			auto pc_beta = beta + static_cast<int>(pc_beta_margin);
+			auto pc_beta = beta + pc_beta_margin;
 			auto pc_depth = depth - pc_beta_depth_margin * plies;
 
 			assert(pc_depth >= plies);
@@ -416,7 +349,7 @@ namespace search
 
 		if (depth >= (pv_node ? no_early_pruning_pv_node_depth_min * plies : no_early_pruning_non_pv_node_depth_min * plies)
 			&& !hash_move
-			&& (pv_node || cut_node || pi->position_value + static_cast<int>(no_early_pruning_position_value_margin) >= beta))
+			&& (pv_node || cut_node || pi->position_value + no_early_pruning_position_value_margin >= beta))
 		{
 			auto d = depth - 2 * plies - (pv_node ? depth_0 : static_cast<uint32_t>(depth) / plies / 4 * plies);
 			pi->no_early_pruning = true;
@@ -521,13 +454,13 @@ namespace search
 				{
 					auto offset = counter_move_values::calculate_offset(moved_piece, to_square(move));
 
-					if (const auto sort_cmp = static_cast<int>(sort_cmp_sort_value); (!cmh || cmh->value_at_offset(offset) < sort_cmp)
+					if (const auto sort_cmp = sort_cmp_sort_value; (!cmh || cmh->value_at_offset(offset) < sort_cmp)
 						&& (!fmh || fmh->value_at_offset(offset) < sort_cmp)
 						&& (cmh && fmh || !fmh2 || fmh2->value_at_offset(offset) < sort_cmp))
 						continue;
 
-					if (pos.thread_info()->max_gain_table.get(moved_piece, move) < static_cast<int>(quiet_moves_max_gain_base)
-						- static_cast<int>(quiet_moves_max_gain_mult) * static_cast<int>(static_cast<uint32_t>(depth) / plies))
+					if (pos.thread_info()->max_gain_table.get(moved_piece, move) < quiet_moves_max_gain_base
+						- quiet_moves_max_gain_mult * static_cast<int>(static_cast<uint32_t>(depth) / plies))
 						continue;
 				}
 
@@ -584,7 +517,7 @@ namespace search
 					+ (cmh ? static_cast<int>(cmh->value_at_offset(offset)) : sort_zero)
 					+ (fmh ? static_cast<int>(fmh->value_at_offset(offset)) : sort_zero)
 					+ (fmh2 ? static_cast<int>(fmh2->value_at_offset(offset)) : sort_zero);
-				stats_value += static_cast<int>(stats_value_sort_value_add);
+				stats_value += stats_value_sort_value_add;
 
 				r -= stats_value / r_stats_value_div * (plies / r_stats_value_mult_div);
 
@@ -718,7 +651,7 @@ namespace search
 
 		else
 		{
-			if (depth >= fail_low_counter_move_bonus_min_depth_mult * plies && pi->position_value >= alpha - static_cast<int>(fail_low_counter_move_bonus_min_depth_margin))
+			if (depth >= fail_low_counter_move_bonus_min_depth_mult * plies && pi->position_value >= alpha - fail_low_counter_move_bonus_min_depth_margin)
 				update_stats_quiet(pos, state_check, depth, quiet_moves, quiet_move_number);
 
 			if (depth >= fail_low_counter_move_bonus_min_depth * plies
@@ -872,32 +805,8 @@ namespace search
 	template <nodetype nt, bool state_check>
 	int q_search(position& pos, int alpha, const int beta, const int depth)
 	{
-		constexpr auto qs_futility_value_0 = 102;
-		constexpr auto qs_futility_value_1 = 0;
-		constexpr auto qs_futility_value_2 = 308;
-		constexpr auto qs_futility_value_3 = 818;
-		constexpr auto qs_futility_value_4 = 827;
-		constexpr auto qs_futility_value_5 = 1186;
-		constexpr auto qs_futility_value_6 = 2228;
-		constexpr auto qs_futility_value_7 = 0;
-
-		const int q_search_futility_value[num_pieces] =
-		{
-			qs_futility_value_0, qs_futility_value_1, qs_futility_value_2, qs_futility_value_3,
-			qs_futility_value_4, qs_futility_value_5, qs_futility_value_6, qs_futility_value_7,
-			qs_futility_value_0, qs_futility_value_1, qs_futility_value_2, qs_futility_value_3,
-			qs_futility_value_4, qs_futility_value_4, qs_futility_value_6, qs_futility_value_7
-		};
-
-		constexpr auto lazy_margin = 480; // sf uses 1400 (* 100 / 256 = 547), but 480 seems optimal here
-		constexpr auto qs_futility_basis_margin = 102;
-		constexpr auto qs_futility_value_capture_history_add_div = 32;
-		constexpr auto qs_stats_value_sortvalue = -12000;
-		constexpr auto qs_skip_see_test_value_greater_than_alpha_sort_value = 1000;
-		constexpr auto qs_skip_see_test_value_less_than_equal_to_alpha_sort_value = 2000;
-
-		const auto lazy_margin_q_search_low = static_cast<int>(lazy_margin) + score_1;
-		const auto lazy_margin_q_search_high = static_cast<int>(lazy_margin);
+		const auto lazy_margin_q_search_low = lazy_margin + score_1;
+		const auto lazy_margin_q_search_high = lazy_margin;
 
 		const auto pv_node = nt == PV;
 
@@ -1025,11 +934,11 @@ namespace search
 					continue;
 				}
 
-				if (futility_basis + static_cast<int>(qs_futility_basis_margin) <= alpha)
+				if (futility_basis + qs_futility_basis_margin <= alpha)
 				{
 					if (!pos.see_test(move, 1))
 					{
-						best_value = std::max(best_value, futility_basis + static_cast<int>(qs_futility_basis_margin));
+						best_value = std::max(best_value, futility_basis + qs_futility_basis_margin);
 						continue;
 					}
 					goto skip_see_test;
@@ -1051,7 +960,7 @@ namespace search
 						if (const auto stats_value = static_cast<int>(pos.thread_info()->evasion_history.value_at_offset(offset))
 							+ (pi->move_counter_values ? static_cast<int>(pi->move_counter_values->value_at_offset(offset)) : sort_zero)
 							+ ((pi - 1)->move_counter_values ? static_cast<int>((pi - 1)->move_counter_values->value_at_offset(offset)) : sort_zero)
-							+ ((pi - 3)->move_counter_values? static_cast<int>((pi - 3)->move_counter_values->value_at_offset(offset)) : sort_zero); stats_value < static_cast<int>(qs_stats_value_sortvalue))
+							+ ((pi - 3)->move_counter_values ? static_cast<int>((pi - 3)->move_counter_values->value_at_offset(offset)) : sort_zero); stats_value < qs_stats_value_sortvalue)
 							continue;
 					}
 
@@ -1331,7 +1240,6 @@ namespace search
 
 void mainthread::begin_search()
 {
-	constexpr auto default_draw_value = 24;
 	search::running = true;
 	root_position->copy_position(thread_pool.root_position, nullptr, nullptr);
 	const auto me = root_position->on_move();
@@ -1510,25 +1418,6 @@ NO_ANALYSIS:
 
 void thread::begin_search()
 {
-	constexpr auto v_singular_margin = 102;
-	constexpr auto delta_alpha_margin = 14;
-	constexpr auto delta_beta_margin = 14;
-	constexpr auto value_pawn_mult = 20;
-
-	constexpr auto improvement_factor_min_base = 1304;
-	constexpr auto improvement_factor_max_base = 652;
-	constexpr auto improvement_factor_max_mult = 160;
-	constexpr auto improvement_factor_bv_mult = 12;
-
-	constexpr auto best_value_vp_mult = 8;
-	constexpr auto delta_alphabeta_value_add = 4;
-	constexpr auto root_depth_mate_value_bv_add = 10;
-
-	constexpr auto time_control_optimum_mult_1 = 124;
-	constexpr auto time_control_optimum_mult_2 = 420;
-
-	constexpr auto info_depth_interval = 1000;
-
 	auto alpha = score_0, delta_alpha = score_0, delta_beta = score_0;
 	auto fast_move = no_move;
 	auto* main_thread = this == thread_pool.main() ? thread_pool.main() : nullptr;
@@ -1587,7 +1476,7 @@ void thread::begin_search()
 				&& abs(hash_value) < win_score)
 			{
 				const auto depth_singular = std::max(main_thread->previous_root_depth / 2, main_thread->previous_root_depth - 8 * plies);
-				const auto v_singular = hash_value - static_cast<int>(v_singular_margin);
+				const auto v_singular = hash_value - v_singular_margin;
 				pi->excluded_move = hash_move;
 				pi->position_value = evaluate::eval(*root_position, no_score, no_score);
 				main_thread->quick_move_evaluation_busy = true;
@@ -1713,8 +1602,8 @@ void thread::begin_search()
 				else
 					break;
 
-				delta_alpha += delta_alpha / 4 + static_cast<int>(delta_alphabeta_value_add);
-				delta_beta += delta_beta / 4 + static_cast<int>(delta_alphabeta_value_add);
+				delta_alpha += delta_alpha / 4 + delta_alphabeta_value_add;
+				delta_beta += delta_beta / 4 + delta_alphabeta_value_add;
 
 				assert(alpha >= -max_score && beta <= max_score);
 			}
