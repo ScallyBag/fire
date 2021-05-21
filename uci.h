@@ -31,7 +31,7 @@ static int uci_syzygy_probe_depth = 1;
 static int uci_syzygy_probe_limit = 6;
 static std::string uci_syzygy_path = "";
 
-inline std::string engine_mode = "hybrid";
+inline std::string engine_mode = "nnue";
 inline bool bench_active = false;
 
 // function declarations

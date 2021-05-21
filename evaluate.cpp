@@ -646,14 +646,12 @@ namespace evaluate
 
 	int eval(const position& pos, const int alpha, const int beta)
 	{
-		int nnue_score = 0;
-		if (engine_mode == "hybrid" || engine_mode == "nnue")
+		if (engine_mode == "nnue")
 		{
 			const std::string fenstr = pos.fen();
 			const char* c = fenstr.c_str();
-			nnue_score = nnue_evaluate_fen(c);
-			if (engine_mode == "nnue")
-				return nnue_score;
+			const int nnue_score = nnue_evaluate_fen(c);
+			return nnue_score;
 		}
 
 		if (pos.is_in_check())
@@ -837,8 +835,6 @@ namespace evaluate
 				pi->eval_is_exact = true;
 			}
 		}
-		if (engine_mode == "hybrid")
-			return (result + nnue_score) / 2;
 		return result;
 	}
 
