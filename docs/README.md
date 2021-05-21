@@ -65,7 +65,6 @@ Be aware that, due to lack of avx2 instruction set, the popc binaries are consid
 Here is a complete list of recommended processors for Fire 8.HN x64:
 
 **AVX2 (Advanced Vector Extensions 2)** (also known as Haswell New Instructions)
-CPUs with AVX2:
 Intel
 - Haswell processor (only Core and Xeon branded), Q2 2013
 - Haswell E processor, Q3 2014
@@ -99,6 +98,7 @@ Intel
 - Intel Nehalem processors and newer (like Sandy Bridge, Ivy Bridge) (POPCNT supported)
 - Intel Silvermont processors (POPCNT supported)
 - Intel Haswell processors and newer (like Skylake, Broadwell) (ABM, BMI1 and BMI2 supported)[6]
+
 AMD
 K10-based processors (ABM supported)
 - "Cat" low-power processors
