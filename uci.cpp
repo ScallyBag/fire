@@ -133,36 +133,25 @@ void uci_loop(const int argc, char* argv[])
 		{
 			break;
 		}
-		else if (token == "perft" || token == "divide")
+		else if (token == "perft")
 		{
-			int perft_type;
-			if (token == "perft")
-				perft_type = 1;
-			else
-				perft_type = 2;
+			auto depth = 7;
+			auto &fen = startpos;
 			
-			// set params or use default values
-			auto depth = is >> token ? token : "7";
-			auto hash = is >> token ? token : "64";
-			auto threads = is >> token ? token : "1";
-
-			//parse fen words from command line and assign default values if missing
-			auto piece_placement = is >> token ? token : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-			auto side_to_move = is >> token ? token : "-";
-			auto castling = is >> token ? token : "-";
-			auto en_passant = is >> token ? token : "-";
-			auto half_moves = is >> token ? token : "";
-			auto full_moves = is >> token ? token : "";
-			auto fen = piece_placement + " " + side_to_move + " " + castling + " " + en_passant + " " + half_moves + " " + full_moves;
-
-			if (piece_placement == "perft.epd")
-				fen = "perft.epd";
-
-			if (perft_type == 1)
-				// strings must be converted to integers
-				perft(stoi(depth), fen);
-			else
-				divide(stoi(depth), fen);
+			is >> depth;
+			is >> fen;
+			
+			perft(depth, fen);
+		}
+		else if (token == "divide")
+		{
+			auto depth = 7;
+			auto &fen = startpos;
+			
+			is >> depth;
+			is >> fen;
+			
+			divide(depth, fen);
 		}
 		else if (token == "bench")
 		{	//bench depth = 16 unless specified on command line
@@ -377,7 +366,7 @@ void set_option(std::istringstream& is)
 				is >> token;
 				search::futility_margin_ext_mult = stoi(token);
 				break;
-			}
+			}	
 		}
 	}
 }
