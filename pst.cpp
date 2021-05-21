@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -119,7 +119,7 @@ namespace pst
 		0, 0, 0, 0, 0, 0, 0, 0
 		},
 		// black king	
-		{	
+		{
 		65144046, 58590062, 75891336, 85459515, 85459515, 75891336, 58590062, 65144046,
 		54985666, 48300610, 66715996, 77070607, 77070607, 66715996, 48300610, 54985666,
 		47186705, 40698257, 59703466, 70975581, 70975581, 59703466, 40698257, 47186705,

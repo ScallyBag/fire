@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -26,12 +26,12 @@ namespace material
 {
 	// adapted, consolidated, and optimized from robbolito material routines
 	// https://github.com/FireFather/robbolito/blob/main/values.c
-	
+
 	int mat_imbalance(const int wp, const int wn, const int wb, const int wbl, const int wbd, const int wr, const int wq,
-					  const int bp, const int bn, const int bb, const int bbl, const int bbd, const int br, const int bq)
+		const int bp, const int bn, const int bb, const int bbl, const int bbd, const int br, const int bq)
 	{
 		auto score = 0;
-		
+
 		// bishop pair
 		const auto wbp = wbl & wbd;
 		const auto bbp = bbl & bbd;
@@ -167,7 +167,7 @@ namespace material
 
 		return hash_entry;
 	}
-	
+
 	// retrieve endgame value from material hash
 	int mat_hash_entry::value_from_function(const position& pos) const
 	{
@@ -183,5 +183,5 @@ namespace material
 				return scale_factor;
 		}
 		return static_cast<sfactor>(factor[color]);
-	}	
+	}
 }

@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -20,7 +20,6 @@
 #include <iostream>
 
 #include "fire.h"
-#include "search.h"
 #include "uci.h"
 
 cmhinfo* cmh_data;
@@ -55,7 +54,7 @@ void threadpool::init()
 	threads[0] = new mainthread;
 	thread_count = 1;
 	end_games.init_endgames();
-	end_games.init_scale_factors();	
+	end_games.init_scale_factors();
 	change_thread_count(thread_count);
 	fifty_move_distance = 50;
 	multi_pv = 1;

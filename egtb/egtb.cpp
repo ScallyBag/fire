@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -27,16 +27,16 @@ namespace egtb
 	int max_pieces_wdl = 0;
 	int max_pieces_dtz = 0;
 	int max_pieces_dtm = 0;
-	
+
 	egtb_probe egtb_probe_wdl = nullptr;
 	egtb_probe egtb_probe_dtm = nullptr;
 	egtb_probe egtb_probe_dtz = nullptr;
-	
+
 	bool use_rule50;
-	
+
 	static bool syzygy_in_use = false;
 	static std::string current_syzygy_path;
-	
+
 	int tb_probe_wdl(position& pos);
 	int tb_probe_dtz(position& pos);
 
@@ -59,7 +59,7 @@ namespace egtb
 				syzygy_in_use = true;
 				egtb_probe_wdl = &tb_probe_wdl;
 				egtb_probe_dtz = &tb_probe_dtz;
-				
+
 				// notify the GUI via UCI if TBs are found, and how many
 				acout() << "info string Found " << tb_num_piece + tb_num_pawn << " tablebases" << std::endl;
 				return;
@@ -113,5 +113,5 @@ namespace egtb
 		if (val < -draw_value)
 			return -longest_mate_score + pos.info()->ply;
 		return draw_value;
-	}	
+	}
 }

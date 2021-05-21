@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -30,7 +30,7 @@ sfactor endgame_kbpk(const position& pos)
 	const auto bb_black_attack = endgame::attack_king_inc(pos.king(weak));
 
 	if (const auto bb_white_attack = pos.attack_from<pt_king>(pos.king(strong))
-			| pos.attack_from<pt_bishop>(pos.piece_square(strong, pt_bishop)); pos.number(strong, pt_pawn) == 1 && pos.on_move() == weak
+		| pos.attack_from<pt_bishop>(pos.piece_square(strong, pt_bishop)); pos.number(strong, pt_pawn) == 1 && pos.on_move() == weak
 		&& pos.pieces(strong, pt_pawn) & bb_black_attack & ~bb_white_attack)
 		return draw_factor;
 
@@ -61,9 +61,9 @@ sfactor endgame_kbpk(const position& pos)
 		for (auto i = 0; i < pos.number(weak, pt_pawn); i++)
 			black_pawns |= relative_square(strong, pos.piece_list(weak, pt_pawn)[i]);
 	}
-	
+
 	const auto bb_king_cover = endgame::attack_king_inc(black_king);
-	
+
 	if (pos.number(strong, pt_pawn) > 1)
 		pawn = no_square;
 
@@ -72,7 +72,8 @@ sfactor endgame_kbpk(const position& pos)
 		if (bb_king_cover & bb(h8))
 		{
 			if (white_pawns & bb(h5) && (black_pawns & bb2(g7, h6)) == bb2(g7, h6))
-				{}
+			{
+			}
 			else
 				return draw_factor;
 		}
@@ -84,7 +85,7 @@ sfactor endgame_kbpk(const position& pos)
 		if (!(white_pawns & ~bb2(h2, h3)) && black_pawns & bb(h4))
 			return static_cast<sfactor>(normal_factor / 4);
 	}
-	
+
 	if (pawn == g6 && bishop == h7 && bb_king_cover & bb(h8))
 		return draw_factor;
 
@@ -223,31 +224,31 @@ sfactor endgame_kbppkb(const position& pos)
 	switch (file_distance(psq1, psq2))
 	{
 	case 0:
-		{
-			if (file_of(square_k) == file_of(block_sq1)
-				&& relative_rank(strong, square_k) >= relative_rank(strong, block_sq1)
-				&& different_color(square_k, wb_sq))
-				return draw_factor;
-			return no_factor;
-		}
+	{
+		if (file_of(square_k) == file_of(block_sq1)
+			&& relative_rank(strong, square_k) >= relative_rank(strong, block_sq1)
+			&& different_color(square_k, wb_sq))
+			return draw_factor;
+		return no_factor;
+	}
 
 	case 1:
-		{
-			if (square_k == block_sq1
-				&& different_color(square_k, wb_sq)
-				&& (bb_sq == block_sq2
-				|| pos.attack_from<pt_bishop>(block_sq2) & pos.pieces(weak, pt_bishop)
-				|| rank_distance(psq1, psq2) >= 2))
-				return draw_factor;
+	{
+		if (square_k == block_sq1
+			&& different_color(square_k, wb_sq)
+			&& (bb_sq == block_sq2
+			|| pos.attack_from<pt_bishop>(block_sq2) & pos.pieces(weak, pt_bishop)
+			|| rank_distance(psq1, psq2) >= 2))
+			return draw_factor;
 
-			if (square_k == block_sq2
-				&& different_color(square_k, wb_sq)
-				&& (bb_sq == block_sq1
-				|| pos.attack_from<pt_bishop>(block_sq1) & pos.pieces(weak, pt_bishop)))
-				return draw_factor;
+		if (square_k == block_sq2
+			&& different_color(square_k, wb_sq)
+			&& (bb_sq == block_sq1
+			|| pos.attack_from<pt_bishop>(block_sq1) & pos.pieces(weak, pt_bishop)))
+			return draw_factor;
 
-			return no_factor;
-		}
+		return no_factor;
+	}
 
 	default:
 		return no_factor;
@@ -570,7 +571,6 @@ template <side strong>
 sfactor endgame_kqkrp(const position& pos)
 {
 	const auto weak = ~strong;
-
 	assert(pos.number(weak, pt_pawn) >= 1);
 
 	const auto king_sq = pos.king(weak);
@@ -604,8 +604,8 @@ void endgames::init_scale_factors()
 	factor_functions[factor_number_++] = &endgame_kpkp<white>;
 	factor_functions[factor_number_++] = &endgame_kpkp<black>;
 	factor_functions[factor_number_++] = &endgame_kqkrp<white>;
-	factor_functions[factor_number_++] = &endgame_kqkrp<black>;	
-	
+	factor_functions[factor_number_++] = &endgame_kqkrp<black>;
+
 	add_scale_factor("0110100 0100100", &endgame_kbpkb<white>, &endgame_kbpkb<black>);
 	add_scale_factor("0110100 0101000", &endgame_kbpkn<white>, &endgame_kbpkn<black>);
 	add_scale_factor("0120100 0100100", &endgame_kbppkb<white>, &endgame_kbppkb<black>);
@@ -613,7 +613,7 @@ void endgames::init_scale_factors()
 	add_scale_factor("0111000 0100100", &endgame_knpkb<white>, &endgame_knpkb<black>);
 	add_scale_factor("0100001 0110000", &endgame_kqkp<white>, &endgame_kqkp<black>);
 	add_scale_factor("0100010 0110000", &endgame_krkp<white>, &endgame_krkp<black>);
-	add_scale_factor("0110010 0100100", &endgame_krpkb<white>, &endgame_krpkb<black>);	
+	add_scale_factor("0110010 0100100", &endgame_krpkb<white>, &endgame_krpkb<black>);
 	add_scale_factor("0110010 0100010", &endgame_krpkr<white>, &endgame_krpkr<black>);
 	add_scale_factor("0120010 0110010", &endgame_krppkrp<white>, &endgame_krppkrp<black>);
 }

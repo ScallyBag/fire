@@ -37,6 +37,7 @@ constexpr uint64_t rank_6_bb = rank_1_bb << 40;
 constexpr uint64_t rank_7_bb = rank_1_bb << 48;
 constexpr uint64_t rank_8_bb = rank_1_bb << 56;
 
+constexpr uint64_t light_squares = 0x55AA55AA55AA55AAULL;
 constexpr uint64_t dark_squares = 0xAA55AA55AA55AA55ULL;
 
 namespace bitboard

@@ -27,7 +27,7 @@ namespace evaluate
 {
 	// init arrays
 	void init()
-		{
+	{
 		// init mobility mult arrays
 		for (auto n = 0; n < 64; n++)
 		{
@@ -735,7 +735,7 @@ namespace evaluate
 
 		eval_score -= blocked_pawns * popcnt(pos.pieces(white, pt_pawn) & shift_down<white>(pos.pieces()));
 		eval_score += blocked_pawns * popcnt(pos.pieces(black, pt_pawn) & shift_down<black>(pos.pieces()));
-		
+
 		if (pos.non_pawn_material(white) + pos.non_pawn_material(black) >= space_threshold)
 		{
 			eval_score += eval_space<white>(pos, ai);
@@ -775,10 +775,10 @@ namespace evaluate
 			: static_cast<sfactor>(std::min(static_cast<int>(conversion), 2 * scale_factor));
 
 		const auto phase = material_entry->get_game_phase();
-		
+
 		auto val = (mg * conversion / max_factor * phase + eg * eval_factor / max_factor * (middlegame_phase - phase)) /
 			static_cast<int>(middlegame_phase);
-		
+
 		pi->eval_positional = val;
 		pi->eval_factor = static_cast<uint8_t>(eval_factor);
 		val += material_entry->value * eval_factor / max_factor;

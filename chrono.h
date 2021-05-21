@@ -31,18 +31,30 @@ struct search_param
 	search_param()
 	{
 		nodes = time[white] = time[black] = inc[white] = inc[black] =
-			moves_to_go = depth = move_time = mate = infinite = ponder = 0;
+		moves_to_go = depth = move_time = mate = infinite = ponder = 0;
 	}
 
 	[[nodiscard]] bool use_time_calculating() const
 	{
 		return !(mate | move_time | depth | nodes | infinite);
 	}
-
-	time_point start_time = 0;
-	int time[num_sides]{}, inc[num_sides]{}, moves_to_go, depth, move_time, mate, infinite, ponder;
+	
+	int time[num_sides]
+	{
+	},
+	inc[num_sides]
+	{
+	},
+	moves_to_go,
+	depth,
+	move_time,
+	mate,
+	infinite,
+	ponder;
+	
 	uint64_t nodes;
 	max_moves_list search_moves;
+	time_point start_time = 0;	
 };
 
 class timecontrol

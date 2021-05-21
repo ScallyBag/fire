@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -101,17 +101,6 @@ void uci_loop(const int argc, char* argv[])
 			acout() << "option name ClearHash type button" << std::endl;			
 			acout() << "option name Syzygy50MoveRule type check default true" << std::endl;
 			acout() << "option name SyzygyPath type string default <empty>" << std::endl;
-			
-			acout() << "option name razor_margin type spin default 384 min 0 max 800" << std::endl;
-			acout() << "option name futility_value_0 type spin default 0 min 0 max 1000" << std::endl;
-			acout() << "option name futility_value_1 type spin default 112 min 0 max 1000" << std::endl;
-			acout() << "option name futility_value_2 type spin default 243 min 0 max 1000" << std::endl;
-			acout() << "option name futility_value_3 type spin default 376 min 0 max 1000" << std::endl;
-			acout() << "option name futility_value_4 type spin default 510 min 0 max 1000" << std::endl;
-			acout() << "option name futility_value_5 type spin default 646 min 0 max 1000" << std::endl;			
-			acout() << "option name futility_value_6 type spin default 784 min 0 max 1000" << std::endl;
-			acout() << "option name futility_margin_ext_base type spin default 160 min 0 max 1000" << std::endl;			
-			acout() << "option name futility_margin_ext_mult type spin default 204 min 0 max 1000" << std::endl;			
 
 			acout() << "uciok" << std::endl;
 		}
@@ -270,7 +259,7 @@ void set_option(std::istringstream& is)
 				uci_search = token;
 				acout() << "info string SearchType " << uci_search << std::endl;
 				break;
-			}	
+			}
 			if (token == "Ponder")
 			{
 				is >> token;
@@ -388,7 +377,7 @@ void set_option(std::istringstream& is)
 				is >> token;
 				search::futility_margin_ext_mult = stoi(token);
 				break;
-			}	
+			}
 		}
 	}
 }
@@ -499,5 +488,3 @@ std::string sq(const square sq)
 		static_cast<char>('a' + file_of(sq)), static_cast<char>('1' + rank_of(sq))
 	};
 }
-
-

@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -45,10 +45,10 @@ namespace endgame
 		uint64_t material_key = 0;
 		for (auto piece = pt_king; piece <= pt_queen; ++piece)
 		{
-			auto number = pieces[piece] - '0';	
+			auto number = pieces[piece] - '0';
 			for (auto cnt = 0; cnt < number; ++cnt)
 				material_key ^= zobrist::psq[make_piece(color, piece)][cnt];
-			
+
 			number = pieces[piece + 8] - '0';
 			for (auto cnt = 0; cnt < number; ++cnt)
 				material_key ^= zobrist::psq[make_piece(~color, piece)][cnt];
@@ -68,7 +68,7 @@ void endgames::add_scale_factor(const char* pieces, const endgame_scale_factor f
 {
 	map_scale_factor_[endgame::material_key(white, pieces)] = factor_number_;
 	factor_functions[factor_number_++] = f_w;
-	
+
 	map_scale_factor_[endgame::material_key(black, pieces) ^ black_modifier] = factor_number_;
 	factor_functions[factor_number_++] = f_b;
 }
@@ -77,7 +77,7 @@ void endgames::add_value(const char* pieces, const endgame_value f_w, const endg
 {
 	map_value_[endgame::material_key(white, pieces)] = value_number_;
 	value_functions[value_number_++] = f_w;
-	
+
 	map_value_[endgame::material_key(black, pieces)] = value_number_;
 	value_functions[value_number_++] = f_b;
 }
@@ -163,7 +163,7 @@ void endgames::init_endgames()
 
 	value_functions[value_number_++] = &endgame_kxk<white>;
 	value_functions[value_number_++] = &endgame_kxk<black>;
-	
+
 	add_value("0110000 0100000", &endgame_kpk<white>, &endgame_kpk<black>);
 	add_value("0100001 0100010", &endgame_kqkr<white>, &endgame_kqkr<black>);
 
@@ -174,7 +174,7 @@ void endgames::init_endgames()
 	factor_functions[factor_number_++] = &endgame_kpkp<white>;
 	factor_functions[factor_number_++] = &endgame_kpkp<black>;
 	factor_functions[factor_number_++] = &endgame_kqkrp<white>;
-	factor_functions[factor_number_++] = &endgame_kqkrp<black>;	
+	factor_functions[factor_number_++] = &endgame_kqkrp<black>;
 }
 
 int endgames::probe_scale_factor(const uint64_t key, side & strong_side)

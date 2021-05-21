@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -119,7 +119,7 @@ void init_magic_bb_pext(uint64_t* attack, uint64_t* square_index[], uint64_t* ma
 			square_index[sq][pext(b, mask[sq])] = sliding_attacks(sq, b, deltas, 0, 7, 0, 7);
 			b = b - mask[sq] & mask[sq];
 			attack++;
-		} 			while (b);
+		} while (b);
 	}
 }
 #else
@@ -139,7 +139,7 @@ void init_magic_bb(uint64_t* attack, const int attack_index[], uint64_t* square_
 			const int offset = static_cast<uint32_t>((b * mult[sq]) >> shift);
 			square_index[sq][offset] = sliding_attacks(sq, b, deltas, 0, 7, 0, 7);
 			b = (b - mask[sq]) & mask[sq];
-		} 			while (b);
+		} while (b);
 	}
 }
 #endif

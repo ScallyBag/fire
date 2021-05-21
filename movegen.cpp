@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -78,7 +78,7 @@ namespace movegen
 
 		return moves;
 	}
-	
+
 	// generate castle moves
 	template < uint8_t castle, bool only_check_moves, bool chess960>
 	s_move* get_castle(const position& pos, s_move* moves)
@@ -140,7 +140,7 @@ namespace movegen
 
 		return moves;
 	}
-	
+
 	// generate pawn moves
 	template <side me, move_gen mg>
 	s_move* moves_for_pawn(const position& pos, s_move* moves, const uint64_t target)

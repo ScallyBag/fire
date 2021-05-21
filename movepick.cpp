@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -192,7 +192,7 @@ namespace movepick
 			begin++;
 		}
 	}
-	
+
 	inline uint32_t find_best_move(s_move* begin, s_move* end)
 	{
 		auto* best = begin;
@@ -222,10 +222,10 @@ namespace movepick
 		const auto crc = crc16(reinterpret_cast<const uint8_t*>(&bb), 8);
 		return crc;
 	}
-	
+
 	uint32_t pick_move(const position& pos)
 	{
-		switch (auto * pi = pos.info(); pi->mp_stage)
+		switch (auto* pi = pos.info(); pi->mp_stage)
 		{
 		case normal_search: case check_evasions:
 		case q_search_with_checks: case q_search_no_checks:
