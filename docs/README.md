@@ -27,9 +27,11 @@ by Norman Schmidt
 - asychronous cout (acout) class using std::unique_lock<std::mutex>
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
 - reads engine.conf on startup for search, eval, pawn, and material parameters
+- NNUE support, hybrid (or pure) evaluation
 
 Fire 8 has undergone months of meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
+Fire 8.HN (hybrid NNUE) now available
 
 ## strength
 Fire 8 has been thoroughly tested by the CCRL testing group:
@@ -55,8 +57,8 @@ Fire appears to be superior to Ethereal and really shines at ultra-fast TCs like
 - **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set)
 - **x64 pext** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set) if you own a Intel Haswell or newer cpu, this compile should be faster.
 
-- **windows** : Fire_8_x64_popc.exe or Fire_8_x64_pext.exe
-- **linux** :   Fire_8_x64_popc or Fire_8_x64_pext
+- **windows** : Fire_8.HN_x64_popc.exe or Fire_8.HN_x64_pext.exe
+- **linux** :   Fire_8.HN_x64_popc or Fire_8.HN_x64_pext
 
 
 run 'bench' at command line to determine which binary runs best/fastest on your system. for greater accuracy, run it twice and calculate the average of both results.
@@ -78,6 +80,7 @@ please see **http://chesslogik.wix.com/fire** for more info
 - **UCI_Chess960** play chess960 (often called FRC or Fischer Random Chess). default is false.
 - **Clear Hash** clear the hash table. delete allocated memory and re-initialize.
 - **SyzygyProbeDepth** engine begins probing at specified depth. increasing this option makes the engine probe less.
+- **EngineMode** choose hybrid (default), classic, NNUE, or random.
 - **SyzygyProbeLimit** number of pieces that have to be on the board in the endgame before the table-bases are probed.
 - **Syzygy50MoveRule** set to false, tablebase positions that are drawn by the 50-move rule will count as a win or loss.
 - **SyzygyPath** path to the syzygy tablebase files.

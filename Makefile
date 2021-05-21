@@ -20,7 +20,7 @@ else
 	EXE = fire
 endif
 
-PGOBENCH = ./$(EXE) bench
+PGOBENCH = ./$(EXE) bench 14
 
 OBJS =
 	OBJS += util/bench.o bitboard.o chrono.o egtb/egtb.o endgame.o evaluate.o \

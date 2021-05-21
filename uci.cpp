@@ -94,7 +94,7 @@ void uci_loop(const int argc, char* argv[])
 			acout() << "option name Contempt type spin default 0 min -100 max 100" << std::endl;	
 			acout() << "option name SyzygyProbeDepth type spin default 1 min 0 max 64" << std::endl;
 			acout() << "option name SyzygyProbeLimit type spin default 6 min 0 max 6" << std::endl;
-			acout() << "option name EngineMode type combo default nnue var classic var hybrid var nnue var random" << std::endl;
+			acout() << "option name EngineMode type combo default hybrid var classic var hybrid var nnue var random" << std::endl;
 			acout() << "option name Ponder type check default false" << std::endl;
 			acout() << "option name UCI_Chess960 type check default false" << std::endl;
 			acout() << "option name ClearHash type button" << std::endl;			

@@ -18,20 +18,24 @@
 
 #ifdef _MSC_VER
 #define USE_PEXT
+#define USE_AVX2
 #endif
 
 constexpr auto program = "Fire";
-constexpr auto version= "8.11";
+constexpr auto version= "8.HN";
 constexpr auto author = "N. Schmidt";
 constexpr auto platform = "x64";
 
 // specify correct bit manipulation instruction set constant, as this will be appended
 // to the fully distinguished engine name after platform
-#ifdef USE_PEXT
-constexpr auto bmis = "pext";
+#if defined(USE_PEXT)
+constexpr auto bmis = "bmi2";
 constexpr bool use_pext = true;
+#elif defined(USE_AVX2)
+constexpr auto bmis = "avx2";
+constexpr bool use_pext = false;
 #else
-constexpr auto bmis = "popcnt";
+constexpr auto bmis = "popc";
 constexpr bool use_pext = false;
 #endif
 

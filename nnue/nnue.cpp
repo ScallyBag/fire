@@ -963,7 +963,7 @@ INLINE void affine_txfm(clipped_t* input, void* output, unsigned in_dims,
 
 	clipped_t* out_vec = (clipped_t*)output;
 	for (unsigned i = 0; i < out_dims; i++)
-		out_vec[i] = clamp(tmp[i] >> shift, 0, 127);
+		out_vec[i] = CLAMP(tmp[i] >> shift, 0, 127);
 }
 #endif
 
@@ -1161,7 +1161,7 @@ INLINE void transform(Position* pos, clipped_t* output, mask_t* out_mask)
 		for (unsigned i = 0; i < k_half_dimensions; i++)
 		{
 			int16_t sum = (*accumulation)[perspectives[p]][i];
-			output[offset + i] = clamp(sum, 0, 127);
+			output[offset + i] = CLAMP(sum, 0, 127);
 		}
 #endif
 	}
