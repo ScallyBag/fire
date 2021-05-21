@@ -31,7 +31,7 @@ by Norman Schmidt
 
 Fire 8 has undergone months of meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
-Fire 8.HN (hybrid NNUE) now available
+**Fire 8.HN (hybrid NNUE) is now available...combining traditional tuned evaluation with NNUE**
 
 ## strength
 Fire 8 has been thoroughly tested by the CCRL testing group:
