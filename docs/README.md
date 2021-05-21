@@ -27,11 +27,11 @@ by Norman Schmidt
 - asychronous cout (acout) class using std::unique_lock<std::mutex>
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
 - reads engine.conf on startup for search, eval, pawn, and material parameters
-- NNUE support, hybrid (or pure) evaluation
+- NNUE support
 
 Fire 8 has undergone months of meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
-**Fire 8.HN (hybrid NNUE) is now available...combining traditional tuned evaluation with NNUE**
+**Fire 8.N (NNUE) is now available**
 
 ## strength
 Fire 8 has been thoroughly tested by the CCRL testing group:
@@ -55,14 +55,15 @@ Fire appears to be superior to Ethereal and really shines at ultra-fast TCs like
 
 ## available binaries
 - **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set)
-- **x64 pext** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set) if you own a Intel Haswell or newer cpu, this compile should be faster.
+- **x64 avx2** = fast pgo binary (for modern 64-bit systems w/ AVX2 instruction set)
+- **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
 
-- **windows** : Fire_8.HN_x64_bmi2.exe, Fire_8.HN_x64_avx2.exe, or Fire_8.HN_x64_popc.exe
-- **linux** :   Fire_8.HN_x64_avx2 or Fire_8.HN_x64_popc
+- **windows** : Fire_8.N_x64_bmi2.exe, Fire_8.N_x64_avx2.exe, or Fire_8.N_x64_popc.exe
+- **linux** :   Fire_8.N_x64_avx2 or Fire_8.N_x64_popc
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are considerably slower than the bmi2 and/or avx2 binaries.
 
-Here is a complete list of recommended processors for Fire 8.HN x64:
+Here is a complete list of recommended processors for Fire 8.N x64:
 
 **AVX2 (Advanced Vector Extensions 2)** (also known as Haswell New Instructions)
 
