@@ -165,7 +165,10 @@ and others
 - [Gull](https://github.com/FireFather/seagull)
 
 the endgame table bases are implemented using code adapted from
-- [Syzygy EGTBs & probing code](https://github.com/syzygy1/tb)
+- [Syzygy EGTBs & probing code](https://github.com/syzygy1/tb) by Ronald de Man
+
+The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
+https://github.com/dshawul/nnue-probe Many thanks to him and Ronald de Man for that!
 
 the quiescent search positions for the tuner have been generously shared by
 - [Zurichess](https://bitbucket.org/zurichess/zurichess/src/master/)
