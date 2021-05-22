@@ -145,7 +145,7 @@ please see **http://chesslogik.wix.com/fire** for more info
 - **UCI_Chess960** play chess960 (often called FRC or Fischer Random Chess). default is false.
 - **Clear Hash** clear the hash table. delete allocated memory and re-initialize.
 - **SyzygyProbeDepth** engine begins probing at specified depth. increasing this option makes the engine probe less.
-- **EngineMode** choose hybrid (default), classic, NNUE, or random.
+- **EngineMode** choose classic, NNUE (default), or random.
 - **SyzygyProbeLimit** number of pieces that have to be on the board in the endgame before the table-bases are probed.
 - **Syzygy50MoveRule** set to false, tablebase positions that are drawn by the 50-move rule will count as a win or loss.
 - **SyzygyPath** path to the syzygy tablebase files.
