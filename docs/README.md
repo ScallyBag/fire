@@ -122,7 +122,8 @@ K10-based processors (ABM supported)
 - Zen-based, Zen+-based, and processors (ABM, BMI1 and BMI2 supported; microcoded PEXT and PDEP)
 - Zen 3 processors and newer (ABM, BMI1 and BMI2 supported; full hardware implementation)
 
-run 'bench' at command line to determine which binary runs best/fastest on your system. for greater accuracy, run it twice and calculate the average of both results.
+set EngineMode to classic ('setoption name EngineMode value classic') and then run 'bench' at command line to determine which binary
+runs best/fastest on your system. for greater accuracy, run it twice and calculate the average of both results.
 
 
 please see **http://chesslogik.wix.com/fire** for more info
