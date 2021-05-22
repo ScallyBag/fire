@@ -61,6 +61,10 @@ Fire appears to be superior to Ethereal and really shines at ultra-fast TCs like
 - **windows** : Fire_8.N_x64_bmi2.exe, Fire_8.N_x64_avx2.exe, or Fire_8.N_x64_popc.exe
 - **linux** :   Fire_8.N_x64_avx2 or Fire_8.N_x64_popc
 
+You can download a strong NNUE net to use with Fire 8.N from here:
+- https://www.comp.nus.edu.sg/~sergio-v/nnue/
+- https://tests.stockfishchess.org/nns/
+
 Be aware that, due to lack of avx2 instruction set, the popc binaries are considerably slower than the bmi2 and/or avx2 binaries.
 
 Here is a complete list of recommended processors for Fire 8.N x64:
