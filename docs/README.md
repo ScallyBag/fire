@@ -64,6 +64,7 @@ Fire appears to be superior to Ethereal and really shines at ultra-fast TCs like
 You can download a strong NNUE net to use with Fire 8.N from many places...here are a couple sites with many to offer:
 - https://www.comp.nus.edu.sg/~sergio-v/nnue/
 - https://tests.stockfishchess.org/nns/
+
 (rename the downloaded net -> nn.bin and place it in the same directory as the Fire_8.N_x64 executable.)
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are considerably slower than the bmi2 and/or avx2 binaries.
