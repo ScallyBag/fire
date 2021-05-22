@@ -31,7 +31,7 @@ by Norman Schmidt
 
 Fire 8 has undergone months of meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
-**Fire 8.N (NNUE)** (running 'Raptor', a top reinforcement learning NNUE trained by Sergio Viera)
+**Fire 8.N (NNUE)** (running 'Raptor', a top reinforcement learning network trained by Sergio Viera)
 
 **is now available**
    
