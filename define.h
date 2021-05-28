@@ -22,7 +22,7 @@
 #endif
 
 constexpr auto program = "Fire";
-constexpr auto version= "8.N";
+constexpr auto version= "8.NN";
 constexpr auto author = "N. Schmidt";
 constexpr auto platform = "x64";
 
