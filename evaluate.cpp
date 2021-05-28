@@ -223,15 +223,15 @@ namespace evaluate
 			score += distance_b_k[distance(sq, pos.king(me))];
 
 			// bishop pins queen or rook
-			auto bb_pin_rq = empty_attack[pt_bishop][sq] & pos.pieces(you, pt_rook, pt_queen);
-			while (bb_pin_rq)
+			auto pin_rq_bb = empty_attack[pt_bishop][sq] & pos.pieces(you, pt_rook, pt_queen);
+			while (pin_rq_bb)
 			{
-				const auto square_rq = pop_lsb(&bb_pin_rq);
-				if (const auto b = bb_between(square_rq, sq) & pos.pieces(); b && !more_than_one(b))
+				const auto square_rq = pop_lsb(&pin_rq_bb);
+				if (const auto b = get_between(square_rq, sq) & pos.pieces(); b && !more_than_one(b))
 					score += bishop_pin[me][pos.piece_on_square(lsb(b))];
 			}
 
-			auto attack = attack_bb_bishop(sq, pos.pieces(pt_pawn));
+			auto attack = attack_bishop_bb(sq, pos.pieces(pt_pawn));
 			score += mobility_b1[(popcnt(attack) * mob_mult_b1[relative_square(me, sq)] + 16) / 32];
 
 			// bishop trapped underneath pawns
@@ -243,7 +243,7 @@ namespace evaluate
 					score -= trapped_bishop;
 			}
 
-			attack = attack_bb_bishop(sq, pos.pieces() ^ pos.pieces(me, pt_queen));
+			attack = attack_bishop_bb(sq, pos.pieces() ^ pos.pieces(me, pt_queen));
 			if (attack & ai.k_zone[you])
 				ai.k_attack_score[me] += k_zone_attack_bonus;
 			ai.attack[me][pt_bishop] |= attack;
@@ -252,7 +252,7 @@ namespace evaluate
 
 			attack &= ai.mobility_mask[me];
 			if (ai.pinned[me] & sq)
-				attack &= bb_between(pos.king(me), sq);
+				attack &= get_between(pos.king(me), sq);
 			const uint32_t mobility = popcnt(attack);
 			score += mobility_b2[(mobility * mob_mult_b2[relative_square(me, sq)] + 16) / 32];
 
@@ -264,7 +264,7 @@ namespace evaluate
 				& ~squares_same_color && !(squares_same_color & pos.pieces(you, pt_bishop)))
 				score += pawns_on_color;
 
-			if (pos.pieces(you, pt_knight) & bb_b_dominates_p[me][sq])
+			if (pos.pieces(you, pt_knight) & b_dominates_p_bb[me][sq])
 				score += bishop_dominates_pawn;
 		} while (squares);
 
@@ -369,7 +369,7 @@ namespace evaluate
 			else
 			{
 				attack &= ai.mobility_mask[me];
-				mobility = popcnt(attack) + popcnt(attack & bb_ranks_forward(me, sq));
+				mobility = popcnt(attack) + popcnt(attack & ranks_forward_bb(me, sq));
 			}
 			score += mobility_p[(mobility * mob_mult_p[relative_square(me, sq)] + p_mobility_add) / p_mobility_div];
 		} while (squares);
@@ -378,14 +378,14 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_passed_pawns(const position& pos, const attack_info& ai, uint64_t bb_passed_pawns)
+	inline int eval_passed_pawns(const position& pos, const attack_info& ai, uint64_t passed_pawns_bb)
 	{
-		assert(bb_passed_pawns != 0);
+		assert(passed_pawns_bb != 0);
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
-		while (bb_passed_pawns)
+		while (passed_pawns_bb)
 		{
-			const auto passed_pawn = pop_lsb(&bb_passed_pawns);
+			const auto passed_pawn = pop_lsb(&passed_pawns_bb);
 
 			const auto pawn_rank = relative_rank(me, passed_pawn) - 1;
 			if (pos.non_pawn_material(white) == mat_queen && pos.non_pawn_material(black) == mat_queen)
@@ -411,27 +411,27 @@ namespace evaluate
 
 				if (pawn_rank > 2)
 				{
-					const auto bb_behind_passed_pawn = bb_forward(you, passed_pawn);
-					if (bb_behind_passed_pawn & pos.pieces(me, pt_rook))
-						score += bb_behind_passed_pawn_bonus;
-					if (bb_behind_passed_pawn & pos.pieces(you, pt_rook))
-						score -= bb_behind_passed_pawn_bonus;
+					const auto behind_passed_pawn_bb = forward_bb(you, passed_pawn);
+					if (behind_passed_pawn_bb & pos.pieces(me, pt_rook))
+						score += behind_passed_pawn_bonus;
+					if (behind_passed_pawn_bb & pos.pieces(you, pt_rook))
+						score -= behind_passed_pawn_bonus;
 				}
 
 				if (!(pos.pieces() & square_for_pawn))
 				{
-					const auto passed_pawn_path = bb_forward(me, passed_pawn);
-					auto bb_advance_blocked = passed_pawn_path & (pos.pieces(you) | ai.attack[you][all_pieces]);
+					const auto passed_pawn_path = forward_bb(me, passed_pawn);
+					auto advance_blocked_bb = passed_pawn_path & (pos.pieces(you) | ai.attack[you][all_pieces]);
 
-					if (const auto attacked = pos.pieces(you, pt_rook, pt_queen) & bb_forward(you, passed_pawn); attacked)
+					if (const auto attacked = pos.pieces(you, pt_rook, pt_queen) & forward_bb(you, passed_pawn); attacked)
 					{
-						if (const auto sq = front_square(me, attacked); !(pos.pieces() & bb_between(passed_pawn, sq)))
-							bb_advance_blocked = passed_pawn_path;
+						if (const auto sq = front_square(me, attacked); !(pos.pieces() & get_between(passed_pawn, sq)))
+							advance_blocked_bb = passed_pawn_path;
 					}
 
-					if (!bb_advance_blocked)
+					if (!advance_blocked_bb)
 						score += passed_pawn_free_passage[pawn_rank];
-					else if (bb_advance_blocked & ~ai.attack[me][all_pieces])
+					else if (advance_blocked_bb & ~ai.attack[me][all_pieces])
 						score += passed_pawn_advance_blocked[pawn_rank];
 					else
 						score += passed_pawn_advance_supported[pawn_rank];
@@ -459,8 +459,8 @@ namespace evaluate
 		do
 		{
 			const auto sq = pop_lsb(&squares);
-			auto attack = attack_bb_rook(sq, pos.pieces() ^ pos.pieces(me, pt_queen))
-				| attack_bb_bishop(sq, pos.pieces() ^ pos.pieces(me, pt_queen));
+			auto attack = attack_rook_bb(sq, pos.pieces() ^ pos.pieces(me, pt_queen))
+				| attack_bishop_bb(sq, pos.pieces() ^ pos.pieces(me, pt_queen));
 			if (attack & ai.k_zone[you])
 				ai.k_attack_score[me] += queen_attack_king_zone;
 			ai.attack[me][pt_queen] |= attack;
@@ -469,7 +469,7 @@ namespace evaluate
 
 			attack &= mobility_mask_d;
 			if (ai.pinned[me] & sq)
-				attack &= bb_between(pos.king(me), sq);
+				attack &= get_between(pos.king(me), sq);
 
 			constexpr uint64_t center_square = 0x00003C3C3C3C0000;
 			const uint32_t mobility = popcnt(attack) + popcnt(attack & center_square);
@@ -493,7 +493,7 @@ namespace evaluate
 		{
 			const auto sq = pop_lsb(&squares);
 
-			auto attack = attack_bb_rook(sq, pos.pieces() ^ pos.pieces(me, pt_rook, pt_queen));
+			auto attack = attack_rook_bb(sq, pos.pieces() ^ pos.pieces(me, pt_rook, pt_queen));
 			if (attack & ai.k_zone[you])
 				ai.k_attack_score[me] += rook_attacks_king;
 			ai.attack[me][pt_rook] |= attack;
@@ -502,19 +502,19 @@ namespace evaluate
 
 			attack &= ai.mobility_mask[me];
 			if (ai.pinned[me] & sq)
-				attack &= bb_between(pos.king(me), sq);
+				attack &= get_between(pos.king(me), sq);
 			const uint32_t mobility = popcnt(attack);
 			score += mobility_r[(mobility * mob_mult_r[relative_square(me, sq)] + r_mobility_add) / r_mobility_div];
 
 			if (constexpr auto eighth_rank = me == white ? rank_8_bb : rank_1_bb; relative_rank(me, sq) == rank_7 && pos.pieces(you, pt_king) & eighth_rank)
 				score += rook_traps_king_on_7th;
 
-			if (file_of(sq) == file_of(pos.king(you)) && !(pos.pieces(me, pt_pawn) & bb_between(pos.king(you), sq)))
+			if (file_of(sq) == file_of(pos.king(you)) && !(pos.pieces(me, pt_pawn) & get_between(pos.king(you), sq)))
 				ai.k_attack_score[me] += 2 * 8;
 
-			if (!(bb_file(sq) & pos.pieces(me, pt_pawn)))
+			if (!(get_file(sq) & pos.pieces(me, pt_pawn)))
 			{
-				if (const auto pawn = pos.pieces(you, pt_pawn) & bb_file(sq); !pawn)
+				if (const auto pawn = pos.pieces(you, pt_pawn) & get_file(sq); !pawn)
 					score += no_pawn;
 				else if (pawn & ai.attack[you][pt_pawn])
 					score += pawn_attacks;
@@ -752,15 +752,15 @@ namespace evaluate
 			eval_score -= eval_space<black>(pos, ai);
 		}
 
-		auto bb_flank = ai.attack[white][pieces_without_king] & bb_king_flank_attack[black][file_of(pos.king(black))]
+		auto flank_bb = ai.attack[white][pieces_without_king] & king_flank_attack_bb[black][file_of(pos.king(black))]
 			& ~ai.attack[black][pt_king] & ~ai.attack[black][pt_pawn];
-		bb_flank = bb_flank >> 4 | (bb_flank & ai.double_attack[white]);
-		eval_score += popcnt(bb_flank) * flank_double_attack;
+		flank_bb = flank_bb >> 4 | (flank_bb & ai.double_attack[white]);
+		eval_score += popcnt(flank_bb) * flank_double_attack;
 
-		bb_flank = ai.attack[black][pieces_without_king] & bb_king_flank_attack[white][file_of(pos.king(white))]
+		flank_bb = ai.attack[black][pieces_without_king] & king_flank_attack_bb[white][file_of(pos.king(white))]
 			& ~ai.attack[white][pt_king] & ~ai.attack[white][pt_pawn];
-		bb_flank = bb_flank << 4 | (bb_flank & ai.double_attack[black]);
-		eval_score -= popcnt(bb_flank) * flank_double_attack;
+		flank_bb = flank_bb << 4 | (flank_bb & ai.double_attack[black]);
+		eval_score -= popcnt(flank_bb) * flank_double_attack;
 
 		auto score = pawn_entry->pawns_score() + king_safety + mul_div(eval_score, eval_mult, eval_div);
 

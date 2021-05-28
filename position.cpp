@@ -40,8 +40,8 @@ uint64_t position::attack_to(const square sq, const uint64_t occupied) const
 	return (attack_from<pt_pawn>(sq, black) & pieces(white, pt_pawn))
 		| (attack_from<pt_pawn>(sq, white) & pieces(black, pt_pawn))
 		| (attack_from<pt_knight>(sq) & pieces(pt_knight))
-		| (attack_bb_rook(sq, occupied) & pieces(pt_rook, pt_queen))
-		| (attack_bb_bishop(sq, occupied) & pieces(pt_bishop, pt_queen))
+		| (attack_rook_bb(sq, occupied) & pieces(pt_rook, pt_queen))
+		| (attack_bishop_bb(sq, occupied) & pieces(pt_bishop, pt_queen))
 		| (attack_from<pt_king>(sq) & pieces(pt_king));
 }
 
@@ -85,7 +85,7 @@ void position::calculate_pins() const
 	{
 		const auto sq = pop_lsb(&pinners);
 
-		if (const auto b = bb_between(square_k, sq) & pieces(); b && !more_than_one(b))
+		if (const auto b = get_between(square_k, sq) & pieces(); b && !more_than_one(b))
 		{
 			result |= b;
 			pos_info_->pin_by[lsb(b)] = sq;
@@ -119,19 +119,19 @@ square position::calculate_threat() const
 			return msb(b);
 		break;
 	case w_bishop:
-		if (const auto b = attack_bb_bishop(to, pieces()) & pieces(black, pt_rook, pt_queen))
+		if (const auto b = attack_bishop_bb(to, pieces()) & pieces(black, pt_rook, pt_queen))
 			return lsb(b);
 		break;
 	case b_bishop:
-		if (const auto b = attack_bb_bishop(to, pieces()) & pieces(white, pt_rook, pt_queen))
+		if (const auto b = attack_bishop_bb(to, pieces()) & pieces(white, pt_rook, pt_queen))
 			return msb(b);
 		break;
 	case w_rook:
-		if (const auto b = attack_bb_rook(to, pieces()) & pieces(black, pt_queen))
+		if (const auto b = attack_rook_bb(to, pieces()) & pieces(black, pt_queen))
 			return lsb(b);
 		break;
 	case b_rook:
-		if (const auto b = attack_bb_rook(to, pieces()) & pieces(white, pt_queen))
+		if (const auto b = attack_rook_bb(to, pieces()) & pieces(white, pt_queen))
 			return msb(b);
 		break;
 	default:
@@ -248,15 +248,15 @@ bool position::give_check(const uint32_t move) const
 		const auto to_r = relative_square(on_move_, from_r > from ? f1 : d1);
 
 		return empty_attack[pt_rook][to_r] & square_k
-			&& attack_bb_rook(to_r, pieces() ^ from ^ from_r | to_r | to) & square_k;
+			&& attack_rook_bb(to_r, pieces() ^ from ^ from_r | to_r | to) & square_k;
 	}
 
 	{
 		const auto ep_square = make_square(file_of(to), rank_of(from));
 		const auto b = pieces() ^ from ^ ep_square | to;
 
-		return (attack_bb_rook(square_k, b) & pieces(on_move_, pt_queen, pt_rook))
-			| (attack_bb_bishop(square_k, b) & pieces(on_move_, pt_queen, pt_bishop));
+		return (attack_rook_bb(square_k, b) & pieces(on_move_, pt_queen, pt_rook))
+			| (attack_bishop_bb(square_k, b) & pieces(on_move_, pt_queen, pt_bishop));
 	}
 }
 
@@ -358,8 +358,8 @@ bool position::legal_move(const uint32_t move) const
 		assert(piece_on_square(capture_square) == make_piece(~me, pt_pawn));
 		assert(piece_on_square(to) == no_piece);
 
-		return !(attack_bb_rook(square_k, occupied) & pieces(~me, pt_queen, pt_rook))
-			&& !(attack_bb_bishop(square_k, occupied) & pieces(~me, pt_queen, pt_bishop));
+		return !(attack_rook_bb(square_k, occupied) & pieces(~me, pt_queen, pt_rook))
+			&& !(attack_bishop_bb(square_k, occupied) & pieces(~me, pt_queen, pt_bishop));
 	}
 
 	if (piece_type(piece_on_square(from)) == pt_king)
@@ -649,9 +649,9 @@ bool position::see_test(const uint32_t move, const int limit) const
 			return false;
 		occupied ^= bb & -bb;
 		if (!(capture_piece & 1))
-			attackers |= attack_bb_bishop(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
+			attackers |= attack_bishop_bb(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
 		if (capture_piece >= pt_rook)
-			attackers |= attack_bb_rook(to, occupied) & (pieces(pt_rook) | pieces(pt_queen));
+			attackers |= attack_rook_bb(to, occupied) & (pieces(pt_rook) | pieces(pt_queen));
 		attackers &= occupied;
 
 		my_attackers = attackers & pieces(me);
@@ -688,9 +688,9 @@ bool position::see_test(const uint32_t move, const int limit) const
 			return true;
 		occupied ^= bb & -bb;
 		if (!(capture_piece & 1))
-			attackers |= attack_bb_bishop(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
+			attackers |= attack_bishop_bb(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
 		if (capture_piece >= pt_rook)
-			attackers |= attack_bb_rook(to, occupied) & (pieces(pt_rook) | pieces(pt_queen));
+			attackers |= attack_rook_bb(to, occupied) & (pieces(pt_rook) | pieces(pt_queen));
 		attackers &= occupied;
 	} while (true);
 }
@@ -720,7 +720,7 @@ void position::set_castling_possibilities(const side color, const square from_r)
 	for (auto sq = std::min(from_k, to_k); sq <= std::max(from_k, to_k); ++sq)
 		pad |= sq;
 
-	castle_path_[castle] = pad & ~(bb_square[from_k] | bb_square[from_r]);
+	castle_path_[castle] = pad & ~(square_bb[from_k] | square_bb[from_r]);
 
 	if (from_k != relative_square(color, e1))
 		chess960_ = true;
@@ -988,7 +988,7 @@ bool position::valid_move(const uint32_t move) const
 			if (more_than_one(is_in_check()))
 				return false;
 
-			if (!((bb_between(lsb(is_in_check()), king(me)) | is_in_check()) & to))
+			if (!((get_between(lsb(is_in_check()), king(me)) | is_in_check()) & to))
 				return false;
 		}
 		else if (attack_to(to, pieces() ^ from) & pieces(~me))

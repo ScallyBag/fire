@@ -219,7 +219,7 @@ namespace evaluate
 	inline auto passed_pawn_mk_md_div = 4;
 	inline auto passed_pawn_yk_md_mul = 2;
 	inline auto passed_pawn_yk_md_div = 4;
-	inline auto bb_behind_passed_pawn_bonus = 6488502;
+	inline auto behind_passed_pawn_bonus = 6488502;
 
 	// eval_queens
 	inline auto queen_attack_king = 24;
@@ -405,7 +405,7 @@ namespace evaluate
 	};
 
 	// king flank attack table
-	inline uint64_t bb_king_flank_attack[num_sides][num_files] =
+	inline uint64_t king_flank_attack_bb[num_sides][num_files] =
 	{
 		{
 			(rank_5_bb | rank_4_bb | rank_3_bb | rank_2_bb | rank_1_bb) & (file_a_bb | file_b_bb | file_c_bb | file_d_bb),
@@ -430,7 +430,7 @@ namespace evaluate
 	};
 
 	// bishop tables
-	const uint64_t bb_b_dominates_p[2][64] =
+	const uint64_t b_dominates_p_bb[2][64] =
 	{
 		{
 			0, 0, 0, 0, 0, 0, 0, 0,

@@ -163,12 +163,12 @@ inline uint64_t bishop_mask[num_squares];
 inline uint64_t* bishop_attack_table[64];
 inline uint64_t* rook_attack_table[64];
 
-inline uint64_t bb_square[num_squares];
-inline uint64_t bb_adjacent_lines[num_files];
-inline uint64_t bb_ranks_in_front[num_sides][num_ranks];
-inline uint64_t bb_in_between[num_squares][num_squares];
-inline uint64_t bb_connection[num_squares][num_squares];
-inline uint64_t bb_in_front[num_sides][num_squares];
+inline uint64_t square_bb[num_squares];
+inline uint64_t adjacent_files_bb[num_files];
+inline uint64_t ranks_in_front_bb[num_sides][num_ranks];
+inline uint64_t between_bb[num_squares][num_squares];
+inline uint64_t connection_bb[num_squares][num_squares];
+inline uint64_t in_front_bb[num_sides][num_squares];
 
 inline uint64_t passed_pawn_mask[num_sides][num_squares];
 inline uint64_t pawn_attack_span[num_sides][num_squares];
@@ -183,13 +183,13 @@ namespace kpk
 }
 
 // array of file bitboards
-constexpr uint64_t bb_line[num_files] =
+constexpr uint64_t file_bb[num_files] =
 {
 	file_a_bb, file_b_bb, file_c_bb, file_d_bb, file_e_bb, file_f_bb, file_g_bb, file_h_bb
 };
 
 // array of rank bitboards
-constexpr uint64_t bb_row[num_ranks] =
+constexpr uint64_t rank_bb[num_ranks] =
 {
 	rank_1_bb, rank_2_bb, rank_3_bb, rank_4_bb, rank_5_bb, rank_6_bb, rank_7_bb, rank_8_bb
 };
@@ -291,49 +291,49 @@ inline bool more_than_one(const uint64_t b)
 }
 
 // returns a bitboard for complete rank given a specific sq
-inline uint64_t bb_rank(const square sq)
+inline uint64_t get_rank(const square sq)
 {
-	return bb_row[rank_of(sq)];
+	return rank_bb[rank_of(sq)];
 }
 
 // returns a bitboard for complete file given a specific sq
-inline uint64_t bb_file(const square sq)
+inline uint64_t get_file(const square sq)
 {
-	return bb_line[file_of(sq)];
+	return file_bb[file_of(sq)];
 }
 
 // returns a bitboard for complete file given a specific file
-inline uint64_t bb_file(const file f)
+inline uint64_t get_file(const file f)
 {
-	return bb_line[f];
+	return file_bb[f];
 }
 
 // returns a bitboard for adjacent file given a specific file
-inline uint64_t bb_adjacent_files(const file f)
+inline uint64_t get_adjacent_files(const file f)
 {
-	return bb_adjacent_lines[f];
+	return adjacent_files_bb[f];
 }
 
 // returns a bitboard for squares between 2 specific squares
-inline uint64_t bb_between(const square square1, const square square2)
+inline uint64_t get_between(const square square1, const square square2)
 {
-	return bb_in_between[square1][square2];
+	return between_bb[square1][square2];
 }
 
 // returns a bitboard for ranks in front
-inline uint64_t bb_ranks_forward(const side color, const rank r)
+inline uint64_t ranks_forward_bb(const side color, const rank r)
 {
-	return bb_ranks_in_front[color][r];
+	return ranks_in_front_bb[color][r];
 }
 
-inline uint64_t bb_ranks_forward(const side color, const square sq)
+inline uint64_t ranks_forward_bb(const side color, const square sq)
 {
-	return bb_ranks_in_front[color][rank_of(sq)];
+	return ranks_in_front_bb[color][rank_of(sq)];
 }
 
-inline uint64_t bb_forward(const side color, const square sq)
+inline uint64_t forward_bb(const side color, const square sq)
 {
-	return bb_in_front[color][sq];
+	return in_front_bb[color][sq];
 }
 
 inline uint64_t pawn_attack_range(const side color, const square sq)
@@ -350,7 +350,7 @@ inline uint64_t passedpawn_mask(const side color, const square sq)
 // returns a bitboard representing aligned squares (straight or diagonal)
 inline bool aligned(const square square1, const square square2, const square square3)
 {
-	return bb_connection[square1][square2] & square3;
+	return connection_bb[square1][square2] & square3;
 }
 
 // returns a bitboard representing the distance between 2 specific squares
@@ -384,7 +384,7 @@ inline square rear_square(const side color, const uint64_t b)
 }
 
 // bishop attack macro
-inline uint64_t attack_bb_bishop(const square sq, const uint64_t occupied)
+inline uint64_t attack_bishop_bb(const square sq, const uint64_t occupied)
 {
 #ifdef USE_PEXT
 	return bishop_attack_table[sq][pext(occupied, bishop_mask[sq])];
@@ -394,7 +394,7 @@ inline uint64_t attack_bb_bishop(const square sq, const uint64_t occupied)
 }
 
 // rook attack macro
-inline uint64_t attack_bb_rook(const square sq, const uint64_t occupied)
+inline uint64_t attack_rook_bb(const square sq, const uint64_t occupied)
 {
 #ifdef USE_PEXT
 	return rook_attack_table[sq][pext(occupied, rook_mask[sq])];
@@ -409,9 +409,9 @@ inline uint64_t attack_bb(const uint8_t piece_t, const square sq, const uint64_t
 
 	switch (piece_t)
 	{
-	case pt_bishop: return attack_bb_bishop(sq, occupied);
-	case pt_rook: return attack_bb_rook(sq, occupied);
-	case pt_queen: return attack_bb_bishop(sq, occupied) | attack_bb_rook(sq, occupied);
+	case pt_bishop: return attack_bishop_bb(sq, occupied);
+	case pt_rook: return attack_rook_bb(sq, occupied);
+	case pt_queen: return attack_bishop_bb(sq, occupied) | attack_rook_bb(sq, occupied);
 	default: return empty_attack[piece_t][sq];
 	}
 }

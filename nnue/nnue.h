@@ -130,7 +130,7 @@ void _CDECL nnue_init
 /**
 * Evaluate on FEN string
 * Returns
-*   Score relative to side to move in approximate centi-pawns
+*   Score relative to side to move in approximate centipawns
 */
 int _CDECL nnue_evaluate_fen
 (
@@ -156,7 +156,7 @@ int _CDECL nnue_evaluate_fen
 *     piece[n+1] is set to 0 to represent end of array
 *     
 * Returns
-*   Score relative to side to move in approximate centi-pawns
+*   Score relative to side to move in approximate centipawns
 */
 int _CDECL nnue_evaluate
 (

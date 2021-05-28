@@ -298,7 +298,7 @@ inline void position::delete_piece(const side color, const ptype piece, const sq
 
 inline void position::relocate_piece(const side color, const ptype piece, const square from, const square to)
 {
-	const auto van_to_bb = bb_square[from] ^ bb_square[to];
+	const auto van_to_bb = square_bb[from] ^ square_bb[to];
 	piece_bb_[piece] ^= van_to_bb;
 	color_bb_[color] ^= van_to_bb;
 	board_[from] = no_piece;
@@ -317,9 +317,9 @@ template <uint8_t piece_type>
 inline uint64_t position::attack_from(const square sq) const
 {
 	return piece_type == pt_bishop
-		? attack_bb_bishop(sq, pieces())
+		? attack_bishop_bb(sq, pieces())
 		: piece_type == pt_rook
-		? attack_bb_rook(sq, pieces())
+		? attack_rook_bb(sq, pieces())
 		: piece_type == pt_queen
 		? attack_from<pt_rook>(sq) | attack_from<pt_bishop>(sq)
 		: empty_attack[piece_type][sq];

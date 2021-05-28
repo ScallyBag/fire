@@ -27,11 +27,11 @@ sfactor endgame_kbpk(const position& pos)
 	assert(pos.non_pawn_material(strong) == mat_bishop);
 	assert(pos.number(strong, pt_pawn) >= 1);
 
-	const auto bb_black_attack = endgame::attack_king_inc(pos.king(weak));
+	const auto black_attack_bb = endgame::attack_king_inc(pos.king(weak));
 
-	if (const auto bb_white_attack = pos.attack_from<pt_king>(pos.king(strong))
+	if (const auto white_attack_bb = pos.attack_from<pt_king>(pos.king(strong))
 		| pos.attack_from<pt_bishop>(pos.piece_square(strong, pt_bishop)); pos.number(strong, pt_pawn) == 1 && pos.on_move() == weak
-		&& pos.pieces(strong, pt_pawn) & bb_black_attack & ~bb_white_attack)
+		&& pos.pieces(strong, pt_pawn) & black_attack_bb & ~white_attack_bb)
 		return draw_factor;
 
 	auto white_king = relative_square(strong, pos.king(strong));
@@ -62,14 +62,14 @@ sfactor endgame_kbpk(const position& pos)
 			black_pawns |= relative_square(strong, pos.piece_list(weak, pt_pawn)[i]);
 	}
 
-	const auto bb_king_cover = endgame::attack_king_inc(black_king);
+	const auto king_cover_bb = endgame::attack_king_inc(black_king);
 
 	if (pos.number(strong, pt_pawn) > 1)
 		pawn = no_square;
 
 	if (!(white_pawns & ~file_h_bb))
 	{
-		if (bb_king_cover & bb(h8))
+		if (king_cover_bb & bb(h8))
 		{
 			if (white_pawns & bb(h5) && (black_pawns & bb2(g7, h6)) == bb2(g7, h6))
 			{
@@ -86,13 +86,13 @@ sfactor endgame_kbpk(const position& pos)
 			return static_cast<sfactor>(normal_factor / 4);
 	}
 
-	if (pawn == g6 && bishop == h7 && bb_king_cover & bb(h8))
+	if (pawn == g6 && bishop == h7 && king_cover_bb & bb(h8))
 		return draw_factor;
 
 	if (!(white_pawns & ~file_a_bb)
 		&& white_pawns & bb(a6)
 		&& black_pawns & bb(a7)
-		&& bb_king_cover & bb(b8)
+		&& king_cover_bb & bb(b8)
 		&& (!(black_pawns & file_b_bb)
 		|| rank_of(lsb(white_pawns & file_a_bb)) >= rank_of(msb(black_pawns & file_b_bb))))
 		return draw_factor;
@@ -100,22 +100,22 @@ sfactor endgame_kbpk(const position& pos)
 	if (!(white_pawns & ~file_g_bb)
 		&& white_pawns & bb(g6)
 		&& black_pawns & bb(g7)
-		&& bb_king_cover & bb2(g8, f8))
+		&& king_cover_bb & bb2(g8, f8))
 		return draw_factor;
 
 	if (pawn == b6
 		&& black_pawns & bb(b7)
-		&& bb_king_cover & bb2(b8, c8))
+		&& king_cover_bb & bb2(b8, c8))
 		return draw_factor;
 
 	if (white_pawns == bb2(a6, b5)
 		&& (black_pawns & (bb2(a7, b6) | bb3(b7, c7, c6))) == bb2(a7, b6)
-		&& bb_king_cover & bb(b8))
+		&& king_cover_bb & bb(b8))
 		return draw_factor;
 
 	if (white_pawns == bb3(a6, b5, c4)
 		&& (black_pawns & (bb3(a7, b6, c5) | bb3(b7, c7, c6) | bb3(d7, d6, d5))) == bb3(a7, b6, c5)
-		&& bb_king_cover & bb(b8))
+		&& king_cover_bb & bb(b8))
 		return draw_factor;
 
 	return no_factor;
@@ -145,10 +145,10 @@ sfactor endgame_kbpkb(const position& pos)
 		if (relative_rank(strong, pawn) <= rank_5)
 			return draw_factor;
 
-		if (bb_forward(strong, pawn) & black_king && different_color(black_king, white_bishop))
+		if (forward_bb(strong, pawn) & black_king && different_color(black_king, white_bishop))
 			return draw_factor;
 
-		if (bb_forward(strong, pawn) & (pos.attack_from<pt_bishop>(black_bishop) | black_bishop)
+		if (forward_bb(strong, pawn) & (pos.attack_from<pt_bishop>(black_bishop) | black_bishop)
 			&& (weak_side_to_move || !(white_attack & black_bishop)))
 			return draw_factor;
 	}
@@ -284,7 +284,7 @@ sfactor endgame_knpkb(const position& pos)
 	const auto pawn_sq = pos.piece_square(strong, pt_pawn);
 	const auto bishop_sq = pos.piece_square(weak, pt_bishop);
 
-	if (const auto weak_king_sq = pos.king(weak); bb_forward(strong, pawn_sq) & pos.attack_from<pt_bishop>(bishop_sq))
+	if (const auto weak_king_sq = pos.king(weak); forward_bb(strong, pawn_sq) & pos.attack_from<pt_bishop>(bishop_sq))
 		return static_cast<sfactor>(2 * distance(weak_king_sq, pawn_sq));
 
 	return no_factor;
@@ -296,7 +296,7 @@ sfactor endgame_kpk(const position& pos)
 	const auto weak = ~strong;
 	const auto square_k = pos.king(weak);
 
-	if (const auto pawns = pos.pieces(strong, pt_pawn); !(pawns & ~bb_ranks_forward(weak, rank_of(square_k)))
+	if (const auto pawns = pos.pieces(strong, pt_pawn); !(pawns & ~ranks_forward_bb(weak, rank_of(square_k)))
 		&& !(pawns & ~file_a_bb
 		&& pawns & ~file_h_bb)
 		&& file_distance(square_k, lsb(pawns)) <= 1)
@@ -338,7 +338,7 @@ sfactor endgame_krkp(const position& pos)
 
 	const auto promotion = make_square(file_of(pawn), rank_1);
 
-	if (!((pos.attack_from<pt_king>(white_king) | pos.pieces(strong, pt_king)) & bb_ranks_forward(weak, pawn)) &&
+	if (!((pos.attack_from<pt_king>(white_king) | pos.pieces(strong, pt_king)) & ranks_forward_bb(weak, pawn)) &&
 		(rank_of(pawn) <= rank_3 || rank_of(black_king) <= rank_of(pawn)))
 	{
 		const auto bk_distance = static_cast<char16_t>(square_distance[black_king][pawn]);

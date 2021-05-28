@@ -253,7 +253,7 @@ namespace tuner
 		weights.push_back(evaluate::passed_pawn_mk_md_div);
 		weights.push_back(evaluate::passed_pawn_yk_md_mul);
 		weights.push_back(evaluate::passed_pawn_yk_md_div);
-		weights.push_back(evaluate::bb_behind_passed_pawn_bonus);
+		weights.push_back(evaluate::behind_passed_pawn_bonus);
 
 		// eval_queens
 		weights.push_back(evaluate::queen_attack_king);
@@ -612,7 +612,7 @@ namespace tuner
 		evaluate::passed_pawn_mk_md_div = weights[c++];
 		evaluate::passed_pawn_yk_md_mul = weights[c++];
 		evaluate::passed_pawn_yk_md_div = weights[c++];
-		evaluate::bb_behind_passed_pawn_bonus = weights[c++];
+		evaluate::behind_passed_pawn_bonus = weights[c++];
 
 		// eval_queens
 		evaluate::queen_attack_king = weights[c++];
@@ -1160,7 +1160,7 @@ namespace tuner
 		acout() << "passed_pawn_mk_md_div: " << evaluate::passed_pawn_mk_md_div << std::endl;
 		acout() << "passed_pawn_yk_md_mul: " << evaluate::passed_pawn_yk_md_mul << std::endl;
 		acout() << "passed_pawn_yk_md_div: " << evaluate::passed_pawn_yk_md_div << std::endl;
-		acout() << "bb_behind_passed_pawn_bonus: " << evaluate::bb_behind_passed_pawn_bonus << std::endl;
+		acout() << "behind_passed_pawn_bonus: " << evaluate::behind_passed_pawn_bonus << std::endl;
 		acout() << std::endl;
 
 		tune_log << "eval_passed_pawns" << std::endl;
@@ -1172,7 +1172,7 @@ namespace tuner
 		tune_log << "passed_pawn_mk_md_div: " << evaluate::passed_pawn_mk_md_div << std::endl;
 		tune_log << "passed_pawn_yk_md_mul: " << evaluate::passed_pawn_yk_md_mul << std::endl;
 		tune_log << "passed_pawn_yk_md_div: " << evaluate::passed_pawn_yk_md_div << std::endl;
-		tune_log << "bb_behind_passed_pawn_bonus: " << evaluate::bb_behind_passed_pawn_bonus << std::endl;
+		tune_log << "behind_passed_pawn_bonus: " << evaluate::behind_passed_pawn_bonus << std::endl;
 		tune_log << std::endl;
 
 		// eval_queens

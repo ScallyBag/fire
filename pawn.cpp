@@ -51,14 +51,14 @@ namespace pawn
 		{
 			const auto f = file_of(sq);
 
-			const auto neighbor_pawns = my_pawns & bb_adjacent_files(f);
-			const auto double_pawns = my_pawns & bb_forward(me, sq);
-			const bool closed_file = your_pawns & bb_forward(me, sq);
+			const auto neighbor_pawns = my_pawns & get_adjacent_files(f);
+			const auto double_pawns = my_pawns & forward_bb(me, sq);
+			const bool closed_file = your_pawns & forward_bb(me, sq);
 			const auto stoppers = your_pawns & passedpawn_mask(me, sq);
 			const auto attackers = your_pawns & pawnattack[me][sq];
 			const auto attackers_push = your_pawns & pawnattack[me][square_in_front(me, sq)];
-			const auto phalanx = neighbor_pawns & bb_rank(sq);
-			const auto supported = neighbor_pawns & bb_rank(square_behind(me, sq));
+			const auto phalanx = neighbor_pawns & get_rank(sq);
+			const auto supported = neighbor_pawns & get_rank(square_behind(me, sq));
 			const bool chain = supported | phalanx;
 			const auto isolated = !neighbor_pawns;
 
@@ -71,7 +71,7 @@ namespace pawn
 			else
 			{
 				auto b = pawn_attack_range(me, sq) & (my_pawns | your_pawns);
-				b = pawn_attack_range(me, sq) & bb_rank(rear_square(me, b));
+				b = pawn_attack_range(me, sq) & get_rank(rear_square(me, b));
 				remaining = (b | shift_up<me>(b)) & your_pawns;
 			}
 
@@ -117,8 +117,8 @@ namespace pawn
 		if (more_than_one(e->passed_p[me]))
 			score += multiple_passed_pawns;
 
-		const uint64_t bb_begin_blocked = e->p_attack[you] & shift_up<me>(my_pawns & second_row);
-		score -= second_row_fixed * popcnt(bb_begin_blocked);
+		const uint64_t begin_blocked_bb = e->p_attack[you] & shift_up<me>(my_pawns & second_row);
+		score -= second_row_fixed * popcnt(begin_blocked_bb);
 
 		return score;
 	}
@@ -159,13 +159,13 @@ namespace pawn
 
 		e->key = key;
 
-		uint64_t bb_pawn_files[2]{};
+		uint64_t pawn_files_bb[2]{};
 
 		const auto w_pawn = pos.pieces(white, pt_pawn);
 		const auto b_pawn = pos.pieces(black, pt_pawn);
 
-		bb_pawn_files[white] = file_front_rear(w_pawn);
-		bb_pawn_files[black] = file_front_rear(b_pawn);
+		pawn_files_bb[white] = file_front_rear(w_pawn);
+		pawn_files_bb[black] = file_front_rear(b_pawn);
 
 		e->p_attack[white] = pawn_attack<white>(w_pawn);
 		e->p_attack[black] = pawn_attack<black>(b_pawn);
@@ -173,15 +173,15 @@ namespace pawn
 		e->safe_pawn[white] = ~file_front(e->p_attack[white]);
 		e->safe_pawn[black] = ~file_behind(e->p_attack[black]);
 
-		e->half_open_lines[white] = static_cast<int>(~bb_pawn_files[white]) & 0xFF;
-		e->half_open_lines[black] = static_cast<int>(~bb_pawn_files[black]) & 0xFF;
+		e->half_open_lines[white] = static_cast<int>(~pawn_files_bb[white]) & 0xFF;
+		e->half_open_lines[black] = static_cast<int>(~pawn_files_bb[black]) & 0xFF;
 
 		e->asymmetry = popcnt(e->half_open_lines[white] ^ e->half_open_lines[black]);
 
 		e->pscore = eval_pawns<white>(pos, e);
 		e->pscore -= eval_pawns<black>(pos, e);
 
-		auto files = static_cast<int>((bb_pawn_files[white] | bb_pawn_files[black]) & 0xFF);
+		auto files = static_cast<int>((pawn_files_bb[white] | pawn_files_bb[black]) & 0xFF);
 		if (files)
 			files = msb(files) - lsb(files);
 		e->file_width = std::max(files - 3, 0);
@@ -189,16 +189,16 @@ namespace pawn
 		e->conversion_difficult = !(e->half_open_lines[white] & e->half_open_lines[black])
 			|| e->half_open_lines[white] & e->half_open_lines[black] & 0x3c && !e->asymmetry;
 
-		auto bb_pawns = pos.pieces(pt_pawn);
-		e->n_pawns = popcnt(bb_pawns);
-		if (bb_pawns)
+		auto pawns_bb = pos.pieces(pt_pawn);
+		e->n_pawns = popcnt(pawns_bb);
+		if (pawns_bb)
 		{
 			auto line_sum = 0;
 			do
 			{
-				const auto sq = pop_lsb(&bb_pawns);
+				const auto sq = pop_lsb(&pawns_bb);
 				line_sum += sq & 7;
-			} while (bb_pawns);
+			} while (pawns_bb);
 			e->average_line = line_sum / e->n_pawns;
 		}
 
@@ -217,7 +217,7 @@ namespace pawn
 			blocked_by_king
 		};
 
-		auto b = bb_ranks_forward(me, rank_of(square_k)) | bb_rank(square_k);
+		auto b = ranks_forward_bb(me, rank_of(square_k)) | get_rank(square_k);
 		const auto my_pawns = b & pos.pieces(me, pt_pawn);
 		const auto your_pawns = b & pos.pieces(you, pt_pawn);
 		auto danger = eval_0;
@@ -225,10 +225,10 @@ namespace pawn
 
 		for (auto f = center - static_cast<file>(1); f <= center + static_cast<file>(1); ++f)
 		{
-			b = my_pawns & bb_file(f);
+			b = my_pawns & get_file(f);
 			const auto my_rank = b ? relative_rank(me, rear_square(me, b)) : rank_1;
 
-			b = your_pawns & bb_file(f);
+			b = your_pawns & get_file(f);
 			const auto your_rank = b ? relative_rank(me, front_square(you, b)) : rank_1;
 
 			danger += shelter_weakness[std::min(f, file_h - f)][my_rank] * shield_factor[std::abs(f - file_of(square_k))];
@@ -274,15 +274,15 @@ namespace pawn
 
 		auto result = make_score(safe_bonus, 0);
 
-		const auto bb_king = pos.pieces(me, pt_king);
+		const auto king_bb = pos.pieces(me, pt_king);
 
-		if (const auto first_rank = me == white ? rank_1_bb : rank_8_bb; bb_king & first_rank)
+		if (const auto first_rank = me == white ? rank_1_bb : rank_8_bb; king_bb & first_rank)
 		{
-			if (const uint64_t bb = shift_up<me>(bb_king) | shift_up_left<me>(bb_king) | shift_up_right<me>(bb_king); bb == (pos.pieces(me, pt_pawn) & bb))
+			if (const uint64_t bb = shift_up<me>(king_bb) | shift_up_left<me>(king_bb) | shift_up_right<me>(king_bb); bb == (pos.pieces(me, pt_pawn) & bb))
 				result += king_1st_rank;
 		}
 
-		if (pos.pieces(you, pt_pawn) & shift_down<me>(bb_king))
+		if (pos.pieces(you, pt_pawn) & shift_down<me>(king_bb))
 			result += king_near_enemy_pawns;
 
 		if (n_pawns)

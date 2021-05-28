@@ -99,7 +99,7 @@ namespace movegen
 				if (pos.attack_to(sq) & pos.pieces(you))
 					return moves;
 
-			if (const auto from_r = pos.castle_rook_square(to_k); attack_bb_rook(to_k, pos.pieces() ^ from_r) & pos.pieces(you, pt_rook, pt_queen))
+			if (const auto from_r = pos.castle_rook_square(to_k); attack_rook_bb(to_k, pos.pieces() ^ from_r) & pos.pieces(you, pt_rook, pt_queen))
 				return moves;
 		}
 		else
@@ -167,40 +167,40 @@ namespace movegen
 		{
 			empty_squares = mg == quiet_moves || mg == quiet_checks ? target : ~pos.pieces();
 
-			uint64_t bb_multi_move = shift_up<me>(pawns_not_7th_rank) & empty_squares;
-			uint64_t bb_double_move = shift_up<me>(bb_multi_move & third_rank) & empty_squares;
+			uint64_t multi_move_bb = shift_up<me>(pawns_not_7th_rank) & empty_squares;
+			uint64_t double_move_bb = shift_up<me>(multi_move_bb & third_rank) & empty_squares;
 
 			if constexpr (mg == evade_check)
 			{
-				bb_multi_move &= target;
-				bb_double_move &= target;
+				multi_move_bb &= target;
+				double_move_bb &= target;
 			}
 
 			if constexpr (mg == quiet_checks)
 			{
-				bb_multi_move &= pos.attack_from<pt_pawn>(pos.king(you), you);
-				bb_double_move &= pos.attack_from<pt_pawn>(pos.king(you), you);
+				multi_move_bb &= pos.attack_from<pt_pawn>(pos.king(you), you);
+				double_move_bb &= pos.attack_from<pt_pawn>(pos.king(you), you);
 
 				if (const auto discovered_check = pos.info()->x_ray[~pos.on_move()]; pawns_not_7th_rank & discovered_check)
 				{
-					const uint64_t deduction_forward = shift_up<me>(pawns_not_7th_rank & discovered_check) & empty_squares & ~bb_file(
+					const uint64_t deduction_forward = shift_up<me>(pawns_not_7th_rank & discovered_check) & empty_squares & ~get_file(
 						pos.king(you));
 					const uint64_t deduction_double = shift_up<me>(deduction_forward & third_rank) & empty_squares;
 
-					bb_multi_move |= deduction_forward;
-					bb_double_move |= deduction_double;
+					multi_move_bb |= deduction_forward;
+					double_move_bb |= deduction_double;
 				}
 			}
 
-			while (bb_multi_move)
+			while (multi_move_bb)
 			{
-				const auto to = pop_lsb(&bb_multi_move);
+				const auto to = pop_lsb(&multi_move_bb);
 				*moves++ = make_move(to - straight_ahead, to);
 			}
 
-			while (bb_double_move)
+			while (double_move_bb)
 			{
-				const auto to = pop_lsb(&bb_double_move);
+				const auto to = pop_lsb(&double_move_bb);
 				*moves++ = make_move(to - straight_ahead - straight_ahead, to);
 			}
 		}
@@ -322,7 +322,7 @@ template s_move* generate_moves<all_moves>(const position&, s_move*);
 // generate captures by sq
 s_move* generate_captures_on_square(const position& pos, s_move* moves, const square sq)
 {
-	const auto target = bb_square[sq];
+	const auto target = square_bb[sq];
 
 	return pos.on_move() == white
 		? movegen::all_piece_moves<white, captures_promotions>(pos, moves, target)
@@ -341,7 +341,7 @@ s_move* generate_moves<evade_check>(const position& pos, s_move* moves)
 	while (far_attackers)
 	{
 		const auto check_square = pop_lsb(&far_attackers);
-		attacked_squares |= bb_connection[check_square][square_k] ^ check_square;
+		attacked_squares |= connection_bb[check_square][square_k] ^ check_square;
 	}
 
 	auto squares = pos.attack_from<pt_king>(square_k) & ~pos.pieces(me) & ~attacked_squares;
@@ -352,7 +352,7 @@ s_move* generate_moves<evade_check>(const position& pos, s_move* moves)
 		return moves;
 
 	const auto check_square = lsb(pos.is_in_check());
-	const auto target = bb_between(check_square, square_k) | check_square;
+	const auto target = get_between(check_square, square_k) | check_square;
 
 	return me == white
 		? movegen::all_piece_moves<white, evade_check>(pos, moves, target)
