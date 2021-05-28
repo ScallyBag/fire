@@ -39,11 +39,11 @@ Fire 8.NN has undergone meticulous analysis and refactoring using many of the mo
 - **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
 
 - **windows** : Fire_8.NN_x64_bmi2.exe, Fire_8.NN_x64_avx2.exe, or Fire_8.NN_x64_popc.exe
-- **linux** :   Fire_8.NN_x64_avx2 or Fire_8.NN_x64_popc
+- **linux** :   Fire_8.NN_x64_bmi2, Fire_8.NN_x64_avx2, or Fire_8.NN_x64_popc
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are much slower than the bmi2 and/or avx2 binaries.
 
-Here is a complete list of recommended processors for Fire 8.N x64:
+Here is a complete list of recommended processors for Fire 8.NN x64:
 
 **AVX2 (Advanced Vector Extensions 2)** (also known as Haswell New Instructions)
 
@@ -138,7 +138,7 @@ and others
 the endgame table bases are implemented using code adapted from Ronald de Man's
 - [Syzygy EGTBs & probing code](https://github.com/syzygy1/tb)
 
-The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
+The NNUE implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
 - [nnue-probe](https://github.com/dshawul/nnue-probe/)
 
 Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Viera.
