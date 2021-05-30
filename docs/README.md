@@ -39,11 +39,11 @@ Fire 8.NN has undergone meticulous analysis and refactoring using many of the mo
 - **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
 
 - **windows** : Fire_8.NN_x64_bmi2.exe, Fire_8.NN_x64_avx2.exe, or Fire_8.NN_x64_popc.exe
-- **linux** :   Fire_8.NN_x64_bmi2, Fire_8.NN_x64_avx2, or Fire_8.NN_x64_popc
+- **linux** :   Fire_8.NN_x64_avx2 or Fire_8.NN_x64_popc
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are much slower than the bmi2 and/or avx2 binaries.
 
-Here is a complete list of recommended processors for Fire 8.NN x64:
+Here is a complete list of recommended processors for Fire 8.N x64:
 
 **AVX2 (Advanced Vector Extensions 2)** (also known as Haswell New Instructions)
 
@@ -104,8 +104,8 @@ please see **http://chesslogik.wix.com/fire** for more info
 
 ## compile it yourself
 - **windows** (visual studio) use included project files: Fire.vcxproj or Fire.sln
-- **minGW** run one of the included bash shell scripts: makefire_pext.sh or makefire_popc.sh
-- **ubuntu** type 'make profile-build ARCH=x86-64-pext' or 'make profile-build ARCH=x86-64-popc'
+- **minGW** run one of the included bash shell scripts: makefire_bmi2.sh, makefire_axv2.sh or makefire_popc.sh
+- **ubuntu** type 'make profile-build ARCH=x86-64-bmi2' or 'make profile-build ARCH=x86-64-avx2' or 'make profile-build ARCH=x86-64-popc'
 
 ## uci options
 - **Hash** size of the hash table. default is 64 MB.
@@ -138,7 +138,7 @@ and others
 the endgame table bases are implemented using code adapted from Ronald de Man's
 - [Syzygy EGTBs & probing code](https://github.com/syzygy1/tb)
 
-The NNUE implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
+The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
 - [nnue-probe](https://github.com/dshawul/nnue-probe/)
 
 Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Viera.
