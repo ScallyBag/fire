@@ -39,7 +39,7 @@ Fire 8.NN has undergone meticulous analysis and refactoring using many of the mo
 - **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
 
 - **windows** : Fire_8.NN_x64_bmi2.exe, Fire_8.NN_x64_avx2.exe, or Fire_8.NN_x64_popc.exe
-- **linux** :   Fire_8.NN_x64_avx2 or Fire_8.NN_x64_popc
+- **linux** :   Fire_8.NN_x64_bmi2, Fire_8.NN_x64_avx2 or Fire_8.NN_x64_popc
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are much slower than the bmi2 and/or avx2 binaries.
 
