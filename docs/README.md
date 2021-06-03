@@ -29,21 +29,21 @@ by Norman Schmidt
 - reads engine.conf on startup for search, eval, pawn, and material parameters
 - NNUE support
 
-**Fire 8.NN (NNUE) is now available** with a significant speedup and corresponding strength increase.
+**Fire 8.NN.1 (NNUE) is now available** with a significant speedup and corresponding strength increase.
 
-Fire 8.NN has undergone meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
+Fire 8.NN.1 has undergone meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
 ## available binaries
 - **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set)
 - **x64 avx2** = fast pgo binary (for modern 64-bit systems w/ AVX2 instruction set)
 - **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
 
-- **windows** : Fire_8.NN_x64_bmi2.exe, Fire_8.NN_x64_avx2.exe, or Fire_8.NN_x64_popc.exe
-- **linux** :   Fire_8.NN_x64_bmi2, Fire_8.NN_x64_avx2 or Fire_8.NN_x64_popc
+- **windows** : Fire_8.NN.1_x64_bmi2.exe, Fire_8.NN.1_x64_avx2.exe, or Fire_8.NN.1_x64_popc.exe
+- **linux** :   Fire_8.NN.1_x64_bmi2, Fire_8.NN.1_x64_avx2 or Fire_8.NN.1_x64_popc
 
-Be aware that, due to lack of avx2 instruction set, the popc binaries are much slower than the bmi2 and/or avx2 binaries.
+Be aware that, due to lack of avx2 instruction set, the popc binaries are much much slower than the bmi2 and/or avx2 binaries.
 
-Here is a complete list of recommended processors for Fire 8.N x64:
+Here is a complete list of recommended processors for Fire 8.N.1 x64:
 
 **AVX2 (Advanced Vector Extensions 2)** (also known as Haswell New Instructions)
 
