@@ -18,18 +18,18 @@
 #include "position.h"
 
 // UCI option default values
-static std::string startpos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-static int uci_hash = 64;
-static int uci_threads = 1;
-static int uci_multipv = 1;
-static int uci_contempt = 0;
-static bool uci_ponder = false;
-static bool uci_chess960 = false;
+inline std::string startpos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+inline int uci_hash = 64;
+inline int uci_threads = 1;
+inline int uci_multipv = 1;
+inline int uci_contempt = 0;
+inline bool uci_ponder = false;
+inline bool uci_chess960 = false;
 
-static bool uci_syzygy_50_move_rule = false;
-static int uci_syzygy_probe_depth = 1;
-static int uci_syzygy_probe_limit = 6;
-static std::string uci_syzygy_path = "";
+inline bool uci_syzygy_50_move_rule = false;
+inline int uci_syzygy_probe_depth = 1;
+inline int uci_syzygy_probe_limit = 6;
+inline std::string uci_syzygy_path = "";
 
 inline std::string engine_mode = "nnue";
 inline bool bench_active = false;

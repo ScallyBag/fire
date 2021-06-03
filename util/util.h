@@ -15,8 +15,9 @@
 */
 
 #pragma once
-#include <ostream>
 #include <iostream>
+#include <ostream>
+#include <sstream>
 #include <mutex>
 #include <vector>
 

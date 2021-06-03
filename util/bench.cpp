@@ -14,10 +14,10 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <sstream>
 #include <fstream>
 #include "bench.h"
 
-#include "search.h"
 #include "../thread.h"
 #include "../uci.h"
 #include "util.h"
