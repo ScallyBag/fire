@@ -90,7 +90,8 @@ namespace util
 		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 	}
 
-	inline std::vector<std::string> split(std::string& s, char delimiter) {
+	inline std::vector<std::string> split(std::string& s, const char delimiter)
+	{
 		std::vector<std::string> tokens;
 		std::stringstream ss(s);
 		std::string t;
