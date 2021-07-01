@@ -51,7 +51,7 @@ namespace search
 		assert(pv_node || alpha == beta - 1);
 		assert(depth >= plies && depth < max_depth);
 
-		uint32_t quiet_moves[max_quiet_moves];
+		uint32_t quiet_moves[max_quiet_moves]{};
 		main_hash_entry* hash_entry = nullptr;
 
 		uint64_t key64 = 0;
@@ -84,7 +84,7 @@ namespace search
 
 		if (my_thread == thread_pool.main())
 		{
-			if (auto* main_thread = static_cast<mainthread*>(my_thread); ++main_thread->interrupt_counter >= 4096)
+			if (auto* main_thread = dynamic_cast<mainthread*>(my_thread); ++main_thread->interrupt_counter >= 4096)
 			{
 				if (main_thread->quick_move_evaluation_busy)
 				{
@@ -257,8 +257,8 @@ namespace search
 		{
 			assert(eval - beta >= 0);
 
-			auto R = no_depth;
-			R = depth < 4 * plies ? depth : (null_move_tm_base + null_move_tm_mult * (static_cast<uint32_t>(depth) / plies)
+			auto r = no_depth;
+			r = depth < 4 * plies ? depth : (null_move_tm_base + null_move_tm_mult * (static_cast<uint32_t>(depth) / plies)
 				+ std::max(std::min(null_move_depth_greater_than_mult * (eval - beta) / null_move_depth_greater_than_div
 				- null_move_depth_greater_than_sub - null_move_depth_greater_than_cut_node_mult
 				* cut_node - null_move_depth_greater_than_cut_node_mult * (hash_move != no_move), 3 * 256), 0)) / 256 * plies;
@@ -266,9 +266,10 @@ namespace search
 			pi->mp_end_list = (pi - 1)->mp_end_list;
 			pos.play_null_move();
 			(pi + 1)->no_early_pruning = true;
-			auto value = depth - R < plies
+			
+			auto value = depth - r < plies
 				? -q_search<nonPV, false>(pos, -beta, -beta + score_1, depth_0)
-				: -alpha_beta<nonPV>(pos, -beta, -beta + score_1, depth - R, !cut_node);
+				: -alpha_beta<nonPV>(pos, -beta, -beta + score_1, depth - r, !cut_node);
 			(pi + 1)->no_early_pruning = false;
 			pos.take_null_back();
 
@@ -288,9 +289,9 @@ namespace search
 					return value;
 
 				pi->no_early_pruning = true;
-				auto val = depth - R < plies
+				auto val = depth - r < plies
 					? q_search<nonPV, false>(pos, beta - score_1, beta, depth_0)
-					: alpha_beta<nonPV>(pos, beta - score_1, beta, depth - R, false);
+					: alpha_beta<nonPV>(pos, beta - score_1, beta, depth - r, false);
 				pi->no_early_pruning = false;
 
 				if (val >= beta)
@@ -557,7 +558,7 @@ namespace search
 
 			if (pv_node && (move_number == 1 || value > alpha && (root_node || value < beta)))
 			{
-				uint32_t pv[max_ply + 1];
+				uint32_t pv[max_ply + 1]{};
 				(pi + 1)->pv = pv;
 				(pi + 1)->pv[0] = no_move;
 
@@ -578,7 +579,7 @@ namespace search
 			if (signals.stop_analyzing.load(std::memory_order_relaxed))
 				return alpha;
 
-			if (my_thread == thread_pool.main() && static_cast<mainthread*>(my_thread)->quick_move_evaluation_stopped)
+			if (my_thread == thread_pool.main() && dynamic_cast<mainthread*>(my_thread)->quick_move_evaluation_stopped)
 				return alpha;
 
 			if (root_node)
@@ -597,7 +598,7 @@ namespace search
 						root_move.pv.add(*z);
 
 					if (move_number > 1 && my_thread == thread_pool.main())
-						static_cast<mainthread*>(my_thread)->best_move_changed += 1024;
+						dynamic_cast<mainthread*>(my_thread)->best_move_changed += 1024;
 
 					if (!bench_active && my_thread == thread_pool.main())
 						acout() << print_pv(pos, alpha, beta, my_thread->active_pv, move_index) << std::endl;
@@ -776,7 +777,6 @@ namespace search
 
 	void init()
 	{
-		constexpr auto counter_move_bonus_value = 24;
 		std::memset(lm_reductions, 0, sizeof lm_reductions);
 
 		for (int d = plies; d < 64 * plies; ++d)
@@ -795,6 +795,7 @@ namespace search
 
 		for (auto d = 1; d < max_ply; ++d)
 		{
+			constexpr auto counter_move_bonus_value = 24;
 			counter_move_bonus[d] = static_cast<int>(std::min(8192, counter_move_bonus_value * (d * d + 2 * d - 2)));
 		}
 	}
@@ -1052,6 +1053,7 @@ namespace search
 		thread_pool.main()->previous_root_score = max_score;
 		thread_pool.main()->previous_root_depth = 999 * plies;
 		thread_pool.main()->quick_move_allow = false;
+		//thread_pool.clear();
 	}
 
 	void send_time_info()
@@ -1082,9 +1084,6 @@ namespace search
 	void update_stats(const position& pos, const bool state_check, const uint32_t move,
 		const int depth, uint32_t* quiet_moves, const int quiet_number)
 	{
-		constexpr auto update_stats_max_depth = 18;
-		constexpr auto update_stats_move_1_max_depth = 18;
-
 		auto* pi = pos.info();
 
 		auto* cmh = pi->move_counter_values;
@@ -1102,13 +1101,13 @@ namespace search
 			}
 
 			if (cmh)
-				ti->counter_moves.update(pi->moved_piece, to_square(pi->previous_move), move);
+				ti->counter_moves.update(pi->moved_piece, to_square(pi->previous_move), static_cast<uint8_t>(move));
 
 			if (cmh && fmh)
 				ti->counter_followup_moves.update((pi - 1)->moved_piece, to_square((pi - 1)->previous_move),
 					pi->moved_piece, to_square(pi->previous_move), move);
 
-			if (depth < update_stats_max_depth * plies)
+			if (constexpr auto update_stats_max_depth = 18; depth < update_stats_max_depth * plies)
 			{
 				const auto bonus = counter_move_value(depth);
 				const auto hist_bonus = history_bonus(depth);
@@ -1141,7 +1140,7 @@ namespace search
 
 		if ((pi - 1)->move_number == 1 && !pi->captured_piece)
 		{
-			if (depth < update_stats_move_1_max_depth * plies)
+			if (constexpr auto update_stats_move_1_max_depth = 18; depth < update_stats_move_1_max_depth * plies)
 			{
 				const auto bonus = counter_move_value(depth + plies);
 				const auto offset = move_value_stats::calculate_offset(pi->moved_piece, to_square(pi->previous_move));
@@ -1160,8 +1159,6 @@ namespace search
 
 	void update_stats_minus(const position& pos, const bool state_check, const uint32_t move, const int depth)
 	{
-		constexpr auto update_stats_minus_max_depth = 18;
-
 		auto* const pi = pos.info();
 		auto* cmh = pi->move_counter_values;
 		auto* fmh = (pi - 1)->move_counter_values;
@@ -1171,7 +1168,7 @@ namespace search
 
 		if (!pos.capture_or_promotion(move))
 		{
-			if (depth < update_stats_minus_max_depth * plies)
+			if (constexpr auto update_stats_minus_max_depth = 18; depth < update_stats_minus_max_depth * plies)
 			{
 				const auto bonus = counter_move_value(depth);
 				const auto hist_bonus = history_bonus(depth);
@@ -1191,8 +1188,6 @@ namespace search
 
 	void update_stats_quiet(const position& pos, const bool state_check, const int depth, uint32_t* quiet_moves, const int quiet_number)
 	{
-		constexpr auto update_stats_quiet_max_depth = 18;
-
 		auto* const pi = pos.info();
 		auto* cmh = pi->move_counter_values;
 		auto* fmh = (pi - 1)->move_counter_values;
@@ -1200,7 +1195,7 @@ namespace search
 		auto* ti = pos.thread_info();
 		auto& history = state_check ? ti->evasion_history : ti->history;
 
-		if (depth < update_stats_quiet_max_depth * plies)
+		if (constexpr auto update_stats_quiet_max_depth = 18; depth < update_stats_quiet_max_depth * plies)
 		{
 			const auto bonus = static_cast<int>(depth);
 			const auto hist_bonus = static_cast<int>(depth);
@@ -1729,10 +1724,10 @@ std::string print_pv(const position& pos, const int alpha, const int beta, const
 		if (iterate < 1)
 			continue;
 
-		auto val = i <= active_pv ? root_move.score : root_move.previous_score;
+		auto score = i <= active_pv ? root_move.score : root_move.previous_score;
 
-		const auto tb = tb_root_in_tb && abs(val) < egtb_win_score;
-		val = tb ? tb_score : val;
+		const auto tb = tb_root_in_tb && abs(score) < egtb_win_score;
+		score = tb ? tb_score : score;
 
 		if (ss.rdbuf()->in_avail())
 			ss << "\n";
@@ -1754,10 +1749,10 @@ std::string print_pv(const position& pos, const int alpha, const int beta, const
 		ss << " depth " << iterate
 			<< " seldepth " << sel_depth
 			<< " multipv " << i + 1
-			<< " score " << value(val);
+			<< " score " << score_cp(score);
 
 		if (!tb && i == active_pv)
-			ss << (val >= beta ? " lowerbound" : val <= alpha ? " upperbound" : "");
+			ss << (score >= beta ? " lowerbound" : score <= alpha ? " upperbound" : "");
 
 		ss << " pv";
 
@@ -1773,7 +1768,7 @@ std::string print_pv(const position& pos, const int alpha, const int beta, const
 
 void rootmove::pv_from_hash(position& pos)
 {
-	uint64_t keys[max_ply];
+	uint64_t keys[max_ply]{};
 	auto number = 0;
 
 	assert(pv.size() == 1);
