@@ -417,7 +417,7 @@ inline uint64_t attack_bb(const uint8_t piece_t, const square sq, const uint64_t
 }
 
 template <side color>
-inline uint64_t pawn_attack(const uint64_t bb)
+uint64_t pawn_attack(const uint64_t bb)
 {
 	if constexpr (color == white)
 		return shift_bb<north_west>(bb) | shift_bb<north_east>(bb);
@@ -426,7 +426,7 @@ inline uint64_t pawn_attack(const uint64_t bb)
 }
 
 template <side color>
-inline uint64_t shift_up(const uint64_t bb)
+uint64_t shift_up(const uint64_t bb)
 {
 	if constexpr (color == white)
 		return shift_bb<north>(bb);
@@ -435,7 +435,7 @@ inline uint64_t shift_up(const uint64_t bb)
 }
 
 template <side color>
-inline uint64_t shift_down(const uint64_t bb)
+uint64_t shift_down(const uint64_t bb)
 {
 	if constexpr (color == white)
 		return shift_bb<south>(bb);
@@ -444,7 +444,7 @@ inline uint64_t shift_down(const uint64_t bb)
 }
 
 template <side color>
-inline uint64_t shift_up_left(const uint64_t bb)
+uint64_t shift_up_left(const uint64_t bb)
 {
 	if constexpr (color == white)
 		return shift_bb<north_west>(bb);
@@ -453,7 +453,7 @@ inline uint64_t shift_up_left(const uint64_t bb)
 }
 
 template <side color>
-inline uint64_t shift_up_right(const uint64_t bb)
+uint64_t shift_up_right(const uint64_t bb)
 {
 	if constexpr (color == white)
 		return shift_bb<north_east>(bb);

@@ -167,7 +167,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline void eval_init(const position& pos, attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
+	void eval_init(const position& pos, attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
 	{
 		ai.attack[me][pt_king] = pos.attack_from<pt_king>(pos.king(me));
 		ai.attack[me][pt_pawn] = pawn_entry->pawn_attack(me);
@@ -185,7 +185,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_bishops(const position& pos, attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
+	int eval_bishops(const position& pos, attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
@@ -281,7 +281,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_king_attack(const position& pos, const attack_info& ai, const int attack_score)
+	int eval_king_attack(const position& pos, const attack_info& ai, const int attack_score)
 	{
 		const auto you = me == white ? black : white;
 		auto attack_index = attack_score;
@@ -346,7 +346,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_knights(const position& pos, attack_info& ai)
+	int eval_knights(const position& pos, attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
@@ -378,7 +378,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_passed_pawns(const position& pos, const attack_info& ai, uint64_t passed_pawns_bb)
+	int eval_passed_pawns(const position& pos, const attack_info& ai, uint64_t passed_pawns_bb)
 	{
 		assert(passed_pawns_bb != 0);
 		constexpr auto you = me == white ? black : white;
@@ -443,7 +443,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_queens(const position& pos, attack_info& ai)
+	int eval_queens(const position& pos, attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
@@ -480,7 +480,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_rooks(const position& pos, attack_info& ai)
+	int eval_rooks(const position& pos, attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
@@ -527,7 +527,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_space(const position& pos, const attack_info& ai)
+	int eval_space(const position& pos, const attack_info& ai)
 	{
 		constexpr auto you = me == white ? black : white;
 		constexpr uint64_t center_zone = me == white ? 0x000000003c3c3c00 : 0x003c3c3c00000000;
@@ -545,7 +545,7 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_strong_squares(const position& pos, const attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
+	int eval_strong_squares(const position& pos, const attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
 	{
 		constexpr auto you = me == white ? black : white;
 		constexpr uint64_t rank456 = me == white ? 0x3C3C3C000000 : 0x3C3C3C0000;
