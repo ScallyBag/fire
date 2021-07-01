@@ -23,6 +23,7 @@ inline int uci_hash = 64;
 inline int uci_threads = 1;
 inline int uci_multipv = 1;
 inline int uci_contempt = 0;
+inline bool uci_mcts = false;
 inline bool uci_ponder = false;
 inline bool uci_chess960 = false;
 

@@ -288,7 +288,7 @@ inline int tb_score;
 
 typedef int (*egtb_probe)(position& pos);
 void filter_root_moves(position& pos);
-std::string value(int val);
+std::string score_cp(int score);
 
 struct rootmove
 {

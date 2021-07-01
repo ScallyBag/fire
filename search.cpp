@@ -1804,18 +1804,19 @@ void rootmove::pv_from_hash(position& pos)
 		pos.take_move_back(pv[--i]);
 }
 
-std::string value(int val)
+std::string score_cp(const int score)
 {
 	std::stringstream ss;
 
-	if (abs(val) < longest_mate_score)
+	if (abs(score) < longest_mate_score)
 	{
-		if (abs(val) < win_score)
-			val -= thread_pool.root_contempt_value;
-		ss << "cp " << val / 3;
+		if (uci_mcts == true)
+			ss << "cp " << score;
+		else
+			ss << "cp " << score / 3;
 	}
 	else
-		ss << "mate " << (val > 0 ? mate_score - val + 1 : -mate_score - val) / 2;
+		ss << "mate " << (score > 0 ? mate_score - score + 1 : -mate_score - score) / 2;
 
 	return ss.str();
 }
