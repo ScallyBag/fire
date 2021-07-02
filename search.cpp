@@ -84,7 +84,7 @@ namespace search
 
 		if (my_thread == thread_pool.main())
 		{
-			if (auto* main_thread = dynamic_cast<mainthread*>(my_thread); ++main_thread->interrupt_counter >= 4096)
+			if (auto* main_thread = static_cast<mainthread*>(my_thread); ++main_thread->interrupt_counter >= 4096)
 			{
 				if (main_thread->quick_move_evaluation_busy)
 				{
@@ -579,7 +579,7 @@ namespace search
 			if (signals.stop_analyzing.load(std::memory_order_relaxed))
 				return alpha;
 
-			if (my_thread == thread_pool.main() && dynamic_cast<mainthread*>(my_thread)->quick_move_evaluation_stopped)
+			if (my_thread == thread_pool.main() && static_cast<mainthread*>(my_thread)->quick_move_evaluation_stopped)
 				return alpha;
 
 			if (root_node)
@@ -598,7 +598,7 @@ namespace search
 						root_move.pv.add(*z);
 
 					if (move_number > 1 && my_thread == thread_pool.main())
-						dynamic_cast<mainthread*>(my_thread)->best_move_changed += 1024;
+						static_cast<mainthread*>(my_thread)->best_move_changed += 1024;
 
 					if (!bench_active && my_thread == thread_pool.main())
 						acout() << print_pv(pos, alpha, beta, my_thread->active_pv, move_index) << std::endl;
