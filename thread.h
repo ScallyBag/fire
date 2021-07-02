@@ -128,4 +128,31 @@ struct threadpool : std::vector<Thread*>
 	bool dummy_null_move_threat{}, dummy_prob_cut{};
 };
 
+class spinlock
+{
+	std::atomic_int lock_;
+
+public:
+	spinlock()
+	{
+		lock_ = 1;
+	}
+	
+	spinlock(const spinlock&)
+	{
+		lock_ = 1;
+	}
+
+	void acquire()
+	{
+		while (lock_.fetch_sub(1, std::memory_order_acquire) != 1)
+			while (lock_.load(std::memory_order_relaxed) <= 0)
+				std::this_thread::yield();
+	}
+	void release()
+	{
+		lock_.store(1, std::memory_order_release);
+	}
+};
+
 extern threadpool thread_pool;
