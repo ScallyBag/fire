@@ -442,7 +442,7 @@ namespace search
 			}
 
 			new_depth = depth - plies + extension;
-			if (!(root_node | capture_or_promotion | gives_check)
+			if (!(root_node || capture_or_promotion || gives_check)
 				&& best_score > -longest_mate_score
 				&& !pos.advanced_pawn(move)
 				&& pi->non_pawn_material[pos.on_move()])
@@ -1376,7 +1376,7 @@ NO_ANALYSIS:
 	for (auto i = 1; i < thread_pool.active_thread_count; ++i)
 		thread_pool.threads[i]->wait_for_search_to_end();
 
-	thread* best_thread = this;
+	Thread* best_thread = this;
 
 	if (!this->quick_move_played
 		&& thread_pool.multi_pv == 1
@@ -1411,7 +1411,7 @@ NO_ANALYSIS:
 	search::running = false;
 }
 
-void thread::begin_search()
+void Thread::begin_search()
 {
 	auto alpha = score_0, delta_alpha = score_0, delta_beta = score_0;
 	auto fast_move = no_move;
