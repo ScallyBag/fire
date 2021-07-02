@@ -212,7 +212,7 @@ namespace movepick
 		{
 			uint8_t x = crc >> 8 ^ *data_p++;
 			x ^= x >> 4;
-			crc = crc << 8 ^ static_cast<uint16_t>(x << 12) ^ static_cast<uint16_t>(x << 5) ^ static_cast<uint16_t>(x);
+			crc = static_cast<uint16_t>(crc << 8 ^ x << 12 ^ x << 5 ^ x);
 		}
 		return crc;
 	}
