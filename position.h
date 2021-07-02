@@ -19,7 +19,7 @@
 #include "fire.h"
 
 class position;
-class thread;
+class Thread;
 
 struct s_move;
 struct threadinfo;
@@ -153,7 +153,7 @@ public:
 	position(const position&) = default;
 	position& operator=(const position&) = delete;
 
-	position& set(const std::string& fen_str, bool is_chess960, thread* th);
+	position& set(const std::string& fen_str, bool is_chess960, Thread* th);
 	[[nodiscard]] std::string fen() const;
 
 	[[nodiscard]] uint64_t pieces() const;
@@ -231,7 +231,7 @@ public:
 	void increase_game_ply();
 	void increase_tb_hits();
 	[[nodiscard]] bool is_chess960() const;
-	[[nodiscard]] thread* my_thread() const;
+	[[nodiscard]] Thread* my_thread() const;
 	[[nodiscard]] threadinfo* thread_info() const;
 	[[nodiscard]] cmhinfo* cmh_info() const;
 	[[nodiscard]] uint64_t visited_nodes() const;
@@ -243,7 +243,7 @@ public:
 	{
 		return pos_info_;
 	}
-	void copy_position(const position* pos, thread* th, position_info* copy_state);
+	void copy_position(const position* pos, Thread* th, position_info* copy_state);
 	double epd_result;
 private:
 	void set_castling_possibilities(side color, square from_r);
@@ -259,7 +259,7 @@ private:
 
 	position_info* pos_info_;
 	side on_move_;
-	thread* this_thread_;
+	Thread* this_thread_;
 	threadinfo* thread_info_;
 	cmhinfo* cmh_info_;
 	ptype board_[num_squares];
@@ -314,7 +314,7 @@ inline bool position::advanced_pawn(const uint32_t move) const
 }
 
 template <uint8_t piece_type>
-inline uint64_t position::attack_from(const square sq) const
+uint64_t position::attack_from(const square sq) const
 {
 	return piece_type == pt_bishop
 		? attack_bishop_bb(sq, pieces())
@@ -465,7 +465,7 @@ inline ptype position::moved_piece(const uint32_t move) const
 	return board_[from_square(move)];
 }
 
-inline thread* position::my_thread() const
+inline Thread* position::my_thread() const
 {
 	return this_thread_;
 }

@@ -146,7 +146,7 @@ square position::calculate_threat() const
 	return no_square;
 }
 
-void position::copy_position(const position* pos, thread* th, position_info* copy_state)
+void position::copy_position(const position* pos, Thread* th, position_info* copy_state)
 {
 	std::memcpy(this, pos, sizeof(position));
 	if (th)
@@ -781,7 +781,7 @@ void position::set_position_info(position_info* si) const
 			si->non_pawn_material[color] += material_value[piece] * static_cast<int>(piece_number_[make_piece(color, piece)]);
 }
 
-position& position::set(const std::string& fen_str, const bool is_chess960, thread* th)
+position& position::set(const std::string& fen_str, const bool is_chess960, Thread* th)
 {
 	assert(th != nullptr);
 

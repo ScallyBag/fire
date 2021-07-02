@@ -31,7 +31,7 @@
 #include "position.h"
 #include "search.h"
 
-class thread
+class Thread
 {
 	std::thread native_thread_;
 	Mutex mutex_;
@@ -40,8 +40,8 @@ class thread
 	int thread_index_;
 
 public:
-	thread();
-	virtual ~thread();
+	Thread();
+	virtual ~Thread();
 	virtual void begin_search();
 	void idle_loop();
 	void wake(bool activate_search);
@@ -51,10 +51,12 @@ public:
 	threadinfo* ti{};
 	cmhinfo* cmhi{};
 	position* root_position{};
-
+	search::rootmoves_mc mc_rootmoves;
 	rootmoves root_moves;
 	int completed_depth = no_depth;
 	int active_pv{};
+	continuation_history continuation_history;
+	void clear();
 };
 
 struct cmhinfo
@@ -77,18 +79,23 @@ struct threadinfo
 	pawn::pawn_hash pawn_table{};
 };
 
-struct mainthread final : thread
+struct mainthread final : Thread
 {
 	void begin_search() override;
-	bool quick_move_allow = false, quick_move_played = false, quick_move_evaluation_busy = false;
-	bool quick_move_evaluation_stopped = false, failed_low = false;
+	void check_time();
+	bool quick_move_allow = false;
+	bool quick_move_played = false;
+	bool quick_move_evaluation_busy = false;
+	bool quick_move_evaluation_stopped = false;
+	bool failed_low = false;
 	int best_move_changed = 0;
 	int previous_root_score = score_0;
 	int interrupt_counter = 0;
 	int previous_root_depth = {};
+	int calls_cnt;
 };
 
-struct threadpool : std::vector<thread*>
+struct threadpool : std::vector<Thread*>
 {
 	void init();
 	void exit();
@@ -96,7 +103,7 @@ struct threadpool : std::vector<thread*>
 	int thread_count{};
 	time_point start{};
 	int total_analyze_time{};
-	thread* threads[max_threads]{};
+	Thread* threads[max_threads]{};
 	mainthread* main()
 	{
 		return static_cast<mainthread*>(threads[0]);
