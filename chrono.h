@@ -86,8 +86,8 @@ private:
 	int moves_horizon_ = 50;
 	double max_ratio_ = 7.09;
 	double steal_ratio_ = 0.35;
-	int64_t minimum_time_ = 1;
-	int move_overhead_ = 10;
+	int64_t minimum_time_ = 5;
+	int move_overhead_ = 50;
 };
 
 extern timecontrol time_control;
