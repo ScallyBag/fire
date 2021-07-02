@@ -32,9 +32,6 @@ initialized template vars
 
 #pragma once
 
-#ifndef OPTIONS_H
-#define OPTIONS_H
-
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -243,4 +240,3 @@ inline void options::set_engine_params()
 
 extern std::unique_ptr<options> params;
 
-#endif
