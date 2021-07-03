@@ -51,11 +51,9 @@ public:
 	threadinfo* ti{};
 	cmhinfo* cmhi{};
 	position* root_position{};
-	search::rootmoves_mc mc_rootmoves;
 	rootmoves root_moves;
 	int completed_depth = no_depth;
 	int active_pv{};
-	continuation_history continuation_history;
 	void clear();
 };
 
@@ -82,7 +80,6 @@ struct threadinfo
 struct mainthread final : Thread
 {
 	void begin_search() override;
-	void check_time();
 	bool quick_move_allow = false;
 	bool quick_move_played = false;
 	bool quick_move_evaluation_busy = false;

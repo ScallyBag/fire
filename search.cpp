@@ -1356,7 +1356,7 @@ void mainthread::begin_search()
 		for (auto i = 1; i < thread_pool.active_thread_count; ++i)
 			thread_pool.threads[i]->wake(true);
 
-		thread::begin_search();
+		Thread::begin_search();
 	}
 
 NO_ANALYSIS:
