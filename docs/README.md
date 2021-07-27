@@ -35,7 +35,6 @@ by Norman Schmidt
 Fire 8.NN.MC has undergone meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
 ## available binaries
-- **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set)
 - **x64 avx2** = fast pgo binary (for modern 64-bit systems w/ AVX2 instruction set)
 - **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
 
