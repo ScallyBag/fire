@@ -43,7 +43,7 @@ Fire 8.NN.MC has undergone meticulous analysis and refactoring using many of the
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are much much slower than the bmi2 and/or avx2 binaries.
 
-Here is a complete list of recommended processors for Fire 8.N.MC x64:
+Here is a complete list of recommended processors for Fire 8.NN.MC x64:
 
 **AVX2 (Advanced Vector Extensions 2)** (also known as Haswell New Instructions)
 
