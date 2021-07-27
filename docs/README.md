@@ -32,7 +32,10 @@ by Norman Schmidt
 
 **Fire 8.NN.MC (NNUE - MCTS/UCT) is now available**
 
+![alt tag](https://raw.githubusercontent.com/FireFather/fire/master/Fire_8.NN.MCx64.PNG)
+
 Fire 8.NN.MC has undergone meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
+
 
 ## available binaries
 - **x64 avx2** = fast pgo binary (for modern 64-bit systems w/ AVX2 instruction set)
