@@ -39,8 +39,8 @@ Fire 8.NN.MC has undergone meticulous analysis and refactoring using many of the
 - **x64 avx2** = fast pgo binary (for modern 64-bit systems w/ AVX2 instruction set)
 - **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
 
-- **windows** : Fire_8.NN.1_x64_bmi2.exe, Fire_8.NN.1_x64_avx2.exe, or Fire_8.NN.1_x64_popc.exe
-- **linux** :   Fire_8.NN.1_x64_bmi2, Fire_8.NN.1_x64_avx2 or Fire_8.NN.1_x64_popc
+- **windows** : Fire_8.NN.MC_x64_bmi2.exe, Fire_8.NN.MC_x64_avx2.exe
+- **linux** :   Fire_8.NN.MC_x64_bmi2, Fire_8.NN.MC_x64_avx2
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are much much slower than the bmi2 and/or avx2 binaries.
 
@@ -117,7 +117,8 @@ please see **http://chesslogik.wix.com/fire** for more info
 - **UCI_Chess960** play chess960 (often called FRC or Fischer Random Chess). default is false.
 - **Clear Hash** clear the hash table. delete allocated memory and re-initialize.
 - **SyzygyProbeDepth** engine begins probing at specified depth. increasing this option makes the engine probe less.
-- **EngineMode** choose classic, NNUE (default), or random.
+- **EngineMode** choose NNUE (default), or random.
+- **MCTS** enable Monte Carlo Tree Search w/UCT (Upper Confidence Bounds Applied to Trees)
 - **SyzygyProbeLimit** number of pieces that have to be on the board in the endgame before the table-bases are probed.
 - **Syzygy50MoveRule** set to false, tablebase positions that are drawn by the 50-move rule will count as a win or loss.
 - **SyzygyPath** path to the syzygy tablebase files.
