@@ -28,7 +28,7 @@ by Norman Schmidt
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
 - reads engine.conf on startup for search, eval, pawn, and material parameters
 - NNUE support
-- optional MCTS-UCT (Monte Carlo Tree Search w/ Upper Confidence Bounds Applied to Trees)
+- optional MCTS-UCT (Monte Carlo Tree Search w/ Upper Confidence Bounds Applied to Trees) pure/no minmax
 
 **Fire 8.NN.MC (NNUE - MCTS/UCT) is now available**
 
