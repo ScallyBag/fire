@@ -23,10 +23,10 @@ endif
 PGOBENCH = ./$(EXE) bench 16
 
 OBJS =
-	OBJS += util/bench.o bitboard.o chrono.o egtb/egtb.o endgame.o evaluate.o \
-	hash.o bitbase/kpk.o main.o material.o movegen.o movepick.o nnue/nnue.o \
-	nnue/misc.o pawn.o util/perft.o position.o pst.o random/random.o search.o \
-	sfactor.o egtb/tbprobe.o thread.o tune/tuner.o uci.o util/util.o zobrist.o \
+	OBJS += bitbase/kpk.o bitboard.o chrono.o egtb/egtb.o egtb/tbprobe.o endgame.o evaluate.o \
+	hash.o main.o material.o mcts/mcts.o mcts/moves.o mcts/node.o mcts/output.o mcts/policy.o \
+	mcts/ucb.o movegen.o movepick.o nnue/nnue.o nnue/misc.o pawn.o position.o pst.o random/random.o \
+	search.o sfactor.o thread.o tune/tuner.o uci.o util/bench.o util/perft.o util/util.o zobrist.o \
 	
 optimize = yes
 debug = no
@@ -341,6 +341,8 @@ gcc-profile-clean:
 	@rm -rf egtb/*.o	
 	@rm -rf macro/*.gcda
 	@rm -rf macro/*.o
+	@rm -rf mcts/*.gcda
+	@rm -rf mcts/*.o	
 	@rm -rf nnue/*.gcda
 	@rm -rf nnue/*.o	
 	@rm -rf random/*.gcda

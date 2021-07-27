@@ -49,8 +49,6 @@ void init(const int hash_size)
 	bitboard::init();
 	position::init();
 	search::init();
-	evaluate::init();
-	pawn::init();
 	thread_pool.init();
 	search::reset();
 	main_hash.init(hash_size);
@@ -94,10 +92,12 @@ void uci_loop(const int argc, char* argv[])
 			acout() << "option name Contempt type spin default 0 min -100 max 100" << std::endl;	
 			acout() << "option name SyzygyProbeDepth type spin default 1 min 0 max 64" << std::endl;
 			acout() << "option name SyzygyProbeLimit type spin default 6 min 0 max 6" << std::endl;
-			acout() << "option name EngineMode type combo default nnue var classic var nnue var random" << std::endl;
+			acout() << "option name EngineMode type combo default nnue var nnue var random" << std::endl;
+			acout() << "option name ClearHash type button" << std::endl;
+			acout() << "option name MCTS type check default false" << std::endl;			
+			//acout() << "option name Minimax type check default false" << std::endl;	
 			acout() << "option name Ponder type check default false" << std::endl;
 			acout() << "option name UCI_Chess960 type check default false" << std::endl;
-			acout() << "option name ClearHash type button" << std::endl;			
 			acout() << "option name Syzygy50MoveRule type check default true" << std::endl;
 			acout() << "option name SyzygyPath type string default <empty>" << std::endl;
 
@@ -248,6 +248,34 @@ void set_option(std::istringstream& is)
 				acout() << "info string EngineMode " << engine_mode << std::endl;
 				break;
 			}
+			if (token == "ClearHash")
+			{
+				main_hash.clear();
+				acout() << "info string Hash: cleared" << std::endl;
+				break;
+			}
+			if (token == "MCTS")
+			{
+				is >> token;
+				is >> token;
+				if (token == "true")
+					uci_mcts = true;
+				else
+					uci_mcts = false;
+				acout() << "info string MCTS " << uci_mcts << std::endl;
+				break;
+			}	
+			if (token == "Minimax")
+			{
+				is >> token;
+				is >> token;
+				if (token == "true")
+					uci_minimax = true;
+				else
+					uci_minimax = false;
+				acout() << "info string Minimax " << uci_minimax << std::endl;
+				break;
+			}
 			if (token == "Ponder")
 			{
 				is >> token;
@@ -268,12 +296,6 @@ void set_option(std::istringstream& is)
 				else
 					uci_chess960 = false;
 				acout() << "info string UCI_Chess960 " << uci_chess960 << std::endl;
-				break;
-			}
-			if (token == "ClearHash")
-			{
-				main_hash.clear();
-				acout() << "info string Hash: cleared" << std::endl;
 				break;
 			}
 			if (token == "Syzygy50MoveRule")

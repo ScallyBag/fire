@@ -51,9 +51,11 @@ public:
 	threadinfo* ti{};
 	cmhinfo* cmhi{};
 	position* root_position{};
+	search::rootmoves_mc mc_rootmoves;
 	rootmoves root_moves;
 	int completed_depth = no_depth;
 	int active_pv{};
+	continuation_history cont_history;
 	void clear();
 };
 
@@ -80,6 +82,7 @@ struct threadinfo
 struct mainthread final : Thread
 {
 	void begin_search() override;
+	void check_time();
 	bool quick_move_allow = false;
 	bool quick_move_played = false;
 	bool quick_move_evaluation_busy = false;
@@ -125,31 +128,19 @@ struct threadpool : std::vector<Thread*>
 	bool dummy_null_move_threat{}, dummy_prob_cut{};
 };
 
-class spinlock
-{
+class spinlock {
 	std::atomic_int lock_;
 
 public:
-	spinlock()
-	{
-		lock_ = 1;
-	}
-	
-	spinlock(const spinlock&)
-	{
-		lock_ = 1;
-	}
+	spinlock() { lock_ = 1; }
+	spinlock(const spinlock&) { lock_ = 1; }
 
-	void acquire()
-	{
+	void acquire() {
 		while (lock_.fetch_sub(1, std::memory_order_acquire) != 1)
 			while (lock_.load(std::memory_order_relaxed) <= 0)
 				std::this_thread::yield();
 	}
-	void release()
-	{
-		lock_.store(1, std::memory_order_release);
-	}
+	void release() { lock_.store(1, std::memory_order_release); }
 };
 
 extern threadpool thread_pool;

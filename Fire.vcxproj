@@ -126,6 +126,12 @@
     <ClCompile Include="hash.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
+    <ClCompile Include="mcts\mcts.cpp" />
+    <ClCompile Include="mcts\moves.cpp" />
+    <ClCompile Include="mcts\node.cpp" />
+    <ClCompile Include="mcts\output.cpp" />
+    <ClCompile Include="mcts\policy.cpp" />
+    <ClCompile Include="mcts\ucb.cpp" />
     <ClCompile Include="movegen.cpp" />
     <ClCompile Include="movepick.cpp" />
     <ClCompile Include="nnue\misc.cpp" />
@@ -161,6 +167,8 @@
     <ClInclude Include="macro\side.h" />
     <ClInclude Include="macro\square.h" />
     <ClInclude Include="material.h" />
+    <ClInclude Include="mcts\mcts.h" />
+    <ClInclude Include="mcts\node.h" />
     <ClInclude Include="movegen.h" />
     <ClInclude Include="movepick.h" />
     <ClInclude Include="mutex.h" />

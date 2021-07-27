@@ -16,9 +16,11 @@
 
 #pragma once
 #include <atomic>
+#include <vector>
 
 #include "chrono.h"
 #include "fire.h"
+#include "movepick.h"
 #include "position.h"
 
 typedef movelist<max_pv> principal_variation;
@@ -249,6 +251,44 @@ namespace search
 	inline int qs_stats_value_sortvalue = -12000;
 	inline int qs_skip_see_test_value_greater_than_alpha_sort_value = 1000;
 	inline int qs_skip_see_test_value_less_than_equal_to_alpha_sort_value = 2000;
+
+	struct rootmove_mc {
+
+		explicit rootmove_mc(const uint32_t m) : pv(1, m) {}
+		bool operator==(const uint32_t& m) const
+		{
+			return pv[0] == m;
+		}
+		bool operator<(const rootmove_mc& m) const
+		{
+			return m.score != score ? m.score < score
+				: m.previous_score < previous_score;
+		}
+
+		int score = -max_score;
+		int previous_score = -max_score;
+		int sel_depth = 0;
+		int tb_rank = 0;
+		int best_move_count = 0;
+		int tb_score{};
+		std::vector<uint32_t> pv;
+	};
+
+	typedef std::vector<rootmove_mc> rootmoves_mc;
+
+
+	struct stack_mc
+	{
+		uint32_t* pv;
+		piece_to_history* continuation_history;
+		int ply;
+		uint32_t current_move;
+		uint32_t excluded_move;
+		uint32_t killers[2];
+		int static_eval;
+		int stat_score;
+		int move_count;
+	};
 }
 
 // mainthread::begin_search

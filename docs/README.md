@@ -28,10 +28,11 @@ by Norman Schmidt
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
 - reads engine.conf on startup for search, eval, pawn, and material parameters
 - NNUE support
+- optional MCTS-UCT (Monte Carlo Tree Search w/ Upper Confidence Bounds Applied to Trees)
 
-**Fire 8.NN.1 (NNUE) is now available** with a significant speedup and corresponding strength increase.
+**Fire 8.NN.MC (NNUE - MCTS/UCT) is now available**
 
-Fire 8.NN.1 has undergone meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
+Fire 8.NN.MC has undergone meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
 ## available binaries
 - **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set)
@@ -43,7 +44,7 @@ Fire 8.NN.1 has undergone meticulous analysis and refactoring using many of the 
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are much much slower than the bmi2 and/or avx2 binaries.
 
-Here is a complete list of recommended processors for Fire 8.N.1 x64:
+Here is a complete list of recommended processors for Fire 8.N.MC x64:
 
 **AVX2 (Advanced Vector Extensions 2)** (also known as Haswell New Instructions)
 

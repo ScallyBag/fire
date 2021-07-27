@@ -22,6 +22,7 @@
 #include "evaluate.h"
 #include "fire.h"
 #include "hash.h"
+#include "mcts/mcts.h"
 #include "movegen.h"
 #include "movepick.h"
 #include "pragma.h"
@@ -252,7 +253,7 @@ namespace search
 			&& (!pi->strong_threat || depth >= null_move_strong_threat_mult * plies)
 			&& (pi->position_value >= beta || depth >= null_move_pos_val_less_than_beta_mult * plies)
 			&& pi->non_pawn_material[pos.on_move()]
-			&& (!thread_pool.analysis_mode || depth < null_move_max_depth * plies || evaluate::has_two_mobile_pieces(pos))
+			&& (!thread_pool.analysis_mode || depth < null_move_max_depth * plies)
 			)
 		{
 			assert(eval - beta >= 0);
@@ -1356,7 +1357,18 @@ void mainthread::begin_search()
 		for (auto i = 1; i < thread_pool.active_thread_count; ++i)
 			thread_pool.threads[i]->wake(true);
 
-		Thread::begin_search();
+		if (uci_mcts == true)
+		{
+			auto mc = new monte_carlo(*root_position);
+			if (!mc)
+				exit(EXIT_FAILURE);
+
+			mc->search();
+			delete mc;
+			mcts.clear(); 
+		}
+		else
+			Thread::begin_search();
 	}
 
 NO_ANALYSIS:

@@ -96,6 +96,24 @@
     <ClCompile Include="nnue\nnue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mcts\mcts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mcts\node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mcts\policy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mcts\moves.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mcts\ucb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mcts\output.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitboard.h">
@@ -198,6 +216,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="nnue\nnue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mcts\mcts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mcts\node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
