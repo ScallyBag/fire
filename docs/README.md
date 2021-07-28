@@ -28,7 +28,8 @@ by Norman Schmidt
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
 - reads engine.conf on startup for search, eval, pawn, and material parameters
 - NNUE support
-- optional MCTS-UCT (Monte Carlo Tree Search w/ Upper Confidence Bounds Applied to Trees) pure/no minmax
+- fast alpha-beta search
+- or optional experimental MCTS-UCT search (Monte Carlo Tree Search w/ Upper Confidence Bounds Applied to Trees) pure/no minmax
 
 **Fire 8.NN.MC (NNUE - MCTS/UCT) is now available**
 
@@ -99,8 +100,7 @@ K10-based processors (ABM supported)
 - Zen-based, Zen+-based, and processors (ABM, BMI1 and BMI2 supported; microcoded PEXT and PDEP)
 - Zen 3 processors and newer (ABM, BMI1 and BMI2 supported; full hardware implementation)
 
-set EngineMode to classic ('setoption name EngineMode value classic') and then run 'bench' at command line to determine which binary
-runs best/fastest on your system. for greater accuracy, run it twice and calculate the average of both results.
+Run 'bench' at command line to determine which binary runs best/fastest on your system. for greater accuracy, run it twice and calculate the average of both results.
 
 
 please see **http://chesslogik.wix.com/fire** for more info
