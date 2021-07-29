@@ -201,6 +201,10 @@ void set_option(std::istringstream& is)
 				is >> token;
 				is >> token;
 				uci_threads = stoi(token);
+				//hack to bypass 1 thread mcts
+				if (uci_threads == 1 && uci_mcts == true)
+					uci_threads = 2;
+				
 				thread_pool.change_thread_count(uci_threads);
 				if (uci_threads == 1)
 					acout() << "info string Threads " << uci_threads << " thread" << std::endl;
