@@ -146,10 +146,13 @@ the endgame table bases are implemented using code adapted from Ronald de Man's
 The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
 - [nnue-probe](https://github.com/dshawul/nnue-probe/)
 
-Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Viera.
+Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Viera
 - https://www.comp.nus.edu.sg/~sergio-v/nnue/
 (rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.N_x64 executable.)
- 
+
+the MCTS implementation is derived from Stefan Niclolet's work
+- https://github.com/snicolet/Stockfish/commits/montecarlo
+
 the quiescent search positions for the tuner have been generously shared by
 - [Zurichess](https://bitbucket.org/zurichess/zurichess/src/master/)
 
