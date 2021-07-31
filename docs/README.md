@@ -148,7 +148,7 @@ The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excel
 
 Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Vieri
 - https://www.comp.nus.edu.sg/~sergio-v/nnue/
-(rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.N_x64 executable.)
+(rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.NN.MC_x64 executable.)
 
 the MCTS implementation is derived from Stephane Nicolet's work
 - https://github.com/snicolet/Stockfish/commits/montecarlo
