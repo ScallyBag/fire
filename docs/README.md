@@ -150,7 +150,7 @@ Fire includes 'Raptor', a top reinforcement learning network trained by Sergio V
 - https://www.comp.nus.edu.sg/~sergio-v/nnue/
 (rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.N_x64 executable.)
 
-the MCTS implementation is derived from Stefan Niclolet's work
+the MCTS implementation is derived from Stephane Nicolet's work
 - https://github.com/snicolet/Stockfish/commits/montecarlo
 
 the quiescent search positions for the tuner have been generously shared by
