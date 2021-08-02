@@ -127,7 +127,7 @@ namespace evaluate
 		return nnue_score;
 	}
 	
-	int eval(const position& pos, const int alpha, const int beta)
+	int eval(const position& pos)
 	{
 		const int nnue_score = eval_nnue(pos);
 		return nnue_score;

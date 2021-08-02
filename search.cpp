@@ -106,7 +106,7 @@ namespace search
 		{
 			if (signals.stop_analyzing.load(std::memory_order_relaxed) || pi->move_repetition || pi->ply >= max_ply)
 				return pi->ply >= max_ply && !state_check
-				? evaluate::eval(pos, no_score, no_score)
+				? evaluate::eval(pos)
 				: draw[pos.on_move()];
 
 			alpha = std::max(gets_mated(pi->ply), alpha);
@@ -201,7 +201,7 @@ namespace search
 		else
 		{
 			if (pi->previous_move != null_move)
-				eval = evaluate::eval(pos, no_score, no_score);
+				eval = evaluate::eval(pos);
 			else
 				eval = evaluate::eval_after_null_move((pi - 1)->position_value);
 
@@ -807,9 +807,6 @@ namespace search
 	template <nodetype nt, bool state_check>
 	int q_search(position& pos, int alpha, const int beta, const int depth)
 	{
-		const auto lazy_margin_q_search_low = lazy_margin + score_1;
-		const auto lazy_margin_q_search_high = lazy_margin;
-
 		const auto pv_node = nt == PV;
 
 		assert(alpha >= -max_score && alpha < beta&& beta <= max_score);
@@ -833,7 +830,7 @@ namespace search
 
 		if (pi->move_repetition || pi->ply >= max_ply)
 			return pi->ply >= max_ply && !state_check
-			? evaluate::eval(pos, no_score, no_score)
+			? evaluate::eval(pos)
 			: draw[pos.on_move()];
 
 		assert(0 <= pi->ply && pi->ply < max_ply);
@@ -885,8 +882,7 @@ namespace search
 			else
 			{
 				if (pi->previous_move != null_move)
-					best_value = evaluate::eval(pos, pv_node ? no_score : alpha - lazy_margin_q_search_low,
-						pv_node ? no_score : beta + lazy_margin_q_search_high);
+					best_value = evaluate::eval(pos);
 				else
 					best_value = evaluate::eval_after_null_move((pi - 1)->position_value);
 
@@ -1255,10 +1251,10 @@ void mainthread::begin_search()
 
 		const auto temp_contempt = thread_pool.piece_contempt;
 		thread_pool.piece_contempt = 0;
-		const auto v1 = evaluate::eval(*root_position, no_score, no_score);
+		const auto v1 = evaluate::eval(*root_position);
 		thread_pool.piece_contempt = temp_contempt;
 		
-		if (const auto v2 = evaluate::eval(*root_position, no_score, no_score); abs(v1) < win_score && abs(v2) < win_score)
+		if (const auto v2 = evaluate::eval(*root_position); abs(v1) < win_score && abs(v2) < win_score)
 			thread_pool.root_contempt_value = v2 - v1;
 		else
 			thread_pool.root_contempt_value = score_0;
@@ -1406,7 +1402,7 @@ NO_ANALYSIS:
 	previous_root_score = best_thread->root_moves[0].score;
 	previous_root_depth = best_thread->root_moves[0].depth;
 
-	if (best_thread != this)
+	if (best_thread != this || search::signals.stop_if_ponder_hit)
 		best_thread->root_moves[0].depth = root_moves[0].depth;
 
 	if (!bench_active)
@@ -1485,7 +1481,7 @@ void Thread::begin_search()
 				const auto depth_singular = std::max(main_thread->previous_root_depth / 2, main_thread->previous_root_depth - 8 * plies);
 				const auto v_singular = hash_value - v_singular_margin;
 				pi->excluded_move = hash_move;
-				pi->position_value = evaluate::eval(*root_position, no_score, no_score);
+				pi->position_value = evaluate::eval(*root_position);
 				main_thread->quick_move_evaluation_busy = true;
 				const auto val = search::alpha_beta<search::nonPV>(*root_position, v_singular - score_1, v_singular, depth_singular, false);
 				main_thread->quick_move_evaluation_busy = false;

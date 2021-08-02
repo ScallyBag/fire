@@ -22,12 +22,10 @@
 #include "mcts.h"
 
 #include "../evaluate.h"
-#include "../fire.h"
 #include "../position.h"
 #include "../pragma.h"
 #include "../search.h"
 #include "../thread.h"
-#include "../uci.h"
 
 mcts_hash_table mcts;
 
@@ -47,20 +45,16 @@ uint32_t monte_carlo::search()
 		const reward n_reward = playout_policy(node);
 		backup(n_reward);
 
-		if (uci_minimax == false && should_output_result())
+		if (should_output_result())
 		{
 			depth++;
 			print_pv(depth);
 		}
 	}
-
-	if (uci_minimax == false)
-	{
+	
 		depth++;
 		print_pv(depth);
-	}
 
-	if (uci_minimax == false)
 		print_children = true;
 
 	return best_child(root_, stat_visits)->move;
@@ -104,28 +98,9 @@ void mainthread::check_time()
 		search::signals.stop_analyzing = true;
 }
 
-int monte_carlo::minimax_value(position& pos, const int depth) const
+int monte_carlo::evaluate() const
 {
-	const int alpha = -max_score;
-	const int beta = max_score;
-
-	const int value = depth < 1 ? pos.is_in_check()
-		? search::q_search<search::nodetype::PV, true>(pos, alpha, beta, depth_0)
-		: search::q_search<search::nodetype::PV, false>(pos, alpha, beta, depth_0)
-		: search::alpha_beta<search::nodetype::PV>(pos, beta - score_1, beta, depth_0, false);
-
-	return value;
-}
-
-int monte_carlo::evaluate(const int depth) const
-{
-	int score = 0;
-
-	if (uci_minimax == true)
-		score = minimax_value(pos_, depth);
-	else
-		score = evaluate::eval(pos_, no_score, no_score);
-
+	const int score = evaluate::eval(pos_);
 	return score;
 }
 

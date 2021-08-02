@@ -242,7 +242,7 @@ public:
 	void operator=(const t& v) { entry = v; }
 	t* operator&() { return &entry; }
 	t* operator->() { return &entry; }
-	operator const t& () const { return entry; }
+	explicit operator const t& () const { return entry; }
 
 	void operator<<(int bonus) {
 		assert(abs(bonus) <= D);

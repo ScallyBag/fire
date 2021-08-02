@@ -109,14 +109,8 @@ void monte_carlo::undo_move()
 reward monte_carlo::calculate_prior(const uint32_t move)
 {
 	prior_cnt_++;
-
-	const int depth = ply_ <= 2
-		|| pos_.is_capture_move(move)
-		|| pos_.is_in_check() ? prior_slow_eval_depth_
-		: prior_fast_eval_depth_;
-
 	do_move(move);
-	const reward prior = value_to_reward(-evaluate(depth));
+	const reward prior = value_to_reward(-evaluate());
 	undo_move();
 
 	return prior;

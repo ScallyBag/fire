@@ -92,7 +92,7 @@ struct mainthread final : Thread
 	int previous_root_score = score_0;
 	int interrupt_counter = 0;
 	int previous_root_depth = {};
-	int calls_cnt;
+	int calls_cnt{};
 };
 
 struct threadpool : std::vector<Thread*>

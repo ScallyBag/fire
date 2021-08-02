@@ -26,7 +26,7 @@
 
 constexpr auto tb_max_piece = 254;
 constexpr auto tb_max_pawn = 256;
-constexpr auto hash_max = 6;
+constexpr auto hash_max = 7;
 
 #define SWAP(a,b) {int tmp=a;(a)=b;(b)=tmp;}
 

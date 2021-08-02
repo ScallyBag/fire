@@ -63,8 +63,7 @@ public:
 
 	[[nodiscard]] reward value_to_reward(int v) const;
 	[[nodiscard]] int reward_to_value(reward r) const;
-	int minimax_value(position& pos, int depth) const;
-	[[nodiscard]] int evaluate(int depth) const;
+	[[nodiscard]] int evaluate() const;
 	[[nodiscard]] reward evaluate_terminal() const;
 
 	reward calculate_prior(uint32_t move);

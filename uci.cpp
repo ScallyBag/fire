@@ -123,7 +123,7 @@ void uci_loop(const int argc, char* argv[])
 		{
 			go(pos, is);
 		}
-		else if (token == "stop")
+		else if (token == "stop" || (token ==  "ponderhit" && search::signals.stop_if_ponder_hit))
 		{
 			search::signals.stop_analyzing = true;
 			thread_pool.main()->wake(false);
@@ -170,7 +170,7 @@ void uci_loop(const int argc, char* argv[])
 		}
 #endif
 		else
-		{
+		{	
 		}
 	} while (token != "quit" && argc == 1);
 	// if loop is broken with 'quit', exit and destroy thread pool
@@ -269,17 +269,6 @@ void set_option(std::istringstream& is)
 				acout() << "info string MCTS " << uci_mcts << std::endl;
 				break;
 			}	
-			if (token == "Minimax")
-			{
-				is >> token;
-				is >> token;
-				if (token == "true")
-					uci_minimax = true;
-				else
-					uci_minimax = false;
-				acout() << "info string Minimax " << uci_minimax << std::endl;
-				break;
-			}
 			if (token == "Ponder")
 			{
 				is >> token;
@@ -330,6 +319,12 @@ void set_option(std::istringstream& is)
 // including time and inc, etc.
 void go(position& pos, std::istringstream& is)
 {
+	if (uci_threads == 1 && uci_mcts == true)
+	{
+		acout() << "info string MCTS requires > 1 thread " << std::endl;			
+		exit (EXIT_SUCCESS);
+	}
+	
 	search_param param;
 	std::string token;
 	param.infinite = 1;

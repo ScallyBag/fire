@@ -41,7 +41,6 @@ initialized template vars
 #include <fstream>
 #include <vector>
 
-#include "evaluate.h"
 #include "search.h"
 #include "util/util.h"
 
