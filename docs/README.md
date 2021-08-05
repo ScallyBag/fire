@@ -22,7 +22,6 @@ by Norman Schmidt
 - adjustable contempt setting
 - fast perft & divide
 - bench (includes ttd time-to-depth calculation)
-- integrated tuner (if compiled with #define TUNER)
 - timestamped bench, perft/divide, and tuner logs
 - asychronous cout (acout) class using std::unique_lock<std::mutex>
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
@@ -32,7 +31,7 @@ by Norman Schmidt
 - or optional experimental MCTS-UCT search
  (Monte Carlo Tree Search w/ Upper Confidence Bounds Applied to Trees) pure/no minmax
 
-**Fire 8.NN.MC (NNUE - MCTS/UCT) is now available**
+**Fire 8.NN.MC.2 (NNUE - MCTS/UCT) is now available**
 
 ![alt tag](https://raw.githubusercontent.com/FireFather/fire/master/Fire_8.NN.MCx64.PNG)
 
@@ -42,9 +41,10 @@ Fire 8.NN.MC has undergone meticulous analysis and refactoring using many of the
 ## available binaries
 - **x64 avx2** = fast pgo binary (for modern 64-bit systems w/ AVX2 instruction set)
 - **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
+- **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcount instruction set)
 
-- **windows** : Fire_8.NN.MC_x64_bmi2.exe, Fire_8.NN.MC_x64_avx2.exe
-- **linux** :   Fire_8.NN.MC_x64_bmi2, Fire_8.NN.MC_x64_avx2
+- **windows** : Fire_8.NN.MC.2_x64_bmi2.exe, Fire_8.NN.MC.2_x64_avx2.exe, Fire_8.NN.MC.2_x64_popc.exe
+- **linux** :   Fire_8.NN.MC.2_x64_bmi2, Fire_8.NN.MC.2_x64_avx2, Fire_8.NN.MC.2_x64_popc
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are much much slower than the bmi2 and/or avx2 binaries.
 
@@ -148,7 +148,7 @@ The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excel
 
 Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Vieri
 - https://www.comp.nus.edu.sg/~sergio-v/nnue/
-(rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.NN.MC_x64 executable.)
+(rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.NN.MC.2_x64 executable.)
 
 the MCTS implementation is derived from Stephane Nicolet's work
 - https://github.com/snicolet/Stockfish/commits/montecarlo

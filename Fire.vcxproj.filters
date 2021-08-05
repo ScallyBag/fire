@@ -75,9 +75,6 @@
     <ClCompile Include="egtb\tbprobe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tune\tuner.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="util\bench.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -189,9 +186,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="macro\square.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tune\tuner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="util\bench.h">

@@ -16,5 +16,5 @@
 arch_cpu=x86-64-avx2
 make --no-print-directory -j profile-build ARCH=${arch_cpu} COMP=mingw
 strip fire.exe
-mv fire.exe Fire_8.NN.MC_x64_avx2.exe 
+mv fire.exe Fire_8.NN.MC.2_x64_avx2.exe 
 make clean 

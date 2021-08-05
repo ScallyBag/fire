@@ -29,9 +29,6 @@
 #include "uci.h"
 #include "util/perft.h"
 #include "util/util.h"
-#ifdef TUNER
-#include "tune/tuner.h"
-#endif
 
 // stop threads, reset search
 void new_game()
@@ -160,15 +157,6 @@ void uci_loop(const int argc, char* argv[])
 			bench(stoi(bench_depth));
 			bench_active = false;
 		}
-#ifdef TUNER
-		else if (token == "tune")
-		{
-			auto epd_file = is >> token ? token : "quiet.epd";
-			auto threads = is >> token ? token : "1";
-
-			tuner::tune(epd_file, stoi(threads));
-		}
-#endif
 		else
 		{	
 		}
