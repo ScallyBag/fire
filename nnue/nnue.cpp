@@ -13,7 +13,7 @@
   You should have received a copy of the GNU General Public License with
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 
-  Thanks to Yu Nasu, Hisayori Noda, this implementation adapted from R. De Man
+  Thanks to Yu Nasu, Hisayori Noda. This implementation adapted from R. De Man
   and Daniel Shaw's Cfish nnue probe code https://github.com/dshawul/nnue-probe
 
   modified as follows via clang cpp core guidelines:
@@ -119,7 +119,7 @@ uint32_t piece_to_index[2][14] =
 };
 
 // Version of the evaluation file
-static const uint32_t nnue_version = 0x7AF32F16u;
+static constexpr uint32_t nnue_version = 0x7AF32F16u;
 
 // Constants used in evaluation value calculation
 enum
@@ -339,8 +339,7 @@ static int32_t hidden1_biases alignas(64)[32];
 static int32_t hidden2_biases alignas(64)[32];
 static int32_t output_biases[1];
 
-INLINE int32_t affine_propagate(clipped_t* input, int32_t* biases,
-	weight_t* weights)
+INLINE int32_t affine_propagate(clipped_t* input, const int32_t* biases, weight_t* weights)
 {
 #if defined(USE_AVX2)
 	const auto iv = reinterpret_cast<__m256i*>(input);
@@ -976,7 +975,7 @@ constexpr int tile_height = num_regs * simd_width / 16;
 #endif
 
 // Calculate cumulative value without using difference calculation
-INLINE void refresh_accumulator(Position* pos)
+INLINE void refresh_accumulator(const Position* pos)
 {
 	Accumulator* accumulator = &(pos->nnue[0]->accumulator);
 
@@ -1027,7 +1026,7 @@ INLINE void refresh_accumulator(Position* pos)
 }
 
 // Calculate cumulative value using difference calculation if possible
-INLINE bool update_accumulator(Position* pos)
+INLINE bool update_accumulator(const Position* pos)
 {
 	Accumulator* accumulator = &(pos->nnue[0]->accumulator);
 	if (accumulator->computed_accumulation)
@@ -1130,7 +1129,7 @@ INLINE bool update_accumulator(Position* pos)
 }
 
 // Convert input features
-INLINE void transform(Position* pos, clipped_t* output, mask_t* out_mask)
+INLINE void transform(const Position* pos, clipped_t* output, mask_t* out_mask)
 {
 	if (!update_accumulator(pos))
 		refresh_accumulator(pos);
@@ -1148,9 +1147,9 @@ INLINE void transform(Position* pos, clipped_t* output, mask_t* out_mask)
 		const unsigned offset = k_half_dimensions * p;
 
 #ifdef VECTOR
-		const unsigned numChunks = (16 * k_half_dimensions) / simd_width;
+		constexpr unsigned num_chunks = (16 * k_half_dimensions) / simd_width;
 		const auto out = reinterpret_cast<vec8_t*>(&output[offset]);
-		for (unsigned i = 0; i < numChunks / 2; i++)
+		for (unsigned i = 0; i < num_chunks / 2; i++)
 		{
 			const vec16_t s0 = reinterpret_cast<vec16_t*>((*accumulation)[perspectives[p]])[i * 2];
 			const vec16_t s1 = reinterpret_cast<vec16_t*>((*accumulation)[perspectives[p]])[i * 2 + 1];
@@ -1414,23 +1413,3 @@ int _CDECL nnue_evaluate(const int player, int* pieces, int* squares)
 	return nnue_evaluate_pos(&pos);
 }
 
-int _CDECL nnue_evaluate_incremental(const int player, int* pieces, int* squares, nnue_data** nnue)
-{
-	assert(nnue[0] && reinterpret_cast<uint64_t>(&nnue[0]->accumulator) % 64 == 0);
-
-	Position pos{};
-	pos.nnue[0] = nnue[0];
-	pos.nnue[1] = nnue[1];
-	pos.nnue[2] = nnue[2];
-	pos.player = player;
-	pos.pieces = pieces;
-	pos.squares = squares;
-	return nnue_evaluate_pos(&pos);
-}
-
-int _CDECL nnue_evaluate_fen(const char* fen)
-{
-	int pieces[33], squares[33], player, castle, fifty, move_number;
-	decode_fen(fen, &player, &castle, &fifty, &move_number, pieces, squares);
-	return nnue_evaluate(player, pieces, squares);
-}

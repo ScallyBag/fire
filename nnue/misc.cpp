@@ -13,7 +13,7 @@
   You should have received a copy of the GNU General Public License with
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 
-  Thanks to Yu Nasu, Hisayori Noda, this implementation adapted from R. De Man
+  Thanks to Yu Nasu, Hisayori Noda. This implementation adapted from R. De Man
   and Daniel Shaw's Cfish nnue probe code https://github.com/dshawul/nnue-probe
 */
 
@@ -92,11 +92,11 @@ void unmap_file(const void* data, const map_t map)
 /*
 FEN
 */
-static const char piece_name[] = "_KQRBNPkqrbnp_";
-static const char rank_name[] = "12345678";
-static const char file_name[] = "abcdefgh";
-static const char col_name[] = "WwBb";
-static const char cas_name[] = "KQkq";
+static constexpr char piece_name[] = "_KQRBNPkqrbnp_";
+static constexpr char rank_name[] = "12345678";
+static constexpr char file_name[] = "abcdefgh";
+static constexpr char col_name[] = "WwBb";
+static constexpr char cas_name[] = "KQkq";
 
 void decode_fen(const char* fen_str, int* player, int* castle,
 	int* fifty, int* move_number, int* piece, int* square)

@@ -206,7 +206,7 @@ uint64_t shift_bb(const uint64_t b)
 		: 0;
 }
 
-const int kp_delta[][8] =
+constexpr int kp_delta[][8] =
 {
 {},
 {

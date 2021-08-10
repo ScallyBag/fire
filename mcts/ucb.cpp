@@ -35,7 +35,7 @@ double monte_carlo::exploration_constant() const
 	return ucb_exploration_constant_;
 }
 
-double monte_carlo::ucb(mc_node node, edge& edge) const
+double monte_carlo::ucb(mc_node node, const edge& edge) const
 {
 	const long father_visits = node->node_visits;
 	assert(father_visits > 0);

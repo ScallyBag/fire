@@ -88,7 +88,7 @@ void monte_carlo::backup(reward r)
 
 	while (!is_root(current_node()))
 	{
-		const double weight = 1.0;
+		constexpr double weight = 1.0;
 		undo_move();
 
 		r = 1.0 - r;

@@ -173,54 +173,6 @@ void position::copy_position(const position* pos, Thread* th, position_info* cop
 	}
 }
 
-std::string position::fen() const
-{
-	auto empty_cnt = 0;
-	std::ostringstream ss;
-
-	for (auto r = rank_8; ; --r)
-	{
-		for (auto f = file_a; f <= file_h; ++f)
-		{
-			for (empty_cnt = 0; f <= file_h && empty_square(make_square(f, r)); ++f)
-				++empty_cnt;
-
-			if (empty_cnt)
-				ss << empty_cnt;
-
-			if (f <= file_h)
-				ss << util::piece_to_char[piece_on_square(make_square(f, r))];
-		}
-
-		if (r == rank_1)
-			break;
-
-		ss << '/';
-	}
-
-	ss << (on_move_ == white ? " w " : " b ");
-
-	if (castling_possible(white_short))
-		ss << (chess960_ ? static_cast<char>('A' + file_of(castle_rook_square(g1))) : 'K');
-
-	if (castling_possible(white_long))
-		ss << (chess960_ ? static_cast<char>('A' + file_of(castle_rook_square(c1))) : 'Q');
-
-	if (castling_possible(black_short))
-		ss << (chess960_ ? static_cast<char>('a' + file_of(castle_rook_square(g8))) : 'k');
-
-	if (castling_possible(black_long))
-		ss << (chess960_ ? static_cast<char>('a' + file_of(castle_rook_square(c8))) : 'q');
-
-	if (!castling_possible(white) && !castling_possible(black))
-		ss << '-';
-
-	ss << (enpassant_square() == no_square ? " - " : " " + sq(enpassant_square()) + " ")
-		<< pos_info_->draw50_moves << " " << 1 + (game_ply_ - (on_move_ == black)) / 2;
-
-	return ss.str();
-}
-
 int position::game_phase() const
 {
 	return std::max(0, std::min(middlegame_phase, static_cast<int>(pos_info_->phase) - 6));
@@ -374,7 +326,7 @@ bool position::legal_move(const uint32_t move) const
 }
 
 template <bool yes>
-void position::do_castle_move(const side me, square from, square to, square& from_r, square& to_r)
+void position::do_castle_move(const side me, const square from, const square to, square& from_r, square& to_r)
 {
 	from_r = castle_rook_square(to);
 	to_r = relative_square(me, from_r > from ? f1 : d1);

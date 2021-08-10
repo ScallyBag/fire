@@ -117,7 +117,7 @@ namespace material
 	inline auto q_phase_factor = 6;
 
 	// default material hash size = 16 MB;
-	const int material_hash_size = 16384;
+	constexpr int material_hash_size = 16384;
 
 	typedef material_hash_table<mat_hash_entry, material_hash_size> material_hash;
 	mat_hash_entry* probe(const position& pos);

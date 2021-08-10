@@ -64,7 +64,7 @@ void monte_carlo::generate_moves()
 
 reward monte_carlo::value_to_reward(const int v) const
 {
-	const double k = -0.00490739829861;
+	constexpr double k = -0.00490739829861;
 	const double r = 1.0 / (1 + exp(k * v));
 
 	assert(reward_mated <= r && r <= reward_mate);
@@ -76,7 +76,7 @@ int monte_carlo::reward_to_value(const reward r) const
 	if (r > 0.99) return  win_score;
 	if (r < 0.01) return -win_score;
 
-	const double g = 203.77396313709564;
+	constexpr double g = 203.77396313709564;
 	const double v = g * log(r / (1.0 - r));
 	return static_cast<int>(v);
 }

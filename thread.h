@@ -46,7 +46,7 @@ public:
 	void idle_loop();
 	void wake(bool activate_search);
 	void wait_for_search_to_end();
-	void wait(std::atomic_bool& condition);
+	void wait(const std::atomic_bool& condition);
 
 	threadinfo* ti{};
 	cmhinfo* cmhi{};

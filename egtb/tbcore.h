@@ -48,8 +48,8 @@ typedef unsigned int uint32;
 typedef unsigned char ubyte;
 typedef unsigned short ushort;
 
-const ubyte wdl_magic[4] = { 0x71, 0xe8, 0x23, 0x5d };
-const ubyte dtz_magic[4] = { 0xd7, 0x66, 0x0c, 0xa5 };
+constexpr ubyte wdl_magic[4] = { 0x71, 0xe8, 0x23, 0x5d };
+constexpr ubyte dtz_magic[4] = { 0xd7, 0x66, 0x0c, 0xa5 };
 
 constexpr auto tb_hash_bits = 10;
 

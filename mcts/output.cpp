@@ -64,7 +64,7 @@ std::string create_pv(const position& pos, const int depth, const int alpha, con
 		if (depth == 1 && !updated)
 			continue;
 
-		int d = updated ? depth : depth - 1;
+		const int d = updated ? depth : depth - 1;
 		int score = updated ? mc_root_moves[i].score : mc_root_moves[i].previous_score;
 
 		const auto tb = tb_root_in_tb && abs(score) < egtb_win_score;
@@ -92,7 +92,7 @@ std::string create_pv(const position& pos, const int depth, const int alpha, con
 			<< " time " << elapsed
 			<< " pv";
 
-		for (uint32_t m : mc_root_moves[i].pv)
+		for (const uint32_t m : mc_root_moves[i].pv)
 			ss << " " << util::move_to_string(m, pos);
 	}
 	return ss.str();
@@ -103,7 +103,7 @@ void monte_carlo::print_pv(const int depth)
 	assert(is_root(current_node()));
 
 	std::string pv;
-	edge* children = get_list_of_children(root_);
+	const edge* children = get_list_of_children(root_);
 	const int n = number_of_sons(root_);
 
 	edge list[max_children]{};

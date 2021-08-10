@@ -19,7 +19,7 @@
 #include <string>
 
 #include "bitboard.h"
-#include "evaluate.h"
+#include "chrono.h"
 #include "fire.h"
 #include "hash.h"
 #include "nnue/nnue.h"
@@ -49,7 +49,15 @@ void init(const int hash_size)
 	thread_pool.init();
 	search::reset();
 	main_hash.init(hash_size);
-	nnue_init("nn.bin");	
+	const char *filename = uci_nnue_evalfile.c_str();
+	nnue_init(filename);	
+}
+
+// initialize system
+void init_nnue()
+{
+	const char *filename = uci_nnue_evalfile.c_str();
+	nnue_init(filename);	
 }
 
 // create infinite loop while parsing for UCI input stream tokens (words)
@@ -86,18 +94,19 @@ void uci_loop(const int argc, char* argv[])
 			acout() << "option name Hash type spin default 64 min 16 max 1048576" << std::endl;
 			acout() << "option name Threads type spin default 1 min 1 max 128" << std::endl;
 			acout() << "option name MultiPV type spin default 1 min 1 max 64" << std::endl;
-			acout() << "option name Contempt type spin default 0 min -100 max 100" << std::endl;	
+			acout() << "option name Contempt type spin default 0 min -100 max 100" << std::endl;
+			acout() << "option name MinimumTime type spin default 1 min 0 max 1000" << std::endl;
+			acout() << "option name MoveOverhead type spin default 50 min 0 max 1000" << std::endl;
 			acout() << "option name SyzygyProbeDepth type spin default 1 min 0 max 64" << std::endl;
 			acout() << "option name SyzygyProbeLimit type spin default 6 min 0 max 6" << std::endl;
 			acout() << "option name EngineMode type combo default nnue var nnue var random" << std::endl;
 			acout() << "option name ClearHash type button" << std::endl;
 			acout() << "option name MCTS type check default false" << std::endl;			
-			//acout() << "option name Minimax type check default false" << std::endl;	
 			acout() << "option name Ponder type check default false" << std::endl;
 			acout() << "option name UCI_Chess960 type check default false" << std::endl;
 			acout() << "option name Syzygy50MoveRule type check default true" << std::endl;
 			acout() << "option name SyzygyPath type string default <empty>" << std::endl;
-
+			acout() << "option name NnueEvalFile type string default " << uci_nnue_evalfile << std::endl;			
 			acout() << "uciok" << std::endl;
 		}
 		else if (token == "isready")
@@ -216,6 +225,22 @@ void set_option(std::istringstream& is)
 				acout() << "info string Contempt " << uci_contempt << std::endl;
 				break;
 			}
+			if (token == "MinimumTime")
+			{
+				is >> token;
+				is >> token;
+				time_control.uci_minimum_time = stoi(token);
+				acout() << "info string MinimumTime " << time_control.uci_minimum_time << " ms" << std::endl;
+				break;
+			}
+			if (token == "MoveOverhead")
+			{
+				is >> token;
+				is >> token;
+				time_control.uci_move_overhead = stoi(token);
+				acout() << "info string MoveOverhead " << time_control.uci_move_overhead << " ms" << std::endl;
+				break;
+			}
 			if (token == "SyzygyProbeDepth")
 			{
 				is >> token;
@@ -254,7 +279,7 @@ void set_option(std::istringstream& is)
 					uci_mcts = true;
 				else
 					uci_mcts = false;
-				acout() << "info string MCTS " << uci_mcts << std::endl;
+				acout() << "info string MCTS " << token << std::endl;
 				break;
 			}	
 			if (token == "Ponder")
@@ -265,7 +290,7 @@ void set_option(std::istringstream& is)
 					uci_ponder = true;
 				else
 					uci_ponder = false;
-				acout() << "info string Ponder " << uci_ponder << std::endl;
+				acout() << "info string Ponder " << token << std::endl;
 				break;
 			}
 			if (token == "UCI_Chess960")
@@ -276,7 +301,7 @@ void set_option(std::istringstream& is)
 					uci_chess960 = true;
 				else
 					uci_chess960 = false;
-				acout() << "info string UCI_Chess960 " << uci_chess960 << std::endl;
+				acout() << "info string UCI_Chess960 " << token << std::endl;
 				break;
 			}
 			if (token == "Syzygy50MoveRule")
@@ -287,7 +312,7 @@ void set_option(std::istringstream& is)
 					uci_syzygy_50_move_rule = true;
 				else
 					uci_syzygy_50_move_rule = false;
-				acout() << "info string Syzygy50MoveRule " << uci_syzygy_50_move_rule << std::endl;
+				acout() << "info string Syzygy50MoveRule " << token << std::endl;
 				break;
 			}
 			if (token == "SyzygyPath")
@@ -297,6 +322,15 @@ void set_option(std::istringstream& is)
 				uci_syzygy_path = token;
 				egtb::syzygy_init(uci_syzygy_path);
 				acout() << "info string SyzygyPath " << uci_syzygy_path << std::endl;
+				break;
+			}
+			if (token == "NnueEvalFile")
+			{
+				is >> token;
+				is >> token;
+				uci_nnue_evalfile = token;
+				init_nnue();
+				acout() << "info string NnueEvalFile " << uci_nnue_evalfile << std::endl;
 				break;
 			}
 		}
@@ -387,7 +421,7 @@ void set_position(position& pos, std::istringstream& is)
 	else
 		return;
 
-	pos.set(fen, false, thread_pool.main());
+	pos.set(fen, uci_chess960, thread_pool.main());
 
 	while (is >> token && (move = util::move_from_string(pos, token)) != no_move)
 	{

@@ -239,12 +239,25 @@ class pi_entry {
 	t entry;
 
 public:
-	void operator=(const t& v) { entry = v; }
-	t* operator&() { return &entry; }
-	t* operator->() { return &entry; }
-	explicit operator const t& () const { return entry; }
+	void operator=(const t& v)
+	{
+		entry = v;
+	}
+	t* operator&()
+	{
+		return &entry;
+	}
+	t* operator->()
+	{
+		return &entry;
+	}
+	explicit operator const t& () const
+	{
+		return entry;
+	}
 
-	void operator<<(int bonus) {
+	void operator<<(int bonus)
+	{
 		assert(abs(bonus) <= D);
 		static_assert(d <= std::numeric_limits<t>::max(), "D overflows T");
 

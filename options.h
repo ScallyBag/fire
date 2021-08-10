@@ -93,8 +93,8 @@ public:
 inline void options::load_args(const int argc, char* argv[])
 {
 
-	auto matches = [](std::string& s1, const char* s2) { return strcmp(s1.c_str(), s2) == 0; };
-	auto set = [this](std::string& k, std::string& v) { this->opts.emplace(k.substr(1), v); };
+	auto matches = [](const std::string& s1, const char* s2) { return strcmp(s1.c_str(), s2) == 0; };
+	auto set = [this](const std::string& k, std::string& v) { this->opts.emplace(k.substr(1), v); };
 
 	for (int j = 1; j < argc - 1; j += 2)
 	{

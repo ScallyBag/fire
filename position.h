@@ -66,7 +66,7 @@ constexpr ptype make_piece(const side color, const uint8_t piece)
 	return static_cast<ptype>((color << 3) + piece);
 }
 
-const int material_value[num_pieces] =
+constexpr int material_value[num_pieces] =
 {
 	mat_0, mat_0, mat_0, mat_knight, mat_bishop, mat_rook, mat_queen, mat_0,
 	mat_0, mat_0, mat_0, mat_knight, mat_bishop, mat_rook, mat_queen, mat_0
@@ -78,7 +78,7 @@ constexpr int piece_phase[num_pieces] =
 	0, 0, 0, 1, 1, 3, 6, 0
 };
 
-const int see_value_simple[num_pieces] =
+constexpr int see_value_simple[num_pieces] =
 {
 	see_0, see_0, see_pawn, see_knight, see_bishop, see_rook, see_queen, see_0,
 	see_0, see_0, see_pawn, see_knight, see_bishop, see_rook, see_queen, see_0
@@ -154,7 +154,6 @@ public:
 	position& operator=(const position&) = delete;
 
 	position& set(const std::string& fen_str, bool is_chess960, Thread* th);
-	[[nodiscard]] std::string fen() const;
 
 	[[nodiscard]] uint64_t pieces() const;
 	[[nodiscard]] uint64_t pieces(uint8_t piece) const;

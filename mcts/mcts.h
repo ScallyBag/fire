@@ -31,7 +31,7 @@ typedef double reward;
 typedef node_info* mc_node;
 
 inline bool print_children = false;
-const int max_children = 128;
+constexpr int max_children = 128;
 
 enum edge_statistic
 {
@@ -52,7 +52,7 @@ public:
 	void backup(reward r);
 	edge* best_child(mc_node node, edge_statistic statistic) const;
 
-	double ucb(mc_node node, edge& edge) const;
+	double ucb(mc_node node, const edge& edge) const;
 
 	[[nodiscard]] mc_node current_node() const;
 	bool is_root(mc_node node) const;

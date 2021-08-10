@@ -21,10 +21,10 @@
 #include "../position.h"
 #include "../pragma.h"
 
-const reward reward_none = 0.0;
-const reward reward_mated = 0.0;
-const reward reward_draw = 0.5;
-const reward reward_mate = 1.0;
+constexpr reward reward_none = 0.0;
+constexpr reward reward_mated = 0.0;
+constexpr reward reward_draw = 0.5;
+constexpr reward reward_mate = 1.0;
 
 mc_node get_node(const position& pos);
 

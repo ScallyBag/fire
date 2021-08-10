@@ -100,7 +100,7 @@ namespace pawn
 	};
 
 	pawn_hash_entry* probe(const position& pos);
-	const int pawn_hash_size = 16384;
+	constexpr int pawn_hash_size = 16384;
 	typedef pawn_hash_table<pawn_hash_entry, pawn_hash_size> pawn_hash;
 }
 

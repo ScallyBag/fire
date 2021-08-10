@@ -96,7 +96,7 @@ namespace movepick
 	template <>
 	void score<captures_promotions>(const position& pos)
 	{
-		auto* const pi = pos.info();
+		const auto* const pi = pos.info();
 		for (auto* z = pi->mp_current_move; z < pi->mp_end_list; z++)
 			z->value = capture_sort_values[pos.piece_on_square(to_square(z->move))]
 			- 200 * relative_rank(pos.on_move(), to_square(z->move));
@@ -135,7 +135,7 @@ namespace movepick
 	template <>
 	void score<evade_check>(const position& pos)
 	{
-		auto* const pi = pos.info();
+		const auto* const pi = pos.info();
 		const auto& history = pos.thread_info()->evasion_history;
 
 		for (auto* z = pi->mp_current_move; z < pi->mp_end_list; z++)

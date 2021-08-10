@@ -13,7 +13,7 @@
   You should have received a copy of the GNU General Public License with
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 
-  Thanks to Yu Nasu, Hisayori Noda, this implementation adapted from R. De Man
+  Thanks to Yu Nasu, Hisayori Noda. This implementation adapted from R. De Man
   and Daniel Shaw's Cfish nnue probe code https://github.com/dshawul/nnue-probe
 */
 
@@ -102,39 +102,12 @@ typedef struct Position
 
 int nnue_evaluate_pos(Position* pos);
 
-/************************************************************************
-*         EXTERNAL INTERFACES
-*
-* Load a NNUE file using
-*
-*   nnue_init(file_path)
-*
-* and then probe score using one of three functions, whichever
-* is convenient. From easy to hard
-*
-*   a) nnue_evaluate_fen         - accepts a fen string for evaluation
-*   b) nnue_evaluate             - suitable for use in engines
-*   c) nnue_evaluate_incremental - for ultimate performance but will need
-*                                  some work on the engines side.
-*
-**************************************************************************/
-
 /**
 * Load NNUE file
 */
 void _CDECL nnue_init
 (
 	const char* eval_file             /** Path to NNUE file */
-);
-
-/**
-* Evaluate on FEN string
-* Returns
-*   Score relative to side to move in approximate centipawns
-*/
-int _CDECL nnue_evaluate_fen
-(
-	const char* fen                   /** FEN string to probe evaluation for */
 );
 
 /**
@@ -163,23 +136,5 @@ int _CDECL nnue_evaluate
 	int player,                       /** Side to move: white=0 black=1 */
 	int* pieces,                      /** Array of pieces */
 	int* squares                      /** Corresponding array of squares each piece stands on */
-);
-
-/**
-* Incremental NNUE evaluation function.
-* -------------------------------------------------
-* First three parameters and return type are as in nnue_evaluate
-*
-* nnue_data
-*    nnue_data[0] is pointer to NNUEdata for ply i.e. current position
-*    nnue_data[1] is pointer to NNUEdata for ply - 1
-*    nnue_data[2] is pointer to NNUEdata for ply - 2
-*/
-int _CDECL nnue_evaluate_incremental
-(
-	int player,                       /** Side to move: white=0 black=1 */
-	int* pieces,                      /** Array of pieces */
-	int* squares,                     /** Corresponding array of squares each piece stands on */
-	nnue_data** nnue			      /** Pointer to NNUEdata* for current and previous plies */
 );
 

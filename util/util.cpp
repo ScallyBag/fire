@@ -120,7 +120,7 @@ namespace util
 // display ascii representation of position (for use in bench and perft)
 std::ostream& operator<<(std::ostream& os, const position& pos)
 {
-	char p_chars[] =
+	const char p_chars[] =
 	{
 	'K','P','N','B','R','Q',
 	'k','p','n','b','r','q',

@@ -144,7 +144,7 @@ uint64_t threadpool::tb_hits() const
 	return hits;
 }
 
-void Thread::wait(std::atomic_bool& condition)
+void Thread::wait(const std::atomic_bool& condition)
 {
 	std::unique_lock lk(mutex_);
 	sleep_condition_.wait(lk, [&]

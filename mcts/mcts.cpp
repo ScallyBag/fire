@@ -73,7 +73,7 @@ bool monte_carlo::computational_budget() const
 
 void mainthread::check_time()
 {
-	const int time_denominator = 60;
+	constexpr int time_denominator = 60;
 
 	if (--calls_cnt > 0)
 		return;
@@ -92,7 +92,7 @@ void mainthread::check_time()
 	if (search::param.ponder)
 		return;
 
-	if (const int time_numerator = 10; (search::param.use_time_calculating() && (elapsed > time_control.maximum() * time_numerator / time_denominator || search::signals.stop_if_ponder_hit))
+	if (constexpr int time_numerator = 10; (search::param.use_time_calculating() && (elapsed > time_control.maximum() * time_numerator / time_denominator || search::signals.stop_if_ponder_hit))
 		|| (search::param.move_time && elapsed >= search::param.move_time)
 		|| (search::param.nodes && thread_pool.visited_nodes() >= search::param.nodes))
 		search::signals.stop_analyzing = true;

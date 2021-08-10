@@ -1037,7 +1037,7 @@ namespace search
 
 		for (auto i = 0; i < thread_pool.thread_count; ++i)
 		{
-			auto* th = thread_pool.threads[i];
+			const auto* th = thread_pool.threads[i];
 			th->ti->history.clear();
 			th->ti->evasion_history.clear();
 			th->ti->max_gain_table.clear();
@@ -1079,7 +1079,7 @@ namespace search
 
 	// update history, killers, and countermoves
 	void update_stats(const position& pos, const bool state_check, const uint32_t move,
-		const int depth, uint32_t* quiet_moves, const int quiet_number)
+	                  const int depth, const uint32_t* quiet_moves, const int quiet_number)
 	{
 		auto* pi = pos.info();
 
@@ -1183,7 +1183,7 @@ namespace search
 		}
 	}
 
-	void update_stats_quiet(const position& pos, const bool state_check, const int depth, uint32_t* quiet_moves, const int quiet_number)
+	void update_stats_quiet(const position& pos, const bool state_check, const int depth, const uint32_t* quiet_moves, const int quiet_number)
 	{
 		auto* const pi = pos.info();
 		auto* cmh = pi->move_counter_values;
@@ -1355,7 +1355,7 @@ void mainthread::begin_search()
 
 		if (uci_mcts == true)
 		{
-			auto mc = new monte_carlo(*root_position);
+			const auto mc = new monte_carlo(*root_position);
 			if (!mc)
 				exit(EXIT_FAILURE);
 
@@ -1714,7 +1714,7 @@ bool rootmove::ponder_move_from_hash(position& pos)
 	return pv.size() > 1;
 }
 
-std::string print_pv(const position& pos, const int alpha, const int beta, const int active_pv, int active_move)
+std::string print_pv(const position& pos, const int alpha, const int beta, const int active_pv, const int active_move)
 {
 	std::stringstream ss;
 	const auto elapsed = static_cast<int>(time_control.elapsed()) + 1;

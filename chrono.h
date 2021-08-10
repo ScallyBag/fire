@@ -60,12 +60,14 @@ struct search_param
 class timecontrol
 {
 public:
-	void init(search_param& limit, side me, int ply);
+	void init(const search_param& limit, side me, int ply);
 	[[nodiscard]] int64_t optimum() const {return optimal_time_;}
 	[[nodiscard]] int64_t maximum() const {return maximum_time_;}
 	[[nodiscard]] int64_t elapsed() const;
 	[[nodiscard]] double calc_move_importance(int ply) const;
 	void adjustment_after_ponder_hit();
+	int64_t uci_minimum_time = 1;
+	int uci_move_overhead = 50;
 
 private:
 	time_point start_time_ = 0;
@@ -86,8 +88,6 @@ private:
 	int moves_horizon_ = 50;
 	double max_ratio_ = 7.09;
 	double steal_ratio_ = 0.35;
-	int64_t minimum_time_ = 5;
-	int move_overhead_ = 50;
 };
 
 extern timecontrol time_control;

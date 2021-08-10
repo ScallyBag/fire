@@ -13,7 +13,7 @@
   You should have received a copy of the GNU General Public License with
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 
-  Thanks to Yu Nasu, Hisayori Noda, this implementation adapted from R. De Man
+  Thanks to Yu Nasu, Hisayori Noda. This implementation adapted from R. De Man
   and Daniel Shaw's Cfish nnue probe code https://github.com/dshawul/nnue-probe
 */
 
