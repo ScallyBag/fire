@@ -46,13 +46,27 @@ void bench(const int depth)
 		auto s_depth = "depth " + std::to_string(depth);
 		std::istringstream is(s_depth);
 		pos.set(bench_position, false, thread_pool.main());
-		acout() << "position " << pos_num << '/' << num_positions << " " << pos.fen() << std::endl;
+		acout() << "position " << pos_num << '/' << num_positions << " " << bench_position << std::endl;
 		acout() << pos << std::endl;
 		go(pos, is);
 		thread_pool.main()->wait_for_search_to_end();
 		nodes += thread_pool.visited_nodes();
 	}
-
+	uci_chess960 = true;
+	for (auto& bench_position : frc_bench_positions)
+	{
+		pos_num++;
+		search::reset();
+		auto s_depth = "depth " + std::to_string(depth);
+		std::istringstream is(s_depth);
+		pos.set(bench_position, true, thread_pool.main());
+		acout() << "chess960 position " << pos_num << '/' << num_positions << " " << bench_position << std::endl;
+		acout() << pos << std::endl;
+		go(pos, is);
+		thread_pool.main()->wait_for_search_to_end();
+		nodes += thread_pool.visited_nodes();
+	}
+	uci_chess960 = false;
 	const auto elapsed_time = static_cast<double>(now() + 1 - start_time) / 1000;
 	const auto nps = static_cast<double>(nodes) / elapsed_time;
 	const auto ttd = elapsed_time / num_positions;
