@@ -405,7 +405,7 @@ void go(position& pos, std::istringstream& is)
 // convert fen to internal position representation
 void set_position(position& pos, std::istringstream& is)
 {
-	uint32_t move;
+	auto move = no_move;
 	std::string token, fen;
 
 	is >> token;

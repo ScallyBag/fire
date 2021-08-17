@@ -58,7 +58,7 @@ constexpr auto dtz_entries = 64;
 static struct dtz_table_entry dtz_table[dtz_entries];
 
 static void init_indices();
-static uint64 calc_key_from_pcs(const int* pcs, const int mirror);
+static uint64 calc_key_from_pcs(const int* pcs, int mirror);
 static void free_wdl_entry(struct tb_entry* entry);
 static void free_dtz_entry(struct tb_entry* entry);
 

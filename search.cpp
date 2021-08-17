@@ -41,11 +41,11 @@ namespace search
 
 	// alpha-beta pruning utilizing minimax algorithm, effectively eliminating 'unpromising' branches of the search tree...
 	// search time is consequently limited to a 'more promising' subtree, resulting in deeper searches
-	template <nodetype Nt>
+	template <nodetype nt>
 	int alpha_beta(position& pos, int alpha, int beta, int depth, bool cut_node)
 	{
 		constexpr auto info_currmove_interval = 4000;
-		const auto pv_node = Nt == PV;
+		const auto pv_node = nt == PV;
 		constexpr auto max_quiet_moves = 64;
 
 		assert(-max_score <= alpha && alpha < beta&& beta <= max_score);
@@ -355,7 +355,7 @@ namespace search
 		{
 			auto d = depth - 2 * plies - (pv_node ? depth_0 : static_cast<uint32_t>(depth) / plies / 4 * plies);
 			pi->no_early_pruning = true;
-			alpha_beta<Nt>(pos, alpha, beta, d, !pv_node && cut_node);
+			alpha_beta<nt>(pos, alpha, beta, d, !pv_node && cut_node);
 			pi->no_early_pruning = false;
 
 			hash_entry = main_hash.probe(key64);
@@ -804,17 +804,17 @@ namespace search
 	// start at the leaf nodes of the main search and resolve all tactics/capture moves in "quiet" positions.
 	// extend search at all unstable nodes & perform an extension of the evaluation function in order to obtain a static
 	// evaluation ... greatly mitigating the effect of the horizon problem.
-	template <nodetype Nt, bool StateCheck>
+	template <nodetype nt, bool state_check>
 	int q_search(position& pos, int alpha, const int beta, const int depth)
 	{
-		const auto pv_node = Nt == PV;
+		const auto pv_node = nt == PV;
 
 		assert(alpha >= -max_score && alpha < beta&& beta <= max_score);
 		assert(pv_node || alpha == beta - 1);
 		assert(depth <= depth_0);
 
-		uint32_t move;
-		int best_value, futility_basis, orig_alpha = {};
+		auto move = no_move;
+		int best_value = score_0, futility_basis = score_0, orig_alpha = {};
 
 		auto* pi = pos.info();
 
@@ -829,13 +829,13 @@ namespace search
 		auto best_move = no_move;
 
 		if (pi->move_repetition || pi->ply >= max_ply)
-			return pi->ply >= max_ply && !StateCheck
+			return pi->ply >= max_ply && !state_check
 			? evaluate::eval(pos)
 			: draw[pos.on_move()];
 
 		assert(0 <= pi->ply && pi->ply < max_ply);
 
-		const auto hash_depth = StateCheck || depth == depth_0 ? depth_0 : -plies;
+		const auto hash_depth = state_check || depth == depth_0 ? depth_0 : -plies;
 
 		auto key64 = pi->key;
 		key64 ^= pos.draw50_key();
@@ -860,7 +860,7 @@ namespace search
 				return value;
 		}
 
-		if (StateCheck)
+		if (state_check)
 		{
 			pi->position_value = no_score;
 			best_value = futility_basis = -max_score;
@@ -915,7 +915,7 @@ namespace search
 				? pi->check_squares[piece_type(pos.moved_piece(move))] & to_square(move)
 				: pos.give_check(move);
 
-			if (!StateCheck
+			if (!state_check
 				&& !gives_check
 				&& futility_basis > -win_score
 				&& !pos.advanced_pawn(move))
@@ -943,7 +943,7 @@ namespace search
 				}
 			}
 
-			if (StateCheck)
+			if (state_check)
 			{
 				if (best_value > -longest_mate_score
 					&& !pos.is_capture_move(move)
@@ -978,8 +978,8 @@ namespace search
 				continue;
 
 			pos.play_move(move, gives_check);
-			const int value = gives_check ? -q_search<Nt, true>(pos, -beta, -alpha, depth - plies)
-				: -q_search<Nt, false>(pos, -beta, -alpha, depth - plies);
+			const int value = gives_check ? -q_search<nt, true>(pos, -beta, -alpha, depth - plies)
+				: -q_search<nt, false>(pos, -beta, -alpha, depth - plies);
 			pos.take_move_back(move);
 
 			if ((pi + 1)->captured_piece)
@@ -1016,7 +1016,7 @@ namespace search
 			}
 		}
 
-		if (StateCheck && best_value == -max_score)
+		if (state_check && best_value == -max_score)
 			return gets_mated(pi->ply);
 
 		hash_entry = main_hash.replace(key64);
@@ -1357,7 +1357,7 @@ void mainthread::begin_search()
 		{
 			const auto mc = new monte_carlo(*root_position);
 			if (!mc)
-				exit (EXIT_SUCCESS);
+				exit(EXIT_FAILURE);
 
 			mc->search();
 			delete mc;
@@ -1421,9 +1421,7 @@ NO_ANALYSIS:
 
 void Thread::begin_search()
 {
-	int alpha;
-	int delta_alpha;
-	int delta_beta;
+	auto alpha = score_0, delta_alpha = score_0, delta_beta = score_0;
 	auto fast_move = no_move;
 	auto* main_thread = this == thread_pool.main() ? thread_pool.main() : nullptr;
 	if (!main_thread)
@@ -1742,7 +1740,7 @@ std::string print_pv(const position& pos, const int alpha, const int beta, const
 		if (ss.rdbuf()->in_avail())
 			ss << "\n";
 
-		int sel_depth;
+		auto sel_depth = 0;
 		auto* const pi = thread_pool.main()->root_position->info();
 		for (sel_depth = 0; sel_depth < max_ply; sel_depth++)
 			if ((pi + sel_depth)->pawn_key == 0)

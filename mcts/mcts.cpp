@@ -67,7 +67,7 @@ bool monte_carlo::computational_budget() const
 	if (pos_.my_thread() == thread_pool.main())
 		static_cast<mainthread*>(pos_.my_thread())->check_time();
 
-	return descent_cnt_ < max_descents_
+	return (descent_cnt_ < max_descents_)
 		&& !search::signals.stop_analyzing.load(std::memory_order_relaxed);
 }
 
@@ -92,9 +92,9 @@ void mainthread::check_time()
 	if (search::param.ponder)
 		return;
 
-	if (constexpr int time_numerator = 10; search::param.use_time_calculating() && (elapsed > time_control.maximum() * time_numerator / time_denominator || search::signals.stop_if_ponder_hit)
-		|| search::param.move_time && elapsed >= search::param.move_time
-		|| search::param.nodes && thread_pool.visited_nodes() >= search::param.nodes)
+	if (constexpr int time_numerator = 10; (search::param.use_time_calculating() && (elapsed > time_control.maximum() * time_numerator / time_denominator || search::signals.stop_if_ponder_hit))
+		|| (search::param.move_time && elapsed >= search::param.move_time)
+		|| (search::param.nodes && thread_pool.visited_nodes() >= search::param.nodes))
 		search::signals.stop_analyzing = true;
 }
 

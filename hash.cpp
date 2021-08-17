@@ -42,7 +42,7 @@ void hash::init(const size_t mb_size)
 	{
 		std::cerr << "Failed to allocate " << mb_size
 			<< "MB for transposition table." << std::endl;
-		exit (EXIT_SUCCESS);
+		exit(EXIT_FAILURE);
 	}
 
 	buckets_ = new_size;

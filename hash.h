@@ -17,6 +17,7 @@
 #pragma once
 #include "define.h"
 #include "fire.h"
+#include "thread.h"
 
 enum hashflags : uint8_t
 {

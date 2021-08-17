@@ -86,14 +86,17 @@ void unmap_file(const void* data, map_t map);
 INLINE uint32_t readu_le_u32(const void* p)
 {
 	const auto* q = static_cast<const uint8_t*>(p);
-	return q[0] | q[1] << 8 | q[2] << 16 | q[3] << 24;
+	return q[0] | (q[1] << 8) | (q[2] << 16) | (q[3] << 24);
 }
 
 INLINE uint16_t readu_le_u16(const void* p)
 {
 	const auto* q = static_cast<const uint8_t*>(p);
-	return static_cast<uint16_t>(q[0] | q[1] << 8);
+	return q[0] | (q[1] << 8);
 }
+
+void decode_fen(const char* fen_str, int* player, int* castle,
+	int* fifty, int* move_number, int* piece, int* square);
 
 #define CLAMP(a, b, c) ((a) < (b) ? (b) : (a) > (c) ? (c) : (a))
 
