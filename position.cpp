@@ -24,25 +24,23 @@
 #include "macro/side.h"
 #include "macro/square.h"
 #include "macro/file.h"
-#include "macro/rank.h"
 #include "fire.h"
 #include "hash.h"
 #include "movegen.h"
 #include "pragma.h"
 #include "thread.h"
-#include "uci.h"
 #include "util/util.h"
 #include "zobrist.h"
 
 // position functions
 uint64_t position::attack_to(const square sq, const uint64_t occupied) const
 {
-	return (attack_from<pt_pawn>(sq, black) & pieces(white, pt_pawn))
-		| (attack_from<pt_pawn>(sq, white) & pieces(black, pt_pawn))
-		| (attack_from<pt_knight>(sq) & pieces(pt_knight))
-		| (attack_rook_bb(sq, occupied) & pieces(pt_rook, pt_queen))
-		| (attack_bishop_bb(sq, occupied) & pieces(pt_bishop, pt_queen))
-		| (attack_from<pt_king>(sq) & pieces(pt_king));
+	return attack_from<pt_pawn>(sq, black) & pieces(white, pt_pawn)
+		| attack_from<pt_pawn>(sq, white) & pieces(black, pt_pawn)
+		| attack_from<pt_knight>(sq) & pieces(pt_knight)
+		| attack_rook_bb(sq, occupied) & pieces(pt_rook, pt_queen)
+		| attack_bishop_bb(sq, occupied) & pieces(pt_bishop, pt_queen)
+		| attack_from<pt_king>(sq) & pieces(pt_king);
 }
 
 void position::calculate_bishop_color_key() const
@@ -72,14 +70,14 @@ void position::calculate_check_pins() const
 	pos_info_->check_squares[pt_king] = 0;
 }
 
-template <side color>
+template <side Color>
 void position::calculate_pins() const
 {
 	uint64_t result = 0;
-	const auto square_k = king(color);
+	const auto square_k = king(Color);
 
-	auto pinners = (empty_attack[pt_rook][square_k] & pieces(~color, pt_queen, pt_rook))
-		| (empty_attack[pt_bishop][square_k] & pieces(~color, pt_queen, pt_bishop));
+	auto pinners = (empty_attack[pt_rook][square_k] & pieces(~Color, pt_queen, pt_rook))
+		| (empty_attack[pt_bishop][square_k] & pieces(~Color, pt_queen, pt_bishop));
 
 	while (pinners)
 	{
@@ -91,7 +89,7 @@ void position::calculate_pins() const
 			pos_info_->pin_by[lsb(b)] = sq;
 		}
 	}
-	pos_info_->x_ray[color] = result;
+	pos_info_->x_ray[Color] = result;
 }
 
 square position::calculate_threat() const
@@ -325,7 +323,7 @@ bool position::legal_move(const uint32_t move) const
 	return !(pos_info_->x_ray[on_move_] & from) || aligned(from, to_square(move), king(me));
 }
 
-template <bool yes>
+template <bool Yes>
 void position::do_castle_move(const side me, const square from, const square to, square& from_r, square& to_r)
 {
 	from_r = castle_rook_square(to);
@@ -333,16 +331,16 @@ void position::do_castle_move(const side me, const square from, const square to,
 
 	if (!chess960_)
 	{
-		relocate_piece(me, make_piece(me, pt_king), yes ? from : to, yes ? to : from);
-		relocate_piece(me, make_piece(me, pt_rook), yes ? from_r : to_r, yes ? to_r : from_r);
+		relocate_piece(me, make_piece(me, pt_king), Yes ? from : to, Yes ? to : from);
+		relocate_piece(me, make_piece(me, pt_rook), Yes ? from_r : to_r, Yes ? to_r : from_r);
 	}
 	else
 	{
-		delete_piece(me, make_piece(me, pt_king), yes ? from : to);
-		delete_piece(me, make_piece(me, pt_rook), yes ? from_r : to_r);
-		board_[yes ? from : to] = board_[yes ? from_r : to_r] = no_piece;
-		move_piece(me, make_piece(me, pt_king), yes ? to : from);
-		move_piece(me, make_piece(me, pt_rook), yes ? to_r : from_r);
+		delete_piece(me, make_piece(me, pt_king), Yes ? from : to);
+		delete_piece(me, make_piece(me, pt_rook), Yes ? from_r : to_r);
+		board_[Yes ? from : to] = board_[Yes ? from_r : to_r] = no_piece;
+		move_piece(me, make_piece(me, pt_king), Yes ? to : from);
+		move_piece(me, make_piece(me, pt_rook), Yes ? to_r : from_r);
 	}
 }
 

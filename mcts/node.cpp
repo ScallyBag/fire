@@ -39,7 +39,7 @@ mc_node get_node(const position& pos)
 	const auto iterator2 = range.second;
 	while (iterater1 != iterator2)
 	{
-		if (mc_node node = &(iterater1->second); node->key1 == key1 && node->key2 == key2)
+		if (mc_node node = &iterater1->second; node->key1 == key1 && node->key2 == key2)
 			return node;
 
 		++iterater1;
@@ -55,7 +55,7 @@ mc_node get_node(const position& pos)
 	info.prev_move = 0;
 
 	const auto it = mcts.insert(std::make_pair(key1, info));
-	return &(it->second);
+	return &it->second;
 }
 
 mc_node monte_carlo::current_node() const
@@ -76,7 +76,7 @@ void monte_carlo::create_root()
 
 	std::memset(stack_buffer_, 0, sizeof(stack_buffer_));
 	for (int i = -4; i <= max_ply + 2; i++)
-		stack_[i].continuation_history = &(pos_.my_thread()->cont_history[no_piece][0]);
+		stack_[i].continuation_history = &pos_.my_thread()->cont_history[no_piece][0];
 
 	std::memset(nodes_buffer_, 0, sizeof(nodes_buffer_));
 	root_ = nodes_[ply_] = get_node(pos_);
@@ -91,9 +91,9 @@ void monte_carlo::create_root()
 
 bool monte_carlo::is_root(mc_node node) const
 {
-	return (ply_ == 1
+	return ply_ == 1
 		&& node == current_node()
-		&& node == root_);
+		&& node == root_;
 }
 
 bool monte_carlo::is_terminal(mc_node node) const
@@ -135,10 +135,10 @@ edge* monte_carlo::best_child(mc_node node, const edge_statistic statistic) cons
 	double best_value = -1000000000000.0;
 	for (int k = 0; k < number_of_sons(node); k++)
 	{
-		if (const double r = (statistic == stat_visits ? children[k].visits
+		if (const double r = statistic == stat_visits ? children[k].visits
 			: statistic == stat_mean ? children[k].mean_action_value
 			: statistic == stat_ucb ? ucb(node, children[k])
-			: 0.0); r > best_value)
+			: 0.0; r > best_value)
 		{
 			best_value = r;
 			best = k;

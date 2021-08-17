@@ -35,9 +35,9 @@ struct acout
 	{}
 
 	template<typename T>
-	acout& operator<<(const T& _t)
+	acout& operator<<(const T& t)
 	{
-		std::cout << _t;
+		std::cout << t;
 		return *this;
 	}
 
@@ -78,10 +78,10 @@ namespace util
 			assert(seed);
 		}
 
-		template <typename t>
-		t rand()
+		template <typename T>
+		T rand()
 		{
-			return t(rand64());
+			return T(rand64());
 		}
 	};
 	// std::make_unique is part of c++14

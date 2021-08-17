@@ -24,39 +24,39 @@
 namespace movegen
 {
 	// generate all piece moves
-	template <side me, move_gen type>
+	template <side Me, move_gen Type>
 	s_move* all_piece_moves(const position& pos, s_move* moves, const uint64_t target)
 	{
-		const auto only_check_moves = type == quiet_checks;
+		const auto only_check_moves = Type == quiet_checks;
 
-		if constexpr (type != castle_moves)
+		if constexpr (Type != castle_moves)
 		{
-			moves = moves_for_pawn<me, type>(pos, moves, target);
-			moves = moves_for_piece<me, pt_knight, only_check_moves>(pos, moves, target);
-			moves = moves_for_piece<me, pt_bishop, only_check_moves>(pos, moves, target);
-			moves = moves_for_piece<me, pt_rook, only_check_moves>(pos, moves, target);
-			moves = moves_for_piece<me, pt_queen, only_check_moves>(pos, moves, target);
+			moves = moves_for_pawn<Me, Type>(pos, moves, target);
+			moves = moves_for_piece<Me, pt_knight, only_check_moves>(pos, moves, target);
+			moves = moves_for_piece<Me, pt_bishop, only_check_moves>(pos, moves, target);
+			moves = moves_for_piece<Me, pt_rook, only_check_moves>(pos, moves, target);
+			moves = moves_for_piece<Me, pt_queen, only_check_moves>(pos, moves, target);
 
-			if constexpr (type != quiet_checks && type != evade_check)
+			if constexpr (Type != quiet_checks && Type != evade_check)
 			{
-				const auto square_k = pos.king(me);
+				const auto square_k = pos.king(Me);
 				auto squares = pos.attack_from<pt_king>(square_k) & target;
 				while (squares)
 					*moves++ = make_move(square_k, pop_lsb(&squares));
 			}
 		}
 
-		if (type != captures_promotions && type != evade_check && pos.castling_possible(me))
+		if (Type != captures_promotions && Type != evade_check && pos.castling_possible(Me))
 		{
 			if (pos.is_chess960())
 			{
-				moves = get_castle<me == white ? white_short : black_short, only_check_moves, true>(pos, moves);
-				moves = get_castle<me == white ? white_long : black_long, only_check_moves, true>(pos, moves);
+				moves = get_castle<Me == white ? white_short : black_short, only_check_moves, true>(pos, moves);
+				moves = get_castle<Me == white ? white_long : black_long, only_check_moves, true>(pos, moves);
 			}
 			else
 			{
-				moves = get_castle<me == white ? white_short : black_short, only_check_moves, false>(pos, moves);
-				moves = get_castle<me == white ? white_long : black_long, only_check_moves, false>(pos, moves);
+				moves = get_castle<Me == white ? white_short : black_short, only_check_moves, false>(pos, moves);
+				moves = get_castle<Me == white ? white_long : black_long, only_check_moves, false>(pos, moves);
 			}
 		}
 
@@ -64,36 +64,36 @@ namespace movegen
 	}
 
 	// generate forward pawn moves
-	template <side me>
+	template <side Me>
 	s_move* generate_pawn_advance(const position& pos, s_move* moves)
 	{
-		const auto ranks_6_7 = me == white ? rank_6_bb | rank_7_bb : rank_3_bb | rank_2_bb;
+		const auto ranks_6_7 = Me == white ? rank_6_bb | rank_7_bb : rank_3_bb | rank_2_bb;
 
-		uint64_t squares = shift_up<me>(pos.pieces(me, pt_pawn)) & ranks_6_7 & ~pos.pieces();
+		uint64_t squares = shift_up<Me>(pos.pieces(Me, pt_pawn)) & ranks_6_7 & ~pos.pieces();
 		while (squares)
 		{
 			const auto to = pop_lsb(&squares);
-			*moves++ = make_move(to - pawn_ahead(me), to);
+			*moves++ = make_move(to - pawn_ahead(Me), to);
 		}
 
 		return moves;
 	}
 
 	// generate castle moves
-	template < uint8_t castle, bool only_check_moves, bool chess960>
+	template < uint8_t Castle, bool OnlyCheckMoves, bool Chess960>
 	s_move* get_castle(const position& pos, s_move* moves)
 	{
-		const auto me = castle <= white_long ? white : black;
+		const auto me = Castle <= white_long ? white : black;
 		const auto you = me == white ? black : white;
-		const auto short_castle = castle == white_short || castle == black_short;
+		const auto short_castle = Castle == white_short || Castle == black_short;
 
-		if (pos.castling_impossible(castle) || !pos.castling_possible(castle))
+		if (pos.castling_impossible(Castle) || !pos.castling_possible(Castle))
 			return moves;
 
-		const auto from_k = chess960 ? pos.king(me) : relative_square(me, e1);
+		const auto from_k = Chess960 ? pos.king(me) : relative_square(me, e1);
 		const auto to_k = relative_square(me, short_castle ? g1 : c1);
 
-		if (const auto direction = to_k > from_k ? west : east; chess960)
+		if (const auto direction = to_k > from_k ? west : east; Chess960)
 		{
 			for (auto sq = to_k; sq != from_k; sq += direction)
 				if (pos.attack_to(sq) & pos.pieces(you))
@@ -112,7 +112,7 @@ namespace movegen
 
 		const auto move = make_move(castle_move, from_k, to_k);
 
-		if (only_check_moves && !pos.give_check(move))
+		if (OnlyCheckMoves && !pos.give_check(move))
 			return moves;
 
 		*moves++ = move;
@@ -120,72 +120,72 @@ namespace movegen
 	}
 
 	// generate promotions
-	template <side me, move_gen mg, square delta>
+	template <side Me, move_gen Mg, square Delta>
 	s_move* get_promotions(const position& pos, s_move* moves, const square to)
 	{
-		const auto you = me == white ? black : white;
+		const auto you = Me == white ? black : white;
 
-		if (mg == captures_promotions || mg == evade_check || mg == all_moves)
-			*moves++ = make_move(promotion_q, to - delta, to);
+		if (Mg == captures_promotions || Mg == evade_check || Mg == all_moves)
+			*moves++ = make_move(promotion_q, to - Delta, to);
 
-		if (mg == quiet_moves || mg == evade_check || mg == all_moves)
+		if (Mg == quiet_moves || Mg == evade_check || Mg == all_moves)
 		{
-			*moves++ = make_move(promotion_r, to - delta, to);
-			*moves++ = make_move(promotion_b, to - delta, to);
-			*moves++ = make_move(promotion_p, to - delta, to);
+			*moves++ = make_move(promotion_r, to - Delta, to);
+			*moves++ = make_move(promotion_b, to - Delta, to);
+			*moves++ = make_move(promotion_p, to - Delta, to);
 		}
 
-		if (mg == quiet_checks && empty_attack[pt_knight][to] & pos.king(you))
-			*moves++ = make_move(promotion_p, to - delta, to);
+		if (Mg == quiet_checks && empty_attack[pt_knight][to] & pos.king(you))
+			*moves++ = make_move(promotion_p, to - Delta, to);
 
 		return moves;
 	}
 
 	// generate pawn moves
-	template <side me, move_gen mg>
+	template <side Me, move_gen Mg>
 	s_move* moves_for_pawn(const position& pos, s_move* moves, const uint64_t target)
 	{
-		const auto you = me == white ? black : white;
-		const auto eighth_rank = me == white ? rank_8_bb : rank_1_bb;
-		const auto seventh_rank = me == white ? rank_7_bb : rank_2_bb;
-		const auto third_rank = me == white ? rank_3_bb : rank_6_bb;
-		const auto straight_ahead = me == white ? north : south;
-		const auto capture_right = me == white ? north_east : south_west;
-		const auto capture_left = me == white ? north_west : south_east;
+		const auto you = Me == white ? black : white;
+		const auto eighth_rank = Me == white ? rank_8_bb : rank_1_bb;
+		const auto seventh_rank = Me == white ? rank_7_bb : rank_2_bb;
+		const auto third_rank = Me == white ? rank_3_bb : rank_6_bb;
+		const auto straight_ahead = Me == white ? north : south;
+		const auto capture_right = Me == white ? north_east : south_west;
+		const auto capture_left = Me == white ? north_west : south_east;
 
 		uint64_t empty_squares = 0;
-		const auto pawns_7th_rank = pos.pieces(me, pt_pawn) & seventh_rank;
-		const auto pawns_not_7th_rank = pos.pieces(me, pt_pawn) & ~seventh_rank;
+		const auto pawns_7th_rank = pos.pieces(Me, pt_pawn) & seventh_rank;
+		const auto pawns_not_7th_rank = pos.pieces(Me, pt_pawn) & ~seventh_rank;
 
-		auto your_pieces = mg == evade_check
+		auto your_pieces = Mg == evade_check
 			? pos.pieces(you) & target
-			: mg == captures_promotions
+			: Mg == captures_promotions
 			? target
 			: pos.pieces(you);
 
-		if constexpr (mg != captures_promotions)
+		if constexpr (Mg != captures_promotions)
 		{
-			empty_squares = mg == quiet_moves || mg == quiet_checks ? target : ~pos.pieces();
+			empty_squares = Mg == quiet_moves || Mg == quiet_checks ? target : ~pos.pieces();
 
-			uint64_t multi_move_bb = shift_up<me>(pawns_not_7th_rank) & empty_squares;
-			uint64_t double_move_bb = shift_up<me>(multi_move_bb & third_rank) & empty_squares;
+			uint64_t multi_move_bb = shift_up<Me>(pawns_not_7th_rank) & empty_squares;
+			uint64_t double_move_bb = shift_up<Me>(multi_move_bb & third_rank) & empty_squares;
 
-			if constexpr (mg == evade_check)
+			if constexpr (Mg == evade_check)
 			{
 				multi_move_bb &= target;
 				double_move_bb &= target;
 			}
 
-			if constexpr (mg == quiet_checks)
+			if constexpr (Mg == quiet_checks)
 			{
 				multi_move_bb &= pos.attack_from<pt_pawn>(pos.king(you), you);
 				double_move_bb &= pos.attack_from<pt_pawn>(pos.king(you), you);
 
 				if (const auto discovered_check = pos.info()->x_ray[~pos.on_move()]; pawns_not_7th_rank & discovered_check)
 				{
-					const uint64_t deduction_forward = shift_up<me>(pawns_not_7th_rank & discovered_check) & empty_squares & ~get_file(
+					const uint64_t deduction_forward = shift_up<Me>(pawns_not_7th_rank & discovered_check) & empty_squares & ~get_file(
 						pos.king(you));
-					const uint64_t deduction_double = shift_up<me>(deduction_forward & third_rank) & empty_squares;
+					const uint64_t deduction_double = shift_up<Me>(deduction_forward & third_rank) & empty_squares;
 
 					multi_move_bb |= deduction_forward;
 					double_move_bb |= deduction_double;
@@ -205,29 +205,29 @@ namespace movegen
 			}
 		}
 
-		if (pawns_7th_rank && (mg != evade_check || target & eighth_rank))
+		if (pawns_7th_rank && (Mg != evade_check || target & eighth_rank))
 		{
-			if constexpr (mg == captures_promotions)
+			if constexpr (Mg == captures_promotions)
 				empty_squares = ~pos.pieces();
 
-			if constexpr (mg == evade_check)
+			if constexpr (Mg == evade_check)
 				empty_squares &= target;
 
 			uint64_t promotion_right = shift_bb<capture_right>(pawns_7th_rank) & your_pieces;
 			uint64_t promotion_left = shift_bb<capture_left>(pawns_7th_rank) & your_pieces;
-			uint64_t promotion_forward = shift_up<me>(pawns_7th_rank) & empty_squares;
+			uint64_t promotion_forward = shift_up<Me>(pawns_7th_rank) & empty_squares;
 
 			while (promotion_right)
-				moves = get_promotions<me, mg, capture_right>(pos, moves, pop_lsb(&promotion_right));
+				moves = get_promotions<Me, Mg, capture_right>(pos, moves, pop_lsb(&promotion_right));
 
 			while (promotion_left)
-				moves = get_promotions<me, mg, capture_left>(pos, moves, pop_lsb(&promotion_left));
+				moves = get_promotions<Me, Mg, capture_left>(pos, moves, pop_lsb(&promotion_left));
 
 			while (promotion_forward)
-				moves = get_promotions<me, mg, straight_ahead>(pos, moves, pop_lsb(&promotion_forward));
+				moves = get_promotions<Me, Mg, straight_ahead>(pos, moves, pop_lsb(&promotion_forward));
 		}
 
-		if constexpr (mg == captures_promotions || mg == evade_check || mg == all_moves)
+		if constexpr (Mg == captures_promotions || Mg == evade_check || Mg == all_moves)
 		{
 			uint64_t captureright = shift_bb<capture_right>(pawns_not_7th_rank) & your_pieces;
 			uint64_t captureleft = shift_bb<capture_left>(pawns_not_7th_rank) & your_pieces;
@@ -246,7 +246,7 @@ namespace movegen
 
 			if (pos.enpassant_square() != no_square)
 			{
-				if (mg == evade_check && !(target & pos.enpassant_square() - straight_ahead))
+				if (Mg == evade_check && !(target & pos.enpassant_square() - straight_ahead))
 					return moves;
 
 				captureright = pawns_not_7th_rank & pos.attack_from<pt_pawn>(pos.enpassant_square(), you);
@@ -262,29 +262,29 @@ namespace movegen
 	}
 
 	// generate individual piece moves
-	template <side me, uint8_t piece, bool only_check_moves>
+	template <side Me, uint8_t Piece, bool OnlyCheckMoves>
 	s_move* moves_for_piece(const position& pos, s_move* moves, const uint64_t target)
 	{
-		assert(piece != pt_king && piece != pt_pawn);
+		assert(Piece != pt_king && Piece != pt_pawn);
 
-		const auto* pl = pos.piece_list(me, piece);
+		const auto* pl = pos.piece_list(Me, Piece);
 
 		for (auto from = *pl; from != no_square; from = *++pl)
 		{
-			if (only_check_moves)
+			if (OnlyCheckMoves)
 			{
-				if ((piece == pt_bishop || piece == pt_rook || piece == pt_queen)
-					&& !(empty_attack[piece][from] & target & pos.info()->check_squares[piece]))
+				if ((Piece == pt_bishop || Piece == pt_rook || Piece == pt_queen)
+					&& !(empty_attack[Piece][from] & target & pos.info()->check_squares[Piece]))
 					continue;
 
 				if (pos.info()->x_ray[~pos.on_move()] & from)
 					continue;
 			}
 
-			auto squares = pos.attack_from<piece>(from) & target;
+			auto squares = pos.attack_from<Piece>(from) & target;
 
-			if (only_check_moves)
-				squares &= pos.info()->check_squares[piece];
+			if (OnlyCheckMoves)
+				squares &= pos.info()->check_squares[Piece];
 
 			while (squares)
 				*moves++ = make_move(from, pop_lsb(&squares));
@@ -295,24 +295,24 @@ namespace movegen
 }
 
 // generate moves
-template <move_gen mg>
+template <move_gen Mg>
 s_move* generate_moves(const position& pos, s_move* moves)
 {
-	assert(mg == captures_promotions || mg == quiet_moves || mg == all_moves || mg == castle_moves);
+	assert(Mg == captures_promotions || Mg == quiet_moves || Mg == all_moves || Mg == castle_moves);
 
 	const auto me = pos.on_move();
 
-	const auto target = mg == captures_promotions
+	const auto target = Mg == captures_promotions
 		? pos.pieces(~me)
-		: mg == quiet_moves
+		: Mg == quiet_moves
 		? ~pos.pieces()
-		: mg == all_moves
+		: Mg == all_moves
 		? ~pos.pieces(me)
 		: 0;
 
 	return me == white
-		? movegen::all_piece_moves<white, mg>(pos, moves, target)
-		: movegen::all_piece_moves<black, mg>(pos, moves, target);
+		? movegen::all_piece_moves<white, Mg>(pos, moves, target)
+		: movegen::all_piece_moves<black, Mg>(pos, moves, target);
 }
 
 template s_move* generate_moves<captures_promotions>(const position&, s_move*);

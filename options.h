@@ -46,8 +46,8 @@ initialized template vars
 
 class options
 {
-	std::mutex m;
-	std::map<std::string, std::string> opts;
+	std::mutex m_;
+	std::map<std::string, std::string> opts_;
 	void load_args(int argc, char* argv[]);
 
 public:
@@ -66,8 +66,8 @@ public:
 	template<typename T>
 	T value(const char* s)
 	{
-		std::unique_lock lock(m);
-		std::istringstream ss{ opts[std::string{s}] };
+		std::unique_lock lock(m_);
+		std::istringstream ss{ opts_[std::string{s}] };
 		T v{};
 		ss >> v;
 		return v;
@@ -76,13 +76,13 @@ public:
 	template<typename T>
 	void set(const std::string key, const T value)
 	{
-		std::unique_lock lock(m);
+		std::unique_lock lock(m_);
 		
-		if (std::string vs = std::to_string(value); opts.find(key) == opts.end())
+		if (std::string vs = std::to_string(value); opts_.find(key) == opts_.end())
 		{
-			opts.emplace(key, vs);
+			opts_.emplace(key, vs);
 		}
-		else opts[key] = vs;
+		else opts_[key] = vs;
 	}
 
 	bool read_param_file(std::string& filename);
@@ -94,7 +94,7 @@ inline void options::load_args(const int argc, char* argv[])
 {
 
 	auto matches = [](const std::string& s1, const char* s2) { return strcmp(s1.c_str(), s2) == 0; };
-	auto set = [this](const std::string& k, std::string& v) { this->opts.emplace(k.substr(1), v); };
+	auto set = [this](const std::string& k, std::string& v) { this->opts_.emplace(k.substr(1), v); };
 
 	for (int j = 1; j < argc - 1; j += 2)
 	{
@@ -123,7 +123,7 @@ inline bool options::read_param_file(std::string& filename)
 	else acout() << "info string...reading param file " << filename << std::endl;
 
 	std::ifstream param_file(filename);
-	auto set = [this](std::string& k, std::string& v) { this->opts.emplace(k, v); };
+	auto set = [this](std::string& k, std::string& v) { this->opts_.emplace(k, v); };
 
 	while (std::getline(param_file, line))
 	{
@@ -157,7 +157,7 @@ inline bool options::save_param_file(std::string& filename)
 
 	std::ofstream param_file(filename, std::ofstream::out);
 
-	for (const auto& [fst, snd] : opts)
+	for (const auto& [fst, snd] : opts_)
 	{
 		std::string line = fst + ":" + snd + "\n";
 		param_file << line;
@@ -171,7 +171,7 @@ inline void options::set_engine_params()
 {
 	auto matches = [](const std::string& s1, const char* s2) { return strcmp(s1.c_str(), s2) == 0; };
 
-	for (const auto& [fst, snd] : opts)
+	for (const auto& [fst, snd] : opts_)
 	{
 		if (matches(fst, "counter_move_bonus_min_depth")) {search::counter_move_bonus_min_depth = value<int>("counter_move_bonus_min_depth");}
 		else if (matches(fst, "dummy_null_move_threat_min_depth_mult")) {search::dummy_null_move_threat_min_depth_mult = value<int>("dummy_null_move_threat_min_depth_mult");}

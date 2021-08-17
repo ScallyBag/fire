@@ -24,7 +24,7 @@ constexpr auto SEP_CHAR = ';';
 #define UNLOCK(x) pthread_mutex_unlock(&(x))
 #else
 #define LOCK_T HANDLE
-#define LOCK_INIT(x) do { x = CreateMutex(NULL, FALSE, NULL); } while (0)
+#define LOCK_INIT(x) do { (x) = CreateMutex(NULL, FALSE, NULL); } while (0)
 #define LOCK(x) WaitForSingleObject(x, INFINITE)
 #define UNLOCK(x) ReleaseMutex(x)
 #endif

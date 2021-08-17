@@ -283,7 +283,7 @@ static void append_changed_indices(const Position* pos, index_list removed[2],
 {
 	// assert(dp->dirtyNum != 0);
 
-	if (const dirty_piece* dp = &(pos->nnue[0]->dirtyPiece); pos->nnue[1]->accumulator.computed_accumulation)
+	if (const dirty_piece* dp = &pos->nnue[0]->dirtyPiece; pos->nnue[1]->accumulator.computed_accumulation)
 	{
 		for (int c = 0; c < 2; c++)
 		{
@@ -297,7 +297,7 @@ static void append_changed_indices(const Position* pos, index_list removed[2],
 	}
 	else
 	{
-		const dirty_piece* dp2 = &(pos->nnue[1]->dirtyPiece);
+		const dirty_piece* dp2 = &pos->nnue[1]->dirtyPiece;
 		for (int c = 0; c < 2; c++)
 		{
 			reset[c] = dp->pc[0] == static_cast<int>(KING(c))
@@ -421,7 +421,7 @@ INLINE bool next_idx(unsigned* idx, unsigned* offset, mask2_t* v,
 	{
 		*offset += 8 * sizeof(mask2_t);
 		if (*offset >= in_dims) return false;
-		memcpy(v, reinterpret_cast<char*>(mask) + (*offset / 8), sizeof(mask2_t));
+		memcpy(v, reinterpret_cast<char*>(mask) + *offset / 8, sizeof(mask2_t));
 	}
 #ifdef IS_64BIT
 	* idx = *offset + bsf(*v);
@@ -538,7 +538,7 @@ INLINE void affine_txfm(const int8_t* input, void* output, unsigned in_dims, uns
 		{
 			second = k_zero;
 		}
-		__m256i mul = _mm256_set1_epi16(factor), prod, signs;
+		__m256i mul = _mm256_set1_epi16(static_cast<short>(factor)), prod, signs;
 		prod = _mm256_maddubs_epi16(mul, _mm256_unpacklo_epi8(first, second));
 		signs = _mm256_cmpgt_epi16(k_zero, prod);
 		out_0 = _mm256_add_epi32(out_0, _mm256_unpacklo_epi16(prod, signs));
@@ -977,7 +977,7 @@ constexpr int tile_height = num_regs * simd_width / 16;
 // Calculate cumulative value without using difference calculation
 INLINE void refresh_accumulator(const Position* pos)
 {
-	Accumulator* accumulator = &(pos->nnue[0]->accumulator);
+	Accumulator* accumulator = &pos->nnue[0]->accumulator;
 
 	index_list active_indices[2]{};
 	active_indices[0].size = active_indices[1].size = 0;
@@ -1028,7 +1028,7 @@ INLINE void refresh_accumulator(const Position* pos)
 // Calculate cumulative value using difference calculation if possible
 INLINE bool update_accumulator(const Position* pos)
 {
-	Accumulator* accumulator = &(pos->nnue[0]->accumulator);
+	Accumulator* accumulator = &pos->nnue[0]->accumulator;
 	if (accumulator->computed_accumulation)
 		return true;
 
@@ -1147,7 +1147,7 @@ INLINE void transform(const Position* pos, clipped_t* output, mask_t* out_mask)
 		const unsigned offset = k_half_dimensions * p;
 
 #ifdef VECTOR
-		constexpr unsigned num_chunks = (16 * k_half_dimensions) / simd_width;
+		constexpr unsigned num_chunks = 16 * k_half_dimensions / simd_width;
 		const auto out = reinterpret_cast<vec8_t*>(&output[offset]);
 		for (unsigned i = 0; i < num_chunks / 2; i++)
 		{
@@ -1225,7 +1225,7 @@ static void read_output_weights(weight_t* w, const char* d)
 	}
 }
 
-INLINE unsigned wt_idx(const unsigned r, unsigned c, unsigned dims)
+INLINE unsigned wt_idx(const unsigned r, unsigned c, const unsigned dims)
 {
 	(void)dims;
 
@@ -1246,8 +1246,8 @@ INLINE unsigned wt_idx(const unsigned r, unsigned c, unsigned dims)
 	if (dims > 32)
 	{
 		unsigned b = c & 0x18;
-		b = (b << 1) | (b >> 1);
-		c = (c & ~0x18) | (b & 0x18);
+		b = b << 1 | b >> 1;
+		c = c & ~0x18 | b & 0x18;
 	}
 #endif
 

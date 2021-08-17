@@ -70,7 +70,8 @@ static void prt_str(const position& pos, char* str, const int mirror)
 	for (pt = syz_king; pt >= syz_pawn; --pt)
 		for (i = pos.number(color, pt_from_syz[pt]); i > 0; i--)
 			*str++ = pchr[6 - pt];
-	*str++ = 0;
+	// ReSharper disable once CppAssignedValueIsNeverUsed
+	// *str++ = 0;
 }
 
 static uint64 calc_key(const position& pos, const int mirror)
