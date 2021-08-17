@@ -813,8 +813,8 @@ namespace search
 		assert(pv_node || alpha == beta - 1);
 		assert(depth <= depth_0);
 
-		auto move = no_move;
-		int best_value = score_0, futility_basis = score_0, orig_alpha = {};
+		uint32_t move;
+		int best_value, futility_basis, orig_alpha = {};
 
 		auto* pi = pos.info();
 
@@ -1421,7 +1421,9 @@ NO_ANALYSIS:
 
 void Thread::begin_search()
 {
-	auto alpha = score_0, delta_alpha = score_0, delta_beta = score_0;
+	int alpha;
+	int delta_alpha;
+	int delta_beta;
 	auto fast_move = no_move;
 	auto* main_thread = this == thread_pool.main() ? thread_pool.main() : nullptr;
 	if (!main_thread)
@@ -1740,7 +1742,7 @@ std::string print_pv(const position& pos, const int alpha, const int beta, const
 		if (ss.rdbuf()->in_avail())
 			ss << "\n";
 
-		auto sel_depth = 0;
+		int sel_depth;
 		auto* const pi = thread_pool.main()->root_position->info();
 		for (sel_depth = 0; sel_depth < max_ply; sel_depth++)
 			if ((pi + sel_depth)->pawn_key == 0)

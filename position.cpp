@@ -373,7 +373,7 @@ void position::play_move(const uint32_t move, const bool gives_check)
 	const auto from = from_square(move);
 	const auto to = to_square(move);
 	const auto piece = piece_on_square(from);
-	auto capture_piece = no_piece;
+	ptype capture_piece;
 
 	assert(piece_color(piece) == me);
 
@@ -586,8 +586,8 @@ bool position::see_test(const uint32_t move, const int limit) const
 			}
 		}
 
-		uint64_t bb = 0;
-		auto capture_piece = no_piecetype;
+		uint64_t bb;
+		uint8_t capture_piece;
 		if ((bb = my_attackers & pieces(pt_pawn)))
 			capture_piece = pt_pawn;
 		else if ((bb = my_attackers & pieces(pt_knight)))
@@ -738,7 +738,7 @@ position& position::set(const std::string& fen_str, const bool is_chess960, Thre
 	assert(th != nullptr);
 
 	uint8_t r = 0, token = 0;
-	size_t idx = 0;
+	size_t idx;
 	auto sq = a8;
 	std::istringstream ss(fen_str);
 
@@ -772,7 +772,7 @@ position& position::set(const std::string& fen_str, const bool is_chess960, Thre
 
 	while (ss >> token && !isspace(token))
 	{
-		auto rsq = no_square;
+		square rsq;
 		const auto color = islower(token) ? black : white;
 		const auto rook = make_piece(color, pt_rook);
 
