@@ -157,14 +157,23 @@ typedef __mmask64 mask_t;
 
 #elif USE_AVX2
 constexpr auto simd_width = 256;
+constexpr auto num_regs = 16;
+
 typedef __m256i vec16_t;
 typedef __m256i vec8_t;
 typedef uint32_t mask_t;
-#define VEC_ADD_16(a,b) _mm256_add_epi16(a,b)
-#define VEC_SUB_16(a,b) _mm256_sub_epi16(a,b)
-#define VEC_PACKS(a,b) _mm256_packs_epi16(a,b)
-#define VEC_MASK_POS(a) _mm256_movemask_epi8(_mm256_cmpgt_epi8(a,_mm256_setzero_si256()))
-constexpr auto num_regs = 16;
+
+template<typename T1, typename T2>
+constexpr auto VEC_ADD_16(T1 a, T2 b) { return _mm256_add_epi16(a,b); }
+
+template<typename T1, typename T2>
+constexpr auto VEC_SUB_16(T1 a, T2 b) { return _mm256_sub_epi16(a,b); }
+
+template<typename T1, typename T2>
+constexpr auto VEC_PACKS(T1 a, T2 b) { return _mm256_packs_epi16(a,b); }
+
+template<typename T>
+constexpr auto VEC_MASK_POS(T a) { return _mm256_movemask_epi8(_mm256_cmpgt_epi8(a,_mm256_setzero_si256())); }
 
 #elif USE_SSE2
 #define SIMD_WIDTH 128
