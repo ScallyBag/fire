@@ -51,9 +51,9 @@ size_t file_size(const FD fd)
 	fstat(fd, &statbuf);
 	return statbuf.st_size;
 #else
-	DWORD sizeHigh;
-	const DWORD sizeLow = GetFileSize(fd, &sizeHigh);
-	return (static_cast<uint64_t>(sizeHigh) << 32) | sizeLow;
+	DWORD size_high;
+	const DWORD size_low = GetFileSize(fd, &size_high);
+	return (static_cast<uint64_t>(size_high) << 32) | size_low;
 #endif
 }
 
@@ -68,9 +68,9 @@ const void* map_file(const FD fd, map_t* map)
 	return data == MAP_FAILED ? NULL : data;
 
 #else
-	DWORD sizeHigh;
-	const DWORD sizeLow = GetFileSize(fd, &sizeHigh);
-	*map = CreateFileMapping(fd, nullptr, PAGE_READONLY, sizeHigh, sizeLow, nullptr);
+	DWORD size_high;
+	const DWORD size_low = GetFileSize(fd, &size_high);
+	*map = CreateFileMapping(fd, nullptr, PAGE_READONLY, size_high, size_low, nullptr);
 	if (*map == nullptr)
 		return nullptr;
 	return MapViewOfFile(*map, FILE_MAP_READ, 0, 0, 0);
