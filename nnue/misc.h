@@ -95,5 +95,6 @@ INLINE uint16_t readu_le_u16(const void* p)
 	return q[0] | (q[1] << 8);
 }
 
-#define CLAMP(a, b, c) ((a) < (b) ? (b) : (a) > (c) ? (c) : (a))
+template<typename T1, typename T2, typename T3>
+constexpr auto CLAMP(T1 a, T2  b, T3  c) { return ((a) < (b) ? (b) : (a) > (c) ? (c) : (a)); }
 
