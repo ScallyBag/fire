@@ -100,7 +100,7 @@ typedef struct Position
 	nnue_data* nnue[3];
 } Position;
 
-int nnue_evaluate_pos(Position* pos);
+int nnue_evaluate_pos(const Position* pos);
 
 /**
 * Load NNUE file

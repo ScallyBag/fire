@@ -44,7 +44,6 @@ namespace search
 	template <nodetype nt>
 	int alpha_beta(position& pos, int alpha, int beta, int depth, bool cut_node)
 	{
-		constexpr auto info_currmove_interval = 4000;
 		const auto pv_node = nt == PV;
 		constexpr auto max_quiet_moves = 64;
 
@@ -259,7 +258,7 @@ namespace search
 			assert(eval - beta >= 0);
 
 			auto r = no_depth;
-			r = depth < 4 * plies ? depth : (null_move_tm_base + null_move_tm_mult * (static_cast<uint32_t>(depth) / plies)
+			r = depth < 4 * plies ? depth : (null_move_tm_base + null_move_tm_mult * (depth / plies)
 				+ std::max(std::min(null_move_depth_greater_than_mult * (eval - beta) / null_move_depth_greater_than_div
 				- null_move_depth_greater_than_sub - null_move_depth_greater_than_cut_node_mult
 				* cut_node - null_move_depth_greater_than_cut_node_mult * (hash_move != no_move), 3 * 256), 0)) / 256 * plies;
@@ -396,7 +395,7 @@ namespace search
 
 			if (!bench_active && root_node && my_thread == thread_pool.main())
 			{
-				if (time_control.elapsed() > info_currmove_interval)
+				if (constexpr auto info_currmove_interval = 4000; time_control.elapsed() > info_currmove_interval)
 					acout() << "info currmove " << util::move_to_string(move, pos) << " currmovenumber " << move_number + my_thread->active_pv << std::endl;
 			}
 
@@ -428,7 +427,7 @@ namespace search
 			{
 				auto cm = pi->mp_counter_move;
 				auto r_beta = hash_value - static_cast<int>(static_cast<uint32_t>(depth) / plies * excluded_move_r_beta_hash_value_margin_mult / excluded_move_r_beta_hash_value_margin_div);
-				auto r_depth = static_cast<uint32_t>(depth) / plies / 2 * plies;
+				int r_depth = depth / plies / 2 * plies;
 				pi->excluded_move = move;
 
 				if (auto value = alpha_beta<nonPV>(pos, r_beta - score_1, r_beta, r_depth, !pv_node && cut_node); value < r_beta)

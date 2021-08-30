@@ -115,7 +115,7 @@ bool is_little_endian()
 	{
 		int i;
 		char c[sizeof(int)];
-	} x;
+	} x{};
 	x.i = 1;
 	return x.c[0] == 1;
 }

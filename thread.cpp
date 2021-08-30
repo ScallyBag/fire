@@ -20,7 +20,6 @@
 #include <iostream>
 
 #include "fire.h"
-#include "uci.h"
 
 cmhinfo* cmh_data;
 

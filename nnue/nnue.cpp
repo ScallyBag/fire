@@ -1187,7 +1187,7 @@ struct net_data
 };
 
 // Evaluation function
-int nnue_evaluate_pos(Position* pos)
+int nnue_evaluate_pos(const Position* pos)
 {
 	int32_t out_value;
 	alignas(8) mask_t input_mask[ft_out_dims / (8 * sizeof(mask_t))];
@@ -1234,7 +1234,7 @@ static void read_output_weights(weight_t* w, const char* d)
 	}
 }
 
-INLINE unsigned wt_idx(const unsigned r, unsigned c, unsigned dims)
+INLINE unsigned wt_idx(const unsigned r, unsigned c, const unsigned dims)
 {
 	(void)dims;
 
@@ -1337,23 +1337,23 @@ static void init_weights(const void* eval_data)
 
 	// Read transformer
 	for (unsigned i = 0; i < k_half_dimensions; i++, d += 2)
-		ft_biases[i] = readu_le_u16(d);
+		ft_biases[i] = static_cast<int16_t>(readu_le_u16(d));
 	
 	for (unsigned i = 0; i < k_half_dimensions * ft_in_dims; i++, d += 2)
-		ft_weights[i] = readu_le_u16(d);
+		ft_weights[i] = static_cast<int16_t>(readu_le_u16(d));
 
 	// Read network
 	d += 4;
 	for (unsigned i = 0; i < 32; i++, d += 4)
-		hidden1_biases[i] = readu_le_u32(d);
+		hidden1_biases[i] = static_cast<int32_t>(readu_le_u32(d));
 	
 	d = read_hidden_weights(hidden1_weights, 512, d);
 	for (unsigned i = 0; i < 32; i++, d += 4)
-		hidden2_biases[i] = readu_le_u32(d);
+		hidden2_biases[i] = static_cast<int32_t>(readu_le_u32(d));
 	
 	d = read_hidden_weights(hidden2_weights, 32, d);
 	for (unsigned i = 0; i < 1; i++, d += 4)
-		output_biases[i] = readu_le_u32(d);
+		output_biases[i] = static_cast<int32_t>(readu_le_u32(d));
 	
 	read_output_weights(output_weights, d);
 
