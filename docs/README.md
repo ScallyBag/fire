@@ -145,7 +145,7 @@ and others
 the endgame table bases are implemented using code adapted from Ronald de Man's
 - [Syzygy EGTBs & probing code](https://github.com/syzygy1/tb)
 
-The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
+The NNUE implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
 - [nnue-probe](https://github.com/dshawul/nnue-probe/)
 
 Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Vieri
