@@ -137,7 +137,9 @@ and some have been adapted from the super strong open-source chess engine
 - [Stockfish](https://github.com/official-stockfish/Stockfish)
 
 and others
+- [Ippolit](https://github.com/FireFather/ippolit)
 - [Robbolito](https://github.com/FireFather/robbolito)
+- [Firebird](https://github.com/FireFather/firebird)
 - [Ivanhoe](https://www.chessprogramming.org/IvanHoe)
 - [Ivanhoe](http://users.telenet.be/chesslogik/ivanhoe.htm)
 - [Houdini](https://www.cruxis.com/chess/houdini.htm)
