@@ -138,7 +138,8 @@ and some have been adapted from the super strong open-source chess engine
 
 and others
 - [Robbolito](https://github.com/FireFather/robbolito)
-- [Ivanhoe](https://www.chessprogramming.org/IvanHoe & http://users.telenet.be/chesslogik/ivanhoe.htm)
+- [Ivanhoe](https://www.chessprogramming.org/IvanHoe)
+- [Ivanhoe](http://users.telenet.be/chesslogik/ivanhoe.htm)
 - [Houdini](https://www.cruxis.com/chess/houdini.htm)
 - [Gull](https://github.com/FireFather/seagull)
 
