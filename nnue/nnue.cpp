@@ -547,7 +547,7 @@ INLINE void affine_txfm(const int8_t* input, void* output, unsigned in_dims, uns
 		{
 			second = k_zero;
 		}
-		__m256i mul = _mm256_set1_epi16(factor), prod, signs;
+		__m256i mul = _mm256_set1_epi16(static_cast<short>(factor)), prod, signs;
 		prod = _mm256_maddubs_epi16(mul, _mm256_unpacklo_epi8(first, second));
 		signs = _mm256_cmpgt_epi16(k_zero, prod);
 		out_0 = _mm256_add_epi32(out_0, _mm256_unpacklo_epi16(prod, signs));
@@ -1398,12 +1398,12 @@ void _CDECL nnue_init(const char* eval_file)
 
 	if (load_eval_file(eval_file))
 	{
-		printf("NNUE found: %s\n", eval_file);
+		printf("info string NNUE found: %s\n", eval_file);
 		fflush(stdout);
 		return;
 	}
 
-	printf("NNUE not found: %s\n", eval_file);
+	printf("info string NNUE not found: %s\n", eval_file);
 	fflush(stdout);
 }
 

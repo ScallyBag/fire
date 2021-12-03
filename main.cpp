@@ -14,6 +14,7 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "cpuid.h"
 #include "options.h"
 #include "util/util.h"
 #include "uci.h"
@@ -23,10 +24,11 @@ std::unique_ptr<options> params;
 int main(const int argc, char* argv[])
 {
 	// display engine name, version, platform, and bmis
-	acout() << util::engine_info();
-	
-	// display logical cores	
-	acout() << util::core_info();
+	acout() << util::engine_info() << std::endl;
+
+	// display cpu info
+	cpuid();
+	acout() << std::endl;
 
 	// read parameters from disk (engine.conf)
 	params = std::make_unique<options>(argc, argv);

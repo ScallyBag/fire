@@ -98,6 +98,5 @@ namespace util
 		while (getline(ss, t, delimiter)) { tokens.push_back(t); }
 		return tokens;
 	}
-
 }
 std::ostream& operator<<(std::ostream& os, const position& pos);

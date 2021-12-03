@@ -60,10 +60,10 @@ namespace util
 		// if windows
 		SYSTEM_INFO sys_info;
 		GetSystemInfo(&sys_info);
-		ss << "info string " << sys_info.dwNumberOfProcessors << " available cores" << std::endl;
+		ss << sys_info.dwNumberOfProcessors << " available cores" << std::endl;
 #else
 		// if linux
-		ss << "info string " << sysconf(_SC_NPROCESSORS_ONLN) << " available cores" << std::endl;
+		ss << sysconf(_SC_NPROCESSORS_ONLN) << " available cores" << std::endl;
 #endif
 
 		return ss.str();
