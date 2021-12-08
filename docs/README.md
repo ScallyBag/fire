@@ -23,6 +23,7 @@ by Norman Schmidt
 - fast perft & divide
 - bench (includes ttd time-to-depth calculation)
 - timestamped bench, perft/divide, and tuner logs
+- cpu-id function identifies support for CPU extension instruction sets on startup
 - asychronous cout (acout) class using std::unique_lock<std::mutex>
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
 - reads engine.conf on startup for search, eval, pawn, and material parameters
