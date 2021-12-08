@@ -43,8 +43,8 @@ Fire 8.NN.MC has undergone meticulous analysis and refactoring using many of the
 - **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set)
 - **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcount instruction set)
 
-- **windows** : Fire_8.NN.MC.3_x64_bmi2.exe, Fire_8.NN.MC.3_x64_avx2.exe, Fire_8.NN.MC.3_x64_popc.exe
-- **linux** :   Fire_8.NN.MC.3_x64_bmi2, Fire_8.NN.MC.3_x64_avx2, Fire_8.NN.MC.3_x64_popc
+- **windows** : Fire_8.NN.MC.2_x64_bmi2.exe, Fire_8.NN.MC.2_x64_avx2.exe, Fire_8.NN.MC.2_x64_popc.exe
+- **linux** :   Fire_8.NN.MC.2_x64_bmi2, Fire_8.NN.MC.2_x64_avx2, Fire_8.NN.MC.2_x64_popc
 
 Be aware that, due to lack of avx2 instruction set, the popc binaries are much much slower than the bmi2 and/or avx2 binaries.
 
@@ -137,23 +137,20 @@ and some have been adapted from the super strong open-source chess engine
 - [Stockfish](https://github.com/official-stockfish/Stockfish)
 
 and others
-- [Ippolit](https://github.com/FireFather/ippolit)
 - [Robbolito](https://github.com/FireFather/robbolito)
-- [Firebird](https://github.com/FireFather/firebird)
-- [Ivanhoe](https://www.chessprogramming.org/IvanHoe)
-- [Ivanhoe](http://users.telenet.be/chesslogik/ivanhoe.htm)
+- [Ivanhoe](https://www.chessprogramming.org/IvanHoe) [Ivanhoe](http://users.telenet.be/chesslogik/ivanhoe.htm)
 - [Houdini](https://www.cruxis.com/chess/houdini.htm)
 - [Gull](https://github.com/FireFather/seagull)
 
 the endgame table bases are implemented using code adapted from Ronald de Man's
 - [Syzygy EGTBs & probing code](https://github.com/syzygy1/tb)
 
-The NNUE implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
+The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
 - [nnue-probe](https://github.com/dshawul/nnue-probe/)
 
 Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Vieri
 - https://www.comp.nus.edu.sg/~sergio-v/nnue/
-(rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.NN.MC.3_x64 executable.)
+(rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.NN.MC.2_x64 executable.)
 
 the MCTS implementation is derived from Stephane Nicolet's work
 - https://github.com/snicolet/Stockfish/commits/montecarlo

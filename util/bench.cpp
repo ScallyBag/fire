@@ -22,7 +22,7 @@
 #include "../uci.h"
 #include "util.h"
 
-// search 64 positions (startposition, 20 openings from ECO, 20 middlegame, 20 endgames from ECE, & 3 FRC start positions)
+// search 64 positions (startposition, 21 openings from ECO, 21 middlegame, 21 endgames from ECE)
 // to depth 16 and write a time-stamped results file to disk
 // this is an extremely useful function during development and code optimization efforts...to measure speedups and/or slowdowns
 // it can be started via command line 'bench', or via Bench button in your GUI's UCI dialog

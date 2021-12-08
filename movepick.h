@@ -101,15 +101,15 @@ struct piece_square_stats : piece_square_table<int16_t>
 	void update_plus(const int offset, const int val)
 	{
 		auto& elem = *(reinterpret_cast<int16_t*>(table_) + offset);
-		elem -= elem * static_cast<short>(val / max_plus);
-		elem += static_cast<short>(val);
+		elem -= elem * static_cast<int>(val) / max_plus;
+		elem += val;
 	}
 
 	void update_minus(const int offset, const int val)
 	{
 		auto& elem = *(reinterpret_cast<int16_t*>(table_) + offset);
-		elem -= elem * static_cast<short>(val / max_min);
-		elem -= static_cast<short>(val);
+		elem -= elem * static_cast<int>(val) / max_min;
+		elem -= val;
 	}
 };
 

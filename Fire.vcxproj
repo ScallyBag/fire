@@ -119,7 +119,6 @@
     <ClCompile Include="bitbase\kpk.cpp" />
     <ClCompile Include="bitboard.cpp" />
     <ClCompile Include="chrono.cpp" />
-    <ClCompile Include="cpuid.cpp" />
     <ClCompile Include="egtb\egtb.cpp" />
     <ClCompile Include="egtb\tbprobe.cpp" />
     <ClCompile Include="endgame.cpp" />
@@ -154,7 +153,6 @@
     <ClInclude Include="bitboard.h" />
     <ClInclude Include="bitop.h" />
     <ClInclude Include="chrono.h" />
-    <ClInclude Include="cpuid.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="egtb\tbcore.h" />
     <ClInclude Include="egtb\tbprobe.h" />

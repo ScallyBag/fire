@@ -157,23 +157,14 @@ typedef __mmask64 mask_t;
 
 #elif USE_AVX2
 constexpr auto simd_width = 256;
-constexpr auto num_regs = 16;
-
 typedef __m256i vec16_t;
 typedef __m256i vec8_t;
 typedef uint32_t mask_t;
-
-template<typename T1, typename T2>
-constexpr auto VEC_ADD_16(T1 a, T2 b) { return _mm256_add_epi16(a,b); }
-
-template<typename T1, typename T2>
-constexpr auto VEC_SUB_16(T1 a, T2 b) { return _mm256_sub_epi16(a,b); }
-
-template<typename T1, typename T2>
-constexpr auto VEC_PACKS(T1 a, T2 b) { return _mm256_packs_epi16(a,b); }
-
-template<typename T>
-constexpr auto VEC_MASK_POS(T a) { return _mm256_movemask_epi8(_mm256_cmpgt_epi8(a,_mm256_setzero_si256())); }
+#define VEC_ADD_16(a,b) _mm256_add_epi16(a,b)
+#define VEC_SUB_16(a,b) _mm256_sub_epi16(a,b)
+#define VEC_PACKS(a,b) _mm256_packs_epi16(a,b)
+#define VEC_MASK_POS(a) _mm256_movemask_epi8(_mm256_cmpgt_epi8(a,_mm256_setzero_si256()))
+constexpr auto num_regs = 16;
 
 #elif USE_SSE2
 #define SIMD_WIDTH 128
@@ -547,7 +538,7 @@ INLINE void affine_txfm(const int8_t* input, void* output, unsigned in_dims, uns
 		{
 			second = k_zero;
 		}
-		__m256i mul = _mm256_set1_epi16(static_cast<short>(factor)), prod, signs;
+		__m256i mul = _mm256_set1_epi16(factor), prod, signs;
 		prod = _mm256_maddubs_epi16(mul, _mm256_unpacklo_epi8(first, second));
 		signs = _mm256_cmpgt_epi16(k_zero, prod);
 		out_0 = _mm256_add_epi32(out_0, _mm256_unpacklo_epi16(prod, signs));
@@ -1187,7 +1178,7 @@ struct net_data
 };
 
 // Evaluation function
-int nnue_evaluate_pos(const Position* pos)
+int nnue_evaluate_pos(Position* pos)
 {
 	int32_t out_value;
 	alignas(8) mask_t input_mask[ft_out_dims / (8 * sizeof(mask_t))];
@@ -1234,7 +1225,7 @@ static void read_output_weights(weight_t* w, const char* d)
 	}
 }
 
-INLINE unsigned wt_idx(const unsigned r, unsigned c, const unsigned dims)
+INLINE unsigned wt_idx(const unsigned r, unsigned c, unsigned dims)
 {
 	(void)dims;
 
@@ -1337,23 +1328,23 @@ static void init_weights(const void* eval_data)
 
 	// Read transformer
 	for (unsigned i = 0; i < k_half_dimensions; i++, d += 2)
-		ft_biases[i] = static_cast<int16_t>(readu_le_u16(d));
+		ft_biases[i] = readu_le_u16(d);
 	
 	for (unsigned i = 0; i < k_half_dimensions * ft_in_dims; i++, d += 2)
-		ft_weights[i] = static_cast<int16_t>(readu_le_u16(d));
+		ft_weights[i] = readu_le_u16(d);
 
 	// Read network
 	d += 4;
 	for (unsigned i = 0; i < 32; i++, d += 4)
-		hidden1_biases[i] = static_cast<int32_t>(readu_le_u32(d));
+		hidden1_biases[i] = readu_le_u32(d);
 	
 	d = read_hidden_weights(hidden1_weights, 512, d);
 	for (unsigned i = 0; i < 32; i++, d += 4)
-		hidden2_biases[i] = static_cast<int32_t>(readu_le_u32(d));
+		hidden2_biases[i] = readu_le_u32(d);
 	
 	d = read_hidden_weights(hidden2_weights, 32, d);
 	for (unsigned i = 0; i < 1; i++, d += 4)
-		output_biases[i] = static_cast<int32_t>(readu_le_u32(d));
+		output_biases[i] = readu_le_u32(d);
 	
 	read_output_weights(output_weights, d);
 
@@ -1398,12 +1389,12 @@ void _CDECL nnue_init(const char* eval_file)
 
 	if (load_eval_file(eval_file))
 	{
-		printf("info string NNUE found: %s\n", eval_file);
+		printf("NNUE found: %s\n", eval_file);
 		fflush(stdout);
 		return;
 	}
 
-	printf("info string NNUE not found: %s\n", eval_file);
+	printf("NNUE not found: %s\n", eval_file);
 	fflush(stdout);
 }
 

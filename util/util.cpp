@@ -60,10 +60,10 @@ namespace util
 		// if windows
 		SYSTEM_INFO sys_info;
 		GetSystemInfo(&sys_info);
-		ss << sys_info.dwNumberOfProcessors << " available cores" << std::endl;
+		ss << "info string " << sys_info.dwNumberOfProcessors << " available cores" << std::endl;
 #else
 		// if linux
-		ss << sysconf(_SC_NPROCESSORS_ONLN) << " available cores" << std::endl;
+		ss << "info string " << sysconf(_SC_NPROCESSORS_ONLN) << " available cores" << std::endl;
 #endif
 
 		return ss.str();
@@ -120,7 +120,7 @@ namespace util
 // display ascii representation of position (for use in bench and perft)
 std::ostream& operator<<(std::ostream& os, const position& pos)
 {
-	constexpr char p_chars[] =
+	const char p_chars[] =
 	{
 	'K','P','N','B','R','Q',
 	'k','p','n','b','r','q',

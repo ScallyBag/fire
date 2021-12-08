@@ -29,7 +29,7 @@ void random(position& pos) {
 	int num_moves = 0;
 
 	// find & count legal moves
-	for ([[maybe_unused]] const auto& m : legal_move_list(pos))
+	for (const auto& m : legal_move_list(pos))
 		num_moves++;
 
 	// seed the generator	

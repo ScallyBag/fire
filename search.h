@@ -110,9 +110,9 @@ namespace search
 	int value_to_hash(int val, int ply);
 	int value_from_hash(int val, int ply);
 	void copy_pv(uint32_t* pv, uint32_t move, uint32_t* pv_lower);
-	void update_stats(const position& pos, bool state_check, uint32_t move, int depth, const uint32_t* quiet_moves, int quiet_number);
-	void update_stats_quiet(const position& pos, bool state_check, int depth, const uint32_t* quiet_moves, int quiet_number);
-	void update_stats_minus(const position& pos, bool state_check, uint32_t move, int depth);
+	void update_stats(const position& pos, const bool state_check, const uint32_t move, const int depth, const uint32_t* quiet_moves, int quiet_number);
+	void update_stats_quiet(const position& pos, const bool state_check, const int depth, const uint32_t* quiet_moves, const int quiet_number);
+	void update_stats_minus(const position& pos, const bool state_check, const uint32_t move, const int depth);
 	void send_time_info();
 	
 	inline uint8_t lm_reductions[2][2][64 * static_cast<int>(plies)][64];

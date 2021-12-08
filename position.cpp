@@ -24,11 +24,13 @@
 #include "macro/side.h"
 #include "macro/square.h"
 #include "macro/file.h"
+#include "macro/rank.h"
 #include "fire.h"
 #include "hash.h"
 #include "movegen.h"
 #include "pragma.h"
 #include "thread.h"
+#include "uci.h"
 #include "util/util.h"
 #include "zobrist.h"
 
@@ -602,7 +604,7 @@ bool position::see_test(const uint32_t move, const int limit) const
 		value += see_value[capture_piece];
 		if (value < 0)
 			return false;
-		occupied ^= bb;
+		occupied ^= bb & -bb;
 		if (!(capture_piece & 1))
 			attackers |= attack_bishop_bb(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
 		if (capture_piece >= pt_rook)
@@ -641,7 +643,7 @@ bool position::see_test(const uint32_t move, const int limit) const
 		value -= see_value[capture_piece];
 		if (value >= 0)
 			return true;
-		occupied ^= bb;
+		occupied ^= bb & -bb;
 		if (!(capture_piece & 1))
 			attackers |= attack_bishop_bb(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
 		if (capture_piece >= pt_rook)

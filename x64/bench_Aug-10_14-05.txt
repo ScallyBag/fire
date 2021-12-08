@@ -1,6 +1,0 @@
-Fire 8.NN.MC.3 x64 bmi2
-depth 16
-nodes 151329740
-time 105.89 secs
-nps 1429176
-ttd 1.65 secs
