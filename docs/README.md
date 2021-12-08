@@ -23,7 +23,6 @@ by Norman Schmidt
 - fast perft & divide
 - bench (includes ttd time-to-depth calculation)
 - timestamped bench, perft/divide, and tuner logs
-- cpu-id function identifies support for CPU extension instruction sets on startup
 - asychronous cout (acout) class using std::unique_lock<std::mutex>
 - uci option searchtype random w/ uniform_real_distribution & mesenne_twister_engine
 - reads engine.conf on startup for search, eval, pawn, and material parameters
@@ -31,6 +30,7 @@ by Norman Schmidt
 - fast alpha-beta search
 - or optional experimental MCTS-UCT search
  (Monte Carlo Tree Search w/ Upper Confidence Bounds Applied to Trees) pure/no minmax
+- NEW cpu-id function identifies support for CPU extension instruction sets on startup
 
 **Fire 8.NN.MC.3 (NNUE - MCTS/UCT) is now available**
 
