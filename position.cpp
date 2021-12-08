@@ -24,13 +24,11 @@
 #include "macro/side.h"
 #include "macro/square.h"
 #include "macro/file.h"
-#include "macro/rank.h"
 #include "fire.h"
 #include "hash.h"
 #include "movegen.h"
 #include "pragma.h"
 #include "thread.h"
-#include "uci.h"
 #include "util/util.h"
 #include "zobrist.h"
 
