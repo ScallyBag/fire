@@ -30,6 +30,7 @@ by Norman Schmidt
 - fast alpha-beta search
 - or optional experimental MCTS-UCT search
  (Monte Carlo Tree Search w/ Upper Confidence Bounds Applied to Trees) pure/no minmax
+- NEW cpu-id function identifies support for CPU extension instruction sets on startup
 
 **Fire 8.NN.MC.3 (NNUE - MCTS/UCT) is now available**
 
