@@ -137,20 +137,23 @@ and some have been adapted from the super strong open-source chess engine
 - [Stockfish](https://github.com/official-stockfish/Stockfish)
 
 and others
+- [Ippolit](https://github.com/FireFather/ippolit)
 - [Robbolito](https://github.com/FireFather/robbolito)
-- [Ivanhoe](https://www.chessprogramming.org/IvanHoe) [Ivanhoe](http://users.telenet.be/chesslogik/ivanhoe.htm)
+- [Firebird](https://github.com/FireFather/firebird)
+- [Ivanhoe](https://www.chessprogramming.org/IvanHoe)
+- [Ivanhoe](http://users.telenet.be/chesslogik/ivanhoe.htm)
 - [Houdini](https://www.cruxis.com/chess/houdini.htm)
 - [Gull](https://github.com/FireFather/seagull)
 
 the endgame table bases are implemented using code adapted from Ronald de Man's
 - [Syzygy EGTBs & probing code](https://github.com/syzygy1/tb)
 
-The NNUN implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
+The NNUE implementation utilizes a modified version of Daniel Shaw's/Cfish excellent nnue probe code:
 - [nnue-probe](https://github.com/dshawul/nnue-probe/)
 
 Fire includes 'Raptor', a top reinforcement learning network trained by Sergio Vieri
 - https://www.comp.nus.edu.sg/~sergio-v/nnue/
-(rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.NN.MC.2_x64 executable.)
+(rename any downloaded net -> nn.bin and place it in the same directory as the Fire_8.NN.MC.3_x64 executable.)
 
 the MCTS implementation is derived from Stephane Nicolet's work
 - https://github.com/snicolet/Stockfish/commits/montecarlo
