@@ -33,7 +33,7 @@ by Norman Schmidt
 
 **Fire 8.NN.MC.3 (NNUE - MCTS/UCT) is now available**
 
-![alt tag](https://raw.githubusercontent.com/FireFather/fire/master/Fire_8.NN.MCx64.PNG)
+![alt tag](https://raw.githubusercontent.com/FireFather/fire/master/docs/Fire_8.NN.MCx64.PNG)
 
 Fire 8.NN.MC has undergone meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
