@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -95,7 +95,7 @@ main_hash_entry* hash::replace(const uint64_t key) const
 // send hash memory usage info to UCI GUI
 int hash::hash_full() const
 {
-	constexpr auto i_max = 999 / bucket_size + 1;
+	const auto i_max = 999 / bucket_size + 1;
 	auto cnt = 0;
 	for (auto i = 0; i < i_max; i++)
 	{

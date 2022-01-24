@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -30,10 +30,10 @@ enum hashflags : uint8_t
 	exact_value = north_border | south_border
 };
 
-constexpr uint8_t age_mask = 0x38;
-constexpr uint8_t flags_mask = 0xc7;
-constexpr uint8_t threat_mask = 0x03;
-constexpr uint8_t use_mask = 0xfb;
+const uint8_t age_mask = 0x38;
+const uint8_t flags_mask = 0xc7;
+const uint8_t threat_mask = 0x03;
+const uint8_t use_mask = 0xfb;
 
 struct main_hash_entry
 {
@@ -44,7 +44,7 @@ struct main_hash_entry
 
 	[[nodiscard]] int value() const
 	{
-		return value_;
+		return value_; 
 	}
 
 	[[nodiscard]] int eval() const
@@ -131,12 +131,12 @@ public:
 	void init(size_t mb_size);
 	void clear() const;
 
-	[[nodiscard]] main_hash_entry* entry(const uint64_t key) const
+	[[nodiscard]] inline main_hash_entry* entry(const uint64_t key) const
 	{
 		return reinterpret_cast<main_hash_entry*>(reinterpret_cast<char*>(hash_mem_) + (key & bucket_mask_));
 	}
 
-	void prefetch_entry(const uint64_t key) const
+	inline void prefetch_entry(const uint64_t key) const
 	{
 		prefetch(entry(key));
 	}

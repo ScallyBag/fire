@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -96,7 +96,7 @@ namespace movepick
 	template <>
 	void score<captures_promotions>(const position& pos)
 	{
-		const auto* const pi = pos.info();
+		auto* const pi = pos.info();
 		for (auto* z = pi->mp_current_move; z < pi->mp_end_list; z++)
 			z->value = capture_sort_values[pos.piece_on_square(to_square(z->move))]
 			- 200 * relative_rank(pos.on_move(), to_square(z->move));
@@ -135,7 +135,7 @@ namespace movepick
 	template <>
 	void score<evade_check>(const position& pos)
 	{
-		const auto* const pi = pos.info();
+		auto* const pi = pos.info();
 		const auto& history = pos.thread_info()->evasion_history;
 
 		for (auto* z = pi->mp_current_move; z < pi->mp_end_list; z++)
@@ -192,7 +192,7 @@ namespace movepick
 			begin++;
 		}
 	}
-
+	
 	inline uint32_t find_best_move(s_move* begin, s_move* end)
 	{
 		auto* best = begin;
@@ -212,7 +212,7 @@ namespace movepick
 		{
 			uint8_t x = crc >> 8 ^ *data_p++;
 			x ^= x >> 4;
-			crc = static_cast<uint16_t>(crc << 8 ^ x << 12 ^ x << 5 ^ x);
+			crc = crc << 8 ^ static_cast<uint16_t>(x << 12) ^ static_cast<uint16_t>(x << 5) ^ static_cast<uint16_t>(x);
 		}
 		return crc;
 	}
@@ -222,10 +222,10 @@ namespace movepick
 		const auto crc = crc16(reinterpret_cast<const uint8_t*>(&bb), 8);
 		return crc;
 	}
-
+	
 	uint32_t pick_move(const position& pos)
 	{
-		switch (auto* pi = pos.info(); pi->mp_stage)
+		switch (auto * pi = pos.info(); pi->mp_stage)
 		{
 		case normal_search: case check_evasions:
 		case q_search_with_checks: case q_search_no_checks:

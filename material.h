@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -60,6 +60,7 @@ namespace material
 	private:
 		CACHE_ALIGN entry mat_hash_mem_[Size];
 	};
+#ifdef TUNER
 	// pawn factors
 	inline auto p_base_score = 950;
 	inline auto p_q_factor = 90;
@@ -115,9 +116,9 @@ namespace material
 	inline auto max_phase = 32;
 	inline auto r_phase_factor = 3;
 	inline auto q_phase_factor = 6;
-
+#endif
 	// default material hash size = 16 MB;
-	constexpr int material_hash_size = 16384;
+	const int material_hash_size = 16384;
 
 	typedef material_hash_table<mat_hash_entry, material_hash_size> material_hash;
 	mat_hash_entry* probe(const position& pos);

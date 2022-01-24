@@ -31,43 +31,29 @@ struct search_param
 	search_param()
 	{
 		nodes = time[white] = time[black] = inc[white] = inc[black] =
-		moves_to_go = depth = move_time = mate = infinite = ponder = 0;
+			moves_to_go = depth = move_time = mate = infinite = ponder = 0;
 	}
 
 	[[nodiscard]] bool use_time_calculating() const
 	{
 		return !(mate | move_time | depth | nodes | infinite);
 	}
-	
-	int time[num_sides]
-	{
-	},
-	inc[num_sides]
-	{
-	},
-	moves_to_go,
-	depth,
-	move_time,
-	mate,
-	infinite,
-	ponder;
-	
+
+	time_point start_time = 0;
+	int time[num_sides]{}, inc[num_sides]{}, moves_to_go, depth, move_time, mate, infinite, ponder;
 	uint64_t nodes;
 	max_moves_list search_moves;
-	time_point start_time = 0;	
 };
 
 class timecontrol
 {
 public:
-	void init(const search_param& limit, side me, int ply);
+	void init(search_param& limit, side me, int ply);
 	[[nodiscard]] int64_t optimum() const {return optimal_time_;}
 	[[nodiscard]] int64_t maximum() const {return maximum_time_;}
 	[[nodiscard]] int64_t elapsed() const;
 	[[nodiscard]] double calc_move_importance(int ply) const;
 	void adjustment_after_ponder_hit();
-	int64_t uci_minimum_time = 1;
-	int uci_move_overhead = 50;
 
 private:
 	time_point start_time_ = 0;
@@ -88,6 +74,8 @@ private:
 	int moves_horizon_ = 50;
 	double max_ratio_ = 7.09;
 	double steal_ratio_ = 0.35;
+	int64_t minimum_time_ = 1;
+	int move_overhead_ = 10;
 };
 
 extern timecontrol time_control;

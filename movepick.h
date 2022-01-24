@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -15,10 +15,6 @@
 */
 
 #pragma once
-
-#include <array>
-#include <limits>
-
 #include "fire.h"
 #include "movegen.h"
 #include "position.h"
@@ -36,7 +32,7 @@ namespace movepick
 		0, 0, 198, 817, 836, 1270, 2521, 0,
 		0, 0, 198, 817, 836, 1270, 2521, 0
 	};
-
+	
 	void init_search(const position&, uint32_t, int, bool);
 	void init_q_search(const position&, uint32_t, int, square);
 	void init_prob_cut(const position&, uint32_t, int);
@@ -232,59 +228,4 @@ inline stage& operator++(stage& d)
 {
 	return d = static_cast<stage>(static_cast<int>(d) + 1);
 }
-
-template<typename t, int d>
-class pi_entry {
-
-	t entry;
-
-public:
-	void operator=(const t& v)
-	{
-		entry = v;
-	}
-	t* operator&()
-	{
-		return &entry;
-	}
-	t* operator->()
-	{
-		return &entry;
-	}
-	explicit operator const t& () const
-	{
-		return entry;
-	}
-
-	void operator<<(int bonus)
-	{
-		assert(abs(bonus) <= D);
-		static_assert(d <= std::numeric_limits<t>::max(), "D overflows T");
-
-		entry += bonus - entry * abs(bonus) / d;
-
-		assert(abs(entry) <= D);
-	}
-};
-
-template <typename t, int d, int Size, int... sizes>
-struct pos_info : std::array<pos_info<t, d, sizes...>, Size>
-{
-	typedef pos_info<t, d, Size, sizes...> stats;
-
-	void fill(const t& v)
-	{
-		assert(std::is_standard_layout<stats>::value);
-
-		typedef pi_entry<t, d> entry;
-		entry* p = reinterpret_cast<entry*>(this);
-		std::fill(p, p + sizeof(*this) / sizeof(entry), v);
-	}
-};
-
-template <typename t, int d, int Size>
-struct pos_info<t, d, Size> : std::array<pi_entry<t, d>, Size> {};
-typedef pos_info<int16_t, 29952, 16, 64> piece_to_history;
-typedef pos_info<piece_to_history, 0, 16, 64> continuation_history;
-
 

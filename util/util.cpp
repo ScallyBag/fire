@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -42,7 +42,7 @@ namespace util
 		ss << std::endl;
 		return ss.str();
 	}
-
+	
 	// return string with 'author'
 	std::string engine_author()
 	{
@@ -120,7 +120,7 @@ namespace util
 // display ascii representation of position (for use in bench and perft)
 std::ostream& operator<<(std::ostream& os, const position& pos)
 {
-	constexpr char p_chars[] =
+	char p_chars[] =
 	{
 	'K','P','N','B','R','Q',
 	'k','p','n','b','r','q',

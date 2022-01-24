@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -20,7 +20,7 @@
 
 // init the vars and structures needed for time manager
 // including class c_time_manager private member vars optimal_time_ & maximum_time_
-void timecontrol::init(const search_param& limit, const side me, const int ply)
+void timecontrol::init(search_param& limit, const side me, const int ply)
 {
 	start_time_ = now();
 	optimal_time_ = maximum_time_ = limit.time[me];
@@ -29,7 +29,7 @@ void timecontrol::init(const search_param& limit, const side me, const int ply)
 	const auto move_importance = calc_move_importance(ply) * move_importance_factor_;
 	double other_moves_importance = 0;
 
-	auto available = static_cast<int64_t>(limit.time[me]) - static_cast<int64_t>(uci_move_overhead);
+	auto available = static_cast<int64_t>(limit.time[me]) - static_cast<int64_t>(move_overhead_);
 
 	for (auto n = 1; n <= maxmoves; n++)
 	{
@@ -44,11 +44,11 @@ void timecontrol::init(const search_param& limit, const side me, const int ply)
 		maximum_time_ = std::min(t2, maximum_time_);
 
 		other_moves_importance += calc_move_importance(ply + 2 * n);
-		available += static_cast<int64_t>(limit.inc[me]) - static_cast<int64_t>(uci_move_overhead);
+		available += static_cast<int64_t>(limit.inc[me]) - static_cast<int64_t>(move_overhead_);
 	}
 
-	optimal_time_ = std::max(optimal_time_, uci_minimum_time);
-	maximum_time_ = std::max(maximum_time_, uci_minimum_time);
+	optimal_time_ = std::max(optimal_time_, minimum_time_);
+	maximum_time_ = std::max(maximum_time_, minimum_time_);
 
 	if (uci_ponder)
 	{

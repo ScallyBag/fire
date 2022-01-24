@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -24,11 +24,13 @@
 #include "macro/side.h"
 #include "macro/square.h"
 #include "macro/file.h"
+#include "macro/rank.h"
 #include "fire.h"
 #include "hash.h"
 #include "movegen.h"
 #include "pragma.h"
 #include "thread.h"
+#include "uci.h"
 #include "util/util.h"
 #include "zobrist.h"
 
@@ -38,8 +40,8 @@ uint64_t position::attack_to(const square sq, const uint64_t occupied) const
 	return (attack_from<pt_pawn>(sq, black) & pieces(white, pt_pawn))
 		| (attack_from<pt_pawn>(sq, white) & pieces(black, pt_pawn))
 		| (attack_from<pt_knight>(sq) & pieces(pt_knight))
-		| (attack_rook_bb(sq, occupied) & pieces(pt_rook, pt_queen))
-		| (attack_bishop_bb(sq, occupied) & pieces(pt_bishop, pt_queen))
+		| (attack_bb_rook(sq, occupied) & pieces(pt_rook, pt_queen))
+		| (attack_bb_bishop(sq, occupied) & pieces(pt_bishop, pt_queen))
 		| (attack_from<pt_king>(sq) & pieces(pt_king));
 }
 
@@ -83,7 +85,7 @@ void position::calculate_pins() const
 	{
 		const auto sq = pop_lsb(&pinners);
 
-		if (const auto b = get_between(square_k, sq) & pieces(); b && !more_than_one(b))
+		if (const auto b = bb_between(square_k, sq) & pieces(); b && !more_than_one(b))
 		{
 			result |= b;
 			pos_info_->pin_by[lsb(b)] = sq;
@@ -117,34 +119,29 @@ square position::calculate_threat() const
 			return msb(b);
 		break;
 	case w_bishop:
-		if (const auto b = attack_bishop_bb(to, pieces()) & pieces(black, pt_rook, pt_queen))
+		if (const auto b = attack_bb_bishop(to, pieces()) & pieces(black, pt_rook, pt_queen))
 			return lsb(b);
 		break;
 	case b_bishop:
-		if (const auto b = attack_bishop_bb(to, pieces()) & pieces(white, pt_rook, pt_queen))
+		if (const auto b = attack_bb_bishop(to, pieces()) & pieces(white, pt_rook, pt_queen))
 			return msb(b);
 		break;
 	case w_rook:
-		if (const auto b = attack_rook_bb(to, pieces()) & pieces(black, pt_queen))
+		if (const auto b = attack_bb_rook(to, pieces()) & pieces(black, pt_queen))
 			return lsb(b);
 		break;
 	case b_rook:
-		if (const auto b = attack_rook_bb(to, pieces()) & pieces(white, pt_queen))
+		if (const auto b = attack_bb_rook(to, pieces()) & pieces(white, pt_queen))
 			return msb(b);
 		break;
-	case no_piece: break;
-	case w_king: break;
-	case w_queen: break;
-	case b_king: break;
-	case b_queen: break;
-	case num_pieces: break;
-	default: break;
+	default:
+		break;
 	}
 
 	return no_square;
 }
 
-void position::copy_position(const position* pos, Thread* th, position_info* copy_state)
+void position::copy_position(const position* pos, thread* th, position_info* copy_state)
 {
 	std::memcpy(this, pos, sizeof(position));
 	if (th)
@@ -169,6 +166,54 @@ void position::copy_position(const position* pos, Thread* th, position_info* cop
 		}
 		pos_info_--;
 	}
+}
+
+std::string position::fen() const
+{
+	auto empty_cnt = 0;
+	std::ostringstream ss;
+
+	for (auto r = rank_8; ; --r)
+	{
+		for (auto f = file_a; f <= file_h; ++f)
+		{
+			for (empty_cnt = 0; f <= file_h && empty_square(make_square(f, r)); ++f)
+				++empty_cnt;
+
+			if (empty_cnt)
+				ss << empty_cnt;
+
+			if (f <= file_h)
+				ss << util::piece_to_char[piece_on_square(make_square(f, r))];
+		}
+
+		if (r == rank_1)
+			break;
+
+		ss << '/';
+	}
+
+	ss << (on_move_ == white ? " w " : " b ");
+
+	if (castling_possible(white_short))
+		ss << (chess960_ ? static_cast<char>('A' + file_of(castle_rook_square(g1))) : 'K');
+
+	if (castling_possible(white_long))
+		ss << (chess960_ ? static_cast<char>('A' + file_of(castle_rook_square(c1))) : 'Q');
+
+	if (castling_possible(black_short))
+		ss << (chess960_ ? static_cast<char>('a' + file_of(castle_rook_square(g8))) : 'k');
+
+	if (castling_possible(black_long))
+		ss << (chess960_ ? static_cast<char>('a' + file_of(castle_rook_square(c8))) : 'q');
+
+	if (!castling_possible(white) && !castling_possible(black))
+		ss << '-';
+
+	ss << (enpassant_square() == no_square ? " - " : " " + sq(enpassant_square()) + " ")
+		<< pos_info_->draw50_moves << " " << 1 + (game_ply_ - (on_move_ == black)) / 2;
+
+	return ss.str();
 }
 
 int position::game_phase() const
@@ -203,15 +248,15 @@ bool position::give_check(const uint32_t move) const
 		const auto to_r = relative_square(on_move_, from_r > from ? f1 : d1);
 
 		return empty_attack[pt_rook][to_r] & square_k
-			&& attack_rook_bb(to_r, pieces() ^ from ^ from_r | to_r | to) & square_k;
+			&& attack_bb_rook(to_r, pieces() ^ from ^ from_r | to_r | to) & square_k;
 	}
 
 	{
 		const auto ep_square = make_square(file_of(to), rank_of(from));
 		const auto b = pieces() ^ from ^ ep_square | to;
 
-		return (attack_rook_bb(square_k, b) & pieces(on_move_, pt_queen, pt_rook))
-			| (attack_bishop_bb(square_k, b) & pieces(on_move_, pt_queen, pt_bishop));
+		return (attack_bb_rook(square_k, b) & pieces(on_move_, pt_queen, pt_rook))
+			| (attack_bb_bishop(square_k, b) & pieces(on_move_, pt_queen, pt_bishop));
 	}
 }
 
@@ -313,8 +358,8 @@ bool position::legal_move(const uint32_t move) const
 		assert(piece_on_square(capture_square) == make_piece(~me, pt_pawn));
 		assert(piece_on_square(to) == no_piece);
 
-		return !(attack_rook_bb(square_k, occupied) & pieces(~me, pt_queen, pt_rook))
-			&& !(attack_bishop_bb(square_k, occupied) & pieces(~me, pt_queen, pt_bishop));
+		return !(attack_bb_rook(square_k, occupied) & pieces(~me, pt_queen, pt_rook))
+			&& !(attack_bb_bishop(square_k, occupied) & pieces(~me, pt_queen, pt_bishop));
 	}
 
 	if (piece_type(piece_on_square(from)) == pt_king)
@@ -324,7 +369,7 @@ bool position::legal_move(const uint32_t move) const
 }
 
 template <bool yes>
-void position::do_castle_move(const side me, const square from, const square to, square& from_r, square& to_r)
+void position::do_castle_move(const side me, square from, square to, square& from_r, square& to_r)
 {
 	from_r = castle_rook_square(to);
 	to_r = relative_square(me, from_r > from ? f1 : d1);
@@ -604,9 +649,9 @@ bool position::see_test(const uint32_t move, const int limit) const
 			return false;
 		occupied ^= bb & -bb;
 		if (!(capture_piece & 1))
-			attackers |= attack_bishop_bb(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
+			attackers |= attack_bb_bishop(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
 		if (capture_piece >= pt_rook)
-			attackers |= attack_rook_bb(to, occupied) & (pieces(pt_rook) | pieces(pt_queen));
+			attackers |= attack_bb_rook(to, occupied) & (pieces(pt_rook) | pieces(pt_queen));
 		attackers &= occupied;
 
 		my_attackers = attackers & pieces(me);
@@ -643,9 +688,9 @@ bool position::see_test(const uint32_t move, const int limit) const
 			return true;
 		occupied ^= bb & -bb;
 		if (!(capture_piece & 1))
-			attackers |= attack_bishop_bb(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
+			attackers |= attack_bb_bishop(to, occupied) & (pieces(pt_bishop) | pieces(pt_queen));
 		if (capture_piece >= pt_rook)
-			attackers |= attack_rook_bb(to, occupied) & (pieces(pt_rook) | pieces(pt_queen));
+			attackers |= attack_bb_rook(to, occupied) & (pieces(pt_rook) | pieces(pt_queen));
 		attackers &= occupied;
 	} while (true);
 }
@@ -675,7 +720,7 @@ void position::set_castling_possibilities(const side color, const square from_r)
 	for (auto sq = std::min(from_k, to_k); sq <= std::max(from_k, to_k); ++sq)
 		pad |= sq;
 
-	castle_path_[castle] = pad & ~(square_bb[from_k] | square_bb[from_r]);
+	castle_path_[castle] = pad & ~(bb_square[from_k] | bb_square[from_r]);
 
 	if (from_k != relative_square(color, e1))
 		chess960_ = true;
@@ -731,7 +776,7 @@ void position::set_position_info(position_info* si) const
 			si->non_pawn_material[color] += material_value[piece] * static_cast<int>(piece_number_[make_piece(color, piece)]);
 }
 
-position& position::set(const std::string& fen_str, const bool is_chess960, Thread* th)
+position& position::set(const std::string& fen_str, const bool is_chess960, thread* th)
 {
 	assert(th != nullptr);
 
@@ -830,7 +875,9 @@ void position::take_move_back(const uint32_t move)
 	const auto to = to_square(move);
 	auto piece = piece_on_square(to);
 
+	assert(empty_square(from) || move_type(move) == castle_move);
 	assert(piece_type(pos_info_->captured_piece) != pt_king);
+	assert(piece == pos_info_->moved_piece);
 
 	if (move < static_cast<uint32_t>(castle_move))
 	{
@@ -943,7 +990,7 @@ bool position::valid_move(const uint32_t move) const
 			if (more_than_one(is_in_check()))
 				return false;
 
-			if (!((get_between(lsb(is_in_check()), king(me)) | is_in_check()) & to))
+			if (!((bb_between(lsb(is_in_check()), king(me)) | is_in_check()) & to))
 				return false;
 		}
 		else if (attack_to(to, pieces() ^ from) & pieces(~me))

@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -14,15 +14,16 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <sstream>
+#include <iostream>
 #include <fstream>
 #include "bench.h"
 
+#include "search.h"
 #include "../thread.h"
 #include "../uci.h"
 #include "util.h"
 
-// search 64 positions (startposition, 20 openings from ECO, 20 middlegame, 20 endgames from ECE, & 3 FRC start positions)
+// search 64 positions (startposition, 21 openings from ECO, 21 middlegame, 21 endgames from ECE)
 // to depth 16 and write a time-stamped results file to disk
 // this is an extremely useful function during development and code optimization efforts...to measure speedups and/or slowdowns
 // it can be started via command line 'bench', or via Bench button in your GUI's UCI dialog
@@ -44,29 +45,15 @@ void bench(const int depth)
 		pos_num++;
 		search::reset();
 		auto s_depth = "depth " + std::to_string(depth);
-		std::istringstream is(s_depth);
+		std::istringstream iss(s_depth);
 		pos.set(bench_position, false, thread_pool.main());
-		acout() << "position " << pos_num << '/' << num_positions << " " << bench_position << std::endl;
+		acout() << "position " << pos_num << '/' << num_positions << " " << pos.fen() << std::endl;
 		acout() << pos << std::endl;
-		go(pos, is);
+		go(pos, iss);
 		thread_pool.main()->wait_for_search_to_end();
 		nodes += thread_pool.visited_nodes();
 	}
-	uci_chess960 = true;
-	for (auto& bench_position : frc_bench_positions)
-	{
-		pos_num++;
-		search::reset();
-		auto s_depth = "depth " + std::to_string(depth);
-		std::istringstream is(s_depth);
-		pos.set(bench_position, true, thread_pool.main());
-		acout() << "chess960 position " << pos_num << '/' << num_positions << " " << bench_position << std::endl;
-		acout() << pos << std::endl;
-		go(pos, is);
-		thread_pool.main()->wait_for_search_to_end();
-		nodes += thread_pool.visited_nodes();
-	}
-	uci_chess960 = false;
+
 	const auto elapsed_time = static_cast<double>(now() + 1 - start_time) / 1000;
 	const auto nps = static_cast<double>(nodes) / elapsed_time;
 	const auto ttd = elapsed_time / num_positions;

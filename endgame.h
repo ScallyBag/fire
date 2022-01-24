@@ -56,7 +56,7 @@ public:
 
 constexpr int value_tempo = 24;
 constexpr uint64_t black_modifier = 0xa4489c56;
-constexpr uint64_t averbakh_rule = 0xfff7e3c180000000;
+const uint64_t averbakh_rule = 0xfff7e3c180000000;
 
 namespace endgame
 {
@@ -64,7 +64,7 @@ namespace endgame
 	uint64_t attack_king_inc(square s);
 	
 
-	constexpr int push_to_side[num_squares] =
+	const int push_to_side[num_squares] =
 	{
 		 80, 72, 64, 56, 56, 64, 72, 80, 
 		 72, 56, 48, 40, 40, 48, 56, 72, 
@@ -76,7 +76,7 @@ namespace endgame
 		 80, 72, 64, 56, 56, 64, 72, 80
 	};
 
-	constexpr int push_to_corner[num_squares] =
+	const int push_to_corner[num_squares] =
 	{
 		 80, 72, 64, 56, 48, 40, 32, 24, 
 		 72, 64, 56, 48, 40, 32, 24, 32, 
@@ -88,7 +88,7 @@ namespace endgame
 		 24, 32, 40, 48, 56, 64, 72, 80
 	};
 
-	constexpr int draw_closer[8] =
+	const int draw_closer[8] =
 	{
 		0, 0, 80, 64, 48, 32, 16, 8
 		

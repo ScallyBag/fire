@@ -15,7 +15,6 @@
 */
 
 #pragma once
-#include "../fire.h"
 
 // these macros specify basic arithmetic operations on enumerated score values
 inline score operator+(const score s1, const score s2)

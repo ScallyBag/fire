@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -14,21 +14,24 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "uci.h"
+
 #include <iostream>
 #include <sstream>
 #include <string>
 
 #include "bitboard.h"
-#include "chrono.h"
+#include "evaluate.h"
 #include "fire.h"
 #include "hash.h"
-#include "nnue/nnue.h"
 #include "random/random.h"
 #include "search.h"
 #include "thread.h"
-#include "uci.h"
 #include "util/perft.h"
 #include "util/util.h"
+#ifdef TUNER
+#include "tune.h"
+#endif
 
 // stop threads, reset search
 void new_game()
@@ -46,18 +49,11 @@ void init(const int hash_size)
 	bitboard::init();
 	position::init();
 	search::init();
+	evaluate::init();
+	pawn::init();
 	thread_pool.init();
 	search::reset();
 	main_hash.init(hash_size);
-	const char *filename = uci_nnue_evalfile.c_str();
-	nnue_init(filename);	
-}
-
-// initialize system
-void init_nnue()
-{
-	const char *filename = uci_nnue_evalfile.c_str();
-	nnue_init(filename);	
 }
 
 // create infinite loop while parsing for UCI input stream tokens (words)
@@ -94,19 +90,17 @@ void uci_loop(const int argc, char* argv[])
 			acout() << "option name Hash type spin default 64 min 16 max 1048576" << std::endl;
 			acout() << "option name Threads type spin default 1 min 1 max 128" << std::endl;
 			acout() << "option name MultiPV type spin default 1 min 1 max 64" << std::endl;
-			acout() << "option name Contempt type spin default 0 min -100 max 100" << std::endl;
-			acout() << "option name MinimumTime type spin default 1 min 0 max 1000" << std::endl;
-			acout() << "option name MoveOverhead type spin default 50 min 0 max 1000" << std::endl;
+			acout() << "option name Contempt type spin default 0 min -100 max 100" << std::endl;	
 			acout() << "option name SyzygyProbeDepth type spin default 1 min 0 max 64" << std::endl;
 			acout() << "option name SyzygyProbeLimit type spin default 6 min 0 max 6" << std::endl;
-			acout() << "option name EngineMode type combo default nnue var nnue var random" << std::endl;
-			acout() << "option name ClearHash type button" << std::endl;
-			acout() << "option name MCTS type check default false" << std::endl;			
+			acout() << "option name SearchType type combo default alphabeta var alphabeta var random" << std::endl;
+			
 			acout() << "option name Ponder type check default false" << std::endl;
 			acout() << "option name UCI_Chess960 type check default false" << std::endl;
+			acout() << "option name ClearHash type button" << std::endl;			
 			acout() << "option name Syzygy50MoveRule type check default true" << std::endl;
 			acout() << "option name SyzygyPath type string default <empty>" << std::endl;
-			acout() << "option name NnueEvalFile type string default " << uci_nnue_evalfile << std::endl;			
+
 			acout() << "uciok" << std::endl;
 		}
 		else if (token == "isready")
@@ -129,7 +123,7 @@ void uci_loop(const int argc, char* argv[])
 		{
 			go(pos, is);
 		}
-		else if (token == "stop" || (token ==  "ponderhit" && search::signals.stop_if_ponder_hit))
+		else if (token == "stop")
 		{
 			search::signals.stop_analyzing = true;
 			thread_pool.main()->wake(false);
@@ -138,25 +132,36 @@ void uci_loop(const int argc, char* argv[])
 		{
 			break;
 		}
-		else if (token == "perft")
+		else if (token == "perft" || token == "divide")
 		{
-			auto depth = 7;
-			auto &fen = startpos;
+			int perft_type;
+			if (token == "perft")
+				perft_type = 1;
+			else
+				perft_type = 2;
 			
-			is >> depth;
-			is >> fen;
-			
-			perft(depth, fen);
-		}
-		else if (token == "divide")
-		{
-			auto depth = 7;
-			auto &fen = startpos;
-			
-			is >> depth;
-			is >> fen;
-			
-			divide(depth, fen);
+			// set params or use default values
+			auto depth = is >> token ? token : "7";
+			auto hash = is >> token ? token : "64";
+			auto threads = is >> token ? token : "1";
+
+			//parse fen words from command line and assign default values if missing
+			auto piece_placement = is >> token ? token : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+			auto side_to_move = is >> token ? token : "-";
+			auto castling = is >> token ? token : "-";
+			auto en_passant = is >> token ? token : "-";
+			auto half_moves = is >> token ? token : "";
+			auto full_moves = is >> token ? token : "";
+			auto fen = piece_placement + " " + side_to_move + " " + castling + " " + en_passant + " " + half_moves + " " + full_moves;
+
+			if (piece_placement == "perft.epd")
+				fen = "perft.epd";
+
+			if (perft_type == 1)
+				// strings must be converted to integers
+				perft(stoi(depth), fen);
+			else
+				divide(stoi(depth), fen);
 		}
 		else if (token == "bench")
 		{	//bench depth = 16 unless specified on command line
@@ -166,8 +171,17 @@ void uci_loop(const int argc, char* argv[])
 			bench(stoi(bench_depth));
 			bench_active = false;
 		}
+#ifdef TUNER
+		else if (token == "tune")
+		{
+			auto epd_file = is >> token ? token : "quiet.epd";
+			auto threads = is >> token ? token : "1";
+
+			tuner::tune(epd_file, stoi(threads));
+		}
+#endif
 		else
-		{	
+		{
 		}
 	} while (token != "quit" && argc == 1);
 	// if loop is broken with 'quit', exit and destroy thread pool
@@ -175,19 +189,19 @@ void uci_loop(const int argc, char* argv[])
 }
 
 // read input stream and parse for meaningful UCI options
-void set_option(std::istringstream& is)
+void set_option(std::istringstream& input)
 {
 	std::string token;
-	is >> token;
+	input >> token;
 
 	if (token == "name")
 	{
-		while (is >> token)
+		while (input >> token)
 		{
 			if (token == "Hash")
 			{
-				is >> token;
-				is >> token;
+				input >> token;
+				input >> token;
 				uci_hash = stoi(token);
 				main_hash.init(uci_hash);
 				acout() << "info string Hash " << uci_hash << " MB" << std::endl;
@@ -195,13 +209,9 @@ void set_option(std::istringstream& is)
 			}
 			if (token == "Threads")
 			{
-				is >> token;
-				is >> token;
+				input >> token;
+				input >> token;
 				uci_threads = stoi(token);
-				//hack to bypass 1 thread mcts
-				if (uci_threads == 1 && uci_mcts == true)
-					uci_threads = 2;
-				
 				thread_pool.change_thread_count(uci_threads);
 				if (uci_threads == 1)
 					acout() << "info string Threads " << uci_threads << " thread" << std::endl;
@@ -211,58 +221,65 @@ void set_option(std::istringstream& is)
 			}
 			if (token == "MultiPV")
 			{
-				is >> token;
-				is >> token;
+				input >> token;
+				input >> token;
 				uci_multipv = stoi(token);
 				acout() << "info string MultiPV " << uci_multipv << std::endl;
 				break;
 			}
 			if (token == "Contempt")
 			{
-				is >> token;
-				is >> token;
+				input >> token;
+				input >> token;
 				uci_contempt = stoi(token);
 				acout() << "info string Contempt " << uci_contempt << std::endl;
 				break;
 			}
-			if (token == "MinimumTime")
-			{
-				is >> token;
-				is >> token;
-				time_control.uci_minimum_time = stoi(token);
-				acout() << "info string MinimumTime " << time_control.uci_minimum_time << " ms" << std::endl;
-				break;
-			}
-			if (token == "MoveOverhead")
-			{
-				is >> token;
-				is >> token;
-				time_control.uci_move_overhead = stoi(token);
-				acout() << "info string MoveOverhead " << time_control.uci_move_overhead << " ms" << std::endl;
-				break;
-			}
 			if (token == "SyzygyProbeDepth")
 			{
-				is >> token;
-				is >> token;
+				input >> token;
+				input >> token;
 				uci_syzygy_probe_depth = stoi(token);
 				acout() << "info string SyzygyProbeDepth " << uci_syzygy_probe_depth << std::endl;
 				break;
 			}
 			if (token == "SyzygyProbeLimit")
 			{
-				is >> token;
-				is >> token;
+				input >> token;
+				input >> token;
 				uci_syzygy_probe_limit = stoi(token);
 				acout() << "info string SyzygyProbeLimit " << uci_syzygy_probe_limit << std::endl;
 				break;
 			}
-			if (token == "EngineMode")
+			if (token == "SearchType")
 			{
-				is >> token;
-				is >> token;
-				engine_mode = token;
-				acout() << "info string EngineMode " << engine_mode << std::endl;
+				input >> token;
+				input >> token;
+				uci_search = token;
+				acout() << "info string SearchType " << uci_search << std::endl;
+				break;
+			}
+			
+			if (token == "Ponder")
+			{
+				input >> token;
+				input >> token;
+				if (token == "true")
+					uci_ponder = true;
+				else
+					uci_ponder = false;
+				acout() << "info string Ponder " << uci_ponder << std::endl;
+				break;
+			}
+			if (token == "UCI_Chess960")
+			{
+				input >> token;
+				input >> token;
+				if (token == "true")
+					uci_chess960 = true;
+				else
+					uci_chess960 = false;
+				acout() << "info string UCI_Chess960 " << uci_chess960 << std::endl;
 				break;
 			}
 			if (token == "ClearHash")
@@ -271,68 +288,26 @@ void set_option(std::istringstream& is)
 				acout() << "info string Hash: cleared" << std::endl;
 				break;
 			}
-			if (token == "MCTS")
-			{
-				is >> token;
-				is >> token;
-				if (token == "true")
-					uci_mcts = true;
-				else
-					uci_mcts = false;
-				acout() << "info string MCTS " << token << std::endl;
-				break;
-			}	
-			if (token == "Ponder")
-			{
-				is >> token;
-				is >> token;
-				if (token == "true")
-					uci_ponder = true;
-				else
-					uci_ponder = false;
-				acout() << "info string Ponder " << token << std::endl;
-				break;
-			}
-			if (token == "UCI_Chess960")
-			{
-				is >> token;
-				is >> token;
-				if (token == "true")
-					uci_chess960 = true;
-				else
-					uci_chess960 = false;
-				acout() << "info string UCI_Chess960 " << token << std::endl;
-				break;
-			}
 			if (token == "Syzygy50MoveRule")
 			{
-				is >> token;
-				is >> token;
+				input >> token;
+				input >> token;
 				if (token == "true")
 					uci_syzygy_50_move_rule = true;
 				else
 					uci_syzygy_50_move_rule = false;
-				acout() << "info string Syzygy50MoveRule " << token << std::endl;
+				acout() << "info string Syzygy50MoveRule " << uci_syzygy_50_move_rule << std::endl;
 				break;
 			}
 			if (token == "SyzygyPath")
 			{
-				is >> token;
-				is >> token;
+				input >> token;
+				input >> token;
 				uci_syzygy_path = token;
 				egtb::syzygy_init(uci_syzygy_path);
 				acout() << "info string SyzygyPath " << uci_syzygy_path << std::endl;
 				break;
-			}
-			if (token == "NnueEvalFile")
-			{
-				is >> token;
-				is >> token;
-				uci_nnue_evalfile = token;
-				init_nnue();
-				acout() << "info string NnueEvalFile " << uci_nnue_evalfile << std::endl;
-				break;
-			}
+			}			
 		}
 	}
 }
@@ -341,12 +316,6 @@ void set_option(std::istringstream& is)
 // including time and inc, etc.
 void go(position& pos, std::istringstream& is)
 {
-	if (uci_threads == 1 && uci_mcts == true)
-	{
-		acout() << "info string MCTS requires > 1 thread " << std::endl;			
-		exit (EXIT_SUCCESS);
-	}
-	
 	search_param param;
 	std::string token;
 	param.infinite = 1;
@@ -383,22 +352,12 @@ void go(position& pos, std::istringstream& is)
 			is >> param.depth;
 			param.infinite = 0;
 		}
-		else if (token == "nodes")
-		{
-			is >> param.nodes;
-			param.infinite = 0;
-		}
-		else if (token == "movetime")
-		{
-			is >> param.move_time;
-			param.infinite = 0;
-		}		
 		else if (token == "infinite")
 			param.infinite = 1;
 	}
-	if (engine_mode == "random")
+	if (uci_search == "random")
 		random(pos);
-	else	
+	else			
 		thread_pool.begin_search(pos, param);
 }
 
@@ -421,7 +380,7 @@ void set_position(position& pos, std::istringstream& is)
 	else
 		return;
 
-	pos.set(fen, uci_chess960, thread_pool.main());
+	pos.set(fen, false, thread_pool.main());
 
 	while (is >> token && (move = util::move_from_string(pos, token)) != no_move)
 	{
@@ -449,3 +408,5 @@ std::string sq(const square sq)
 		static_cast<char>('a' + file_of(sq)), static_cast<char>('1' + rank_of(sq))
 	};
 }
+
+

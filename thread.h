@@ -31,7 +31,7 @@
 #include "position.h"
 #include "search.h"
 
-class Thread
+class thread
 {
 	std::thread native_thread_;
 	Mutex mutex_;
@@ -40,23 +40,21 @@ class Thread
 	int thread_index_;
 
 public:
-	Thread();
-	virtual ~Thread();
+	thread();
+	virtual ~thread();
 	virtual void begin_search();
 	void idle_loop();
 	void wake(bool activate_search);
 	void wait_for_search_to_end();
-	void wait(const std::atomic_bool& condition);
+	void wait(std::atomic_bool& condition);
 
 	threadinfo* ti{};
 	cmhinfo* cmhi{};
 	position* root_position{};
-	search::rootmoves_mc mc_rootmoves;
+
 	rootmoves root_moves;
 	int completed_depth = no_depth;
 	int active_pv{};
-	continuation_history cont_history;
-	void clear();
 };
 
 struct cmhinfo
@@ -79,23 +77,18 @@ struct threadinfo
 	pawn::pawn_hash pawn_table{};
 };
 
-struct mainthread final : Thread
+struct mainthread final : thread
 {
 	void begin_search() override;
-	void check_time();
-	bool quick_move_allow = false;
-	bool quick_move_played = false;
-	bool quick_move_evaluation_busy = false;
-	bool quick_move_evaluation_stopped = false;
-	bool failed_low = false;
+	bool quick_move_allow = false, quick_move_played = false, quick_move_evaluation_busy = false;
+	bool quick_move_evaluation_stopped = false, failed_low = false;
 	int best_move_changed = 0;
 	int previous_root_score = score_0;
 	int interrupt_counter = 0;
 	int previous_root_depth = {};
-	int calls_cnt{};
 };
 
-struct threadpool : std::vector<Thread*>
+struct threadpool : std::vector<thread*>
 {
 	void init();
 	void exit();
@@ -103,7 +96,7 @@ struct threadpool : std::vector<Thread*>
 	int thread_count{};
 	time_point start{};
 	int total_analyze_time{};
-	Thread* threads[max_threads]{};
+	thread* threads[max_threads]{};
 	mainthread* main()
 	{
 		return static_cast<mainthread*>(threads[0]);
@@ -126,21 +119,6 @@ struct threadpool : std::vector<Thread*>
 	int fifty_move_distance{};
 	int multi_pv{}, multi_pv_max{};
 	bool dummy_null_move_threat{}, dummy_prob_cut{};
-};
-
-class spinlock {
-	std::atomic_int lock_;
-
-public:
-	spinlock() { lock_ = 1; }
-	spinlock(const spinlock&) { lock_ = 1; }
-
-	void acquire() {
-		while (lock_.fetch_sub(1, std::memory_order_acquire) != 1)
-			while (lock_.load(std::memory_order_relaxed) <= 0)
-				std::this_thread::yield();
-	}
-	void release() { lock_.store(1, std::memory_order_release); }
 };
 
 extern threadpool thread_pool;

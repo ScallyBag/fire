@@ -13,32 +13,22 @@
 # this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 
 UNAME = $(shell uname)
-
-ifeq ($(COMP),mingw)
-	EXE = fire.exe
-else
-	EXE = fire
-endif
-
-PGOBENCH = ./$(EXE) bench 16
+EXE = fire.exe
+PGOBENCH = ./$(EXE) bench
 
 OBJS =
-	OBJS += bitbase/kpk.o bitboard.o chrono.o egtb/egtb.o egtb/tbprobe.o endgame.o evaluate.o \
-	hash.o main.o material.o mcts/mcts.o mcts/moves.o mcts/node.o mcts/output.o mcts/policy.o \
-	mcts/ucb.o movegen.o movepick.o nnue/nnue.o nnue/misc.o pawn.o position.o pst.o random/random.o \
-	search.o sfactor.o thread.o uci.o util/bench.o util/perft.o util/util.o zobrist.o \
+	OBJS += util/bench.o bitboard.o chrono.o egtb/egtb.o endgame.o \
+	evaluate.o hash.o bitbase/kpk.o main.o material.o movegen.o \
+	movepick.o pawn.o util/perft.o position.o pst.o random/random.o search.o \
+	sfactor.o egtb/tbprobe.o thread.o tune/tune.o uci.o util/util.o zobrist.o \
 	
 optimize = yes
 debug = no
-bits = 64
+bits = 32
 prefetch = no
 popcnt = no
 sse = no
-sse2 = no
-ssse3 = no
-sse41 = no
 pext = no
-avx2 = no
 
 ifeq ($(ARCH),x86-64-popc)
 	arch = x86_64
@@ -46,21 +36,6 @@ ifeq ($(ARCH),x86-64-popc)
 	prefetch = yes
 	popcnt = yes
 	sse = yes
-	sse2 = yes
-	ssse3 = yes
-	sse41 = yes
-endif
-
-ifeq ($(ARCH),x86-64-avx2)
-	arch = x86_64
-	bits = 64
-	prefetch = yes
-	popcnt = yes
-	sse = yes
-	sse2 = yes
-	ssse3 = yes
-	sse41 = yes
-	avx2 = yes
 endif
 
 ifeq ($(ARCH),x86-64-bmi2)
@@ -69,10 +44,6 @@ ifeq ($(ARCH),x86-64-bmi2)
 	prefetch = yes
 	popcnt = yes
 	sse = yes
-	sse2 = yes
-	ssse3 = yes
-	sse41 = yes
-	avx2 = yes
 	pext = yes
 endif
 
@@ -168,13 +139,6 @@ ifeq ($(popcnt),yes)
 	endif
 endif
 
-
-ifeq ($(avx2),yes)
-	CXXFLAGS += -DUSE_AVX2
-	ifeq ($(comp),$(filter $(comp),gcc clang mingw))
-		CXXFLAGS += -mavx2
-	endif
-endif
 ifeq ($(pext),yes)
 	CXXFLAGS += -DUSE_PEXT
 	ifeq ($(comp),$(filter $(comp),gcc clang mingw))
@@ -218,18 +182,17 @@ help:
 	@echo ""
 	@echo "Supported architectures:"
 	@echo "x86-64-popc             > x86 64-bit with popcnt support"
-	@echo "x86-64-avx2             > x86 64-bit with avx2 support"
-	@echo "x86-64-bmi2             > x86 64-bit with bmi2 support"
+	@echo "x86-64-bmi2             > x86 64-bit with pext support"
 	@echo ""
 	@echo "Supported compilers:"
 	@echo "gcc                     > Gnu compiler (default)"
 	@echo "mingw                   > Gnu compiler with MinGW under Windows"
 	@echo ""	
 	@echo "make build ARCH=x86-64-popc
-	@echo "make build ARCH=x86-64-pext	
+	@echo "make build ARCH=x86-64-bmi2	
 	@echo ""
 	@echo "make profile-build ARCH=x86-64-popc"	
-	@echo "make profile-build ARCH=x86-64-pext"
+	@echo "make profile-build ARCH=x86-64-bmi2"
 	@echo ""
 
 .PHONY: build profile-build
@@ -282,11 +245,7 @@ config-sanity:
 	@echo "prefetch: '$(prefetch)'"
 	@echo "popcnt: '$(popcnt)'"
 	@echo "sse: '$(sse)'"
-	@echo "sse2: '$(sse2)'"
-	@echo "ssse3: '$(ssse3)'"
-	@echo "sse41: '$(sse41)'"
-	@echo "avx2: '$(avx2)'"
-	@echo "pext: '$(pext)'"	
+	@echo "pext: '$(pext)'"
 	@echo ""
 	@echo "Compiler:"
 	@echo "CXX: $(CXX)"
@@ -304,10 +263,6 @@ config-sanity:
 	@test "$(prefetch)" = "yes" || test "$(prefetch)" = "no"
 	@test "$(popcnt)" = "yes" || test "$(popcnt)" = "no"
 	@test "$(sse)" = "yes" || test "$(sse)" = "no"
-	@test "$(sse2)" = "yes" || test "$(sse2)" = "no"
-	@test "$(ssse3)" = "yes" || test "$(ssse3)" = "no"
-	@test "$(sse41)" = "yes" || test "$(sse41)" = "no"
-	@test "$(avx2)" = "yes" || test "$(avx2)" = "no"
 	@test "$(pext)" = "yes" || test "$(pext)" = "no"
 	@test "$(comp)" = "gcc" || test "$(comp)" = "mingw"
 
@@ -341,10 +296,6 @@ gcc-profile-clean:
 	@rm -rf egtb/*.o	
 	@rm -rf macro/*.gcda
 	@rm -rf macro/*.o
-	@rm -rf mcts/*.gcda
-	@rm -rf mcts/*.o	
-	@rm -rf nnue/*.gcda
-	@rm -rf nnue/*.o	
 	@rm -rf random/*.gcda
 	@rm -rf random/*.o	
 	@rm -rf tune/*.gcda

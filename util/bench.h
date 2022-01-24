@@ -21,7 +21,7 @@ static const char* bench_positions[] =
 {
 	// start position
 	"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -",
-	// 20 opening positions
+	// 21 opening positions
 	"r1bn1rk1/ppp1qppp/3pp3/3P4/2P1n3/2B2NP1/PP2PPBP/2RQK2R w K -",
 	"r2q1rk1/1bppbppp/p4n2/n2Np3/Pp2P3/1B1P1N2/1PP2PPP/R1BQ1RK1 w - -",
 	"rnb2rk1/1pq1bppp/p3pn2/3p4/3NPP2/2N1B3/PPP1B1PP/R3QRK1 w - -",
@@ -42,7 +42,8 @@ static const char* bench_positions[] =
 	"r3kbnr/1bqp1ppp/p3p3/1p2P3/5P2/2N2B2/PPP3PP/R1BQK2R w KQkq -",
 	"r2q1rk1/pb1n1ppp/1p1ppn2/2p3B1/2PP4/P1Q2P2/1P1NP1PP/R3KB1R w KQ -",
 	"r1bq1rk1/pp1n1ppp/4p3/2bpP3/3n1P2/2N1B3/PPPQ2PP/2KR1B1R w - -",
-	// 20 middlegame positions		
+	"r2q1rk1/ppp1bppp/2n1b3/3np3/8/P1NPBNP1/1P2PPBP/R2Q1RK1 w - -",
+	// 21 middlegame positions		
 	"2q1r1k1/1ppb4/r2p1Pp1/p4n1p/2P1n3/5NPP/PP3Q1K/2BRRB2 w - -",
 	"7r/1p2k3/2bpp3/p3np2/P1PR4/2N2PP1/1P4K1/3B4 b - -",
 	"4k3/p1P3p1/2q1np1p/3N4/8/1Q3PP1/6KP/8 w - -",
@@ -63,7 +64,8 @@ static const char* bench_positions[] =
 	"r3rbk1/1pq2ppp/2ppbnn1/p3p3/P1PPN3/BP1BPN1P/2Q2PP1/R2R2K1 w - -",
 	"b7/2q2kp1/p3pbr1/1pPpP2Q/1P1N3P/6P1/P7/5RK1 w - -",
 	"1rr1nbk1/5ppp/3p4/1q1PpN2/np2P3/5Q1P/P1BB1PP1/2R1R1K1 w - -",
-	// 20 endgame positions			
+	"r7/5kp1/2p1p2p/1p1n3P/2rP4/2P3R1/PK2RPP1/2B5 b - -",
+	// 21 endgame positions			
 	"1N2k3/5p2/p2P2p1/3Pp3/pP3b2/5P1r/P7/1K4R1 b - -",
 	"2k2R2/6r1/8/B2pp2p/1p6/3P4/PP2b3/2K5 b - -",
 	"2k5/1pp5/2pb2p1/7p/6n1/P5N1/1PP3PP/2K1B3 b - -",
@@ -83,14 +85,6 @@ static const char* bench_positions[] =
 	"3R1bk1/7p/1p2P1p1/3P4/pP6/P2N2P1/4p1KP/5r2 b - -",
 	"3rn3/p4p2/1p3k2/6pp/2PpB3/P2K2P1/1P4PP/4R3 b - -",
 	"4n3/2k1b3/p6p/P5p1/2K2pP1/5B1P/5P2/4B3 w - -",
-	"4n3/p5k1/2P3pp/2P5/P3pp2/2K3P1/5r1P/R4N2 w - -"
-};
-
-// opening positions from Fisher Random etc for use in bench utility
-static const char* frc_bench_positions[] =
-{
-	// 3 chess960 start positions
-	"rbqnknbr/pppppppp/8/8/8/8/PPPPPPPP/RBQNKNBR w KQkq -",
-	"nrbnqkrb/pppppppp/8/8/8/8/PPPPPPPP/NRBNQKRB w KQkq -",
-	"nqrkrbbn/pppppppp/8/8/8/8/PPPPPPPP/NQRKRBBN w KQkq -"
+	"4n3/p5k1/2P3pp/2P5/P3pp2/2K3P1/5r1P/R4N2 w - -",
+	"6k1/p7/6pp/1p1Pp3/2n1P1Pb/6NP/P4KP1/B7 w - -"
 };

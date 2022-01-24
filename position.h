@@ -19,7 +19,7 @@
 #include "fire.h"
 
 class position;
-class Thread;
+class thread;
 
 struct s_move;
 struct threadinfo;
@@ -66,7 +66,7 @@ constexpr ptype make_piece(const side color, const uint8_t piece)
 	return static_cast<ptype>((color << 3) + piece);
 }
 
-constexpr int material_value[num_pieces] =
+const int material_value[num_pieces] =
 {
 	mat_0, mat_0, mat_0, mat_knight, mat_bishop, mat_rook, mat_queen, mat_0,
 	mat_0, mat_0, mat_0, mat_knight, mat_bishop, mat_rook, mat_queen, mat_0
@@ -78,7 +78,7 @@ constexpr int piece_phase[num_pieces] =
 	0, 0, 0, 1, 1, 3, 6, 0
 };
 
-constexpr int see_value_simple[num_pieces] =
+const int see_value_simple[num_pieces] =
 {
 	see_0, see_0, see_pawn, see_knight, see_bishop, see_rook, see_queen, see_0,
 	see_0, see_0, see_pawn, see_knight, see_bishop, see_rook, see_queen, see_0
@@ -153,7 +153,8 @@ public:
 	position(const position&) = default;
 	position& operator=(const position&) = delete;
 
-	position& set(const std::string& fen_str, bool is_chess960, Thread* th);
+	position& set(const std::string& fen_str, bool is_chess960, thread* th);
+	[[nodiscard]] std::string fen() const;
 
 	[[nodiscard]] uint64_t pieces() const;
 	[[nodiscard]] uint64_t pieces(uint8_t piece) const;
@@ -230,7 +231,7 @@ public:
 	void increase_game_ply();
 	void increase_tb_hits();
 	[[nodiscard]] bool is_chess960() const;
-	[[nodiscard]] Thread* my_thread() const;
+	[[nodiscard]] thread* my_thread() const;
 	[[nodiscard]] threadinfo* thread_info() const;
 	[[nodiscard]] cmhinfo* cmh_info() const;
 	[[nodiscard]] uint64_t visited_nodes() const;
@@ -242,7 +243,7 @@ public:
 	{
 		return pos_info_;
 	}
-	void copy_position(const position* pos, Thread* th, position_info* copy_state);
+	void copy_position(const position* pos, thread* th, position_info* copy_state);
 	double epd_result;
 private:
 	void set_castling_possibilities(side color, square from_r);
@@ -258,7 +259,7 @@ private:
 
 	position_info* pos_info_;
 	side on_move_;
-	Thread* this_thread_;
+	thread* this_thread_;
 	threadinfo* thread_info_;
 	cmhinfo* cmh_info_;
 	ptype board_[num_squares];
@@ -297,7 +298,7 @@ inline void position::delete_piece(const side color, const ptype piece, const sq
 
 inline void position::relocate_piece(const side color, const ptype piece, const square from, const square to)
 {
-	const auto van_to_bb = square_bb[from] ^ square_bb[to];
+	const auto van_to_bb = bb_square[from] ^ bb_square[to];
 	piece_bb_[piece] ^= van_to_bb;
 	color_bb_[color] ^= van_to_bb;
 	board_[from] = no_piece;
@@ -313,12 +314,12 @@ inline bool position::advanced_pawn(const uint32_t move) const
 }
 
 template <uint8_t piece_type>
-uint64_t position::attack_from(const square sq) const
+inline uint64_t position::attack_from(const square sq) const
 {
 	return piece_type == pt_bishop
-		? attack_bishop_bb(sq, pieces())
+		? attack_bb_bishop(sq, pieces())
 		: piece_type == pt_rook
-		? attack_rook_bb(sq, pieces())
+		? attack_bb_rook(sq, pieces())
 		: piece_type == pt_queen
 		? attack_from<pt_rook>(sq) | attack_from<pt_bishop>(sq)
 		: empty_attack[piece_type][sq];
@@ -464,7 +465,7 @@ inline ptype position::moved_piece(const uint32_t move) const
 	return board_[from_square(move)];
 }
 
-inline Thread* position::my_thread() const
+inline thread* position::my_thread() const
 {
 	return this_thread_;
 }
@@ -512,6 +513,7 @@ inline ptype position::piece_on_square(const square sq) const
 
 inline square position::piece_square(const side color, const uint8_t piece) const
 {
+	assert(piece_number_[make_piece(color, piece)] == 1);
 	return piece_list_[make_piece(color, piece)][0];
 }
 

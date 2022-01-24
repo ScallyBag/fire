@@ -75,6 +75,9 @@
     <ClCompile Include="egtb\tbprobe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tune\tune.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="util\bench.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -85,30 +88,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="random\random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="nnue\misc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="nnue\nnue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mcts\mcts.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mcts\node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mcts\policy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mcts\moves.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mcts\ucb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mcts\output.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,6 +167,9 @@
     <ClInclude Include="macro\square.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tune\tune.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="util\bench.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -201,21 +183,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="random\random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="options.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="nnue\misc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="nnue\nnue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mcts\mcts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mcts\node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

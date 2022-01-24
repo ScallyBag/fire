@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-
+  
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -27,20 +27,20 @@
 void bitboard::init()
 {
 	for (auto sq = a1; sq <= h8; ++sq)
-		square_bb[sq] = 1ULL << sq;
+		bb_square[sq] = 1ULL << sq;
 
 	for (auto f = file_a; f <= file_h; ++f)
-		adjacent_files_bb[f] = (f > file_a ? file_bb[f - 1] : 0) | (f < file_h ? file_bb[f + 1] : 0);
+		bb_adjacent_lines[f] = (f > file_a ? bb_line[f - 1] : 0) | (f < file_h ? bb_line[f + 1] : 0);
 
 	for (auto r = rank_1; r < rank_8; ++r)
-		ranks_in_front_bb[white][r] = ~(ranks_in_front_bb[black][r + 1] = ranks_in_front_bb[black][r] | rank_bb[r]);
+		bb_ranks_in_front[white][r] = ~(bb_ranks_in_front[black][r + 1] = bb_ranks_in_front[black][r] | bb_row[r]);
 
 	for (auto color = white; color <= black; ++color)
 		for (auto sq = a1; sq <= h8; ++sq)
 		{
-			in_front_bb[color][sq] = ranks_in_front_bb[color][rank_of(sq)] & file_bb[file_of(sq)];
-			pawn_attack_span[color][sq] = ranks_in_front_bb[color][rank_of(sq)] & adjacent_files_bb[file_of(sq)];
-			passed_pawn_mask[color][sq] = in_front_bb[color][sq] | pawn_attack_span[color][sq];
+			bb_in_front[color][sq] = bb_ranks_in_front[color][rank_of(sq)] & bb_line[file_of(sq)];
+			pawn_attack_span[color][sq] = bb_ranks_in_front[color][rank_of(sq)] & bb_adjacent_lines[file_of(sq)];
+			passed_pawn_mask[color][sq] = bb_in_front[color][sq] | pawn_attack_span[color][sq];
 		}
 
 	for (auto square1 = a1; square1 <= h8; ++square1)
@@ -49,8 +49,8 @@ void bitboard::init()
 
 	for (auto sq = a1; sq <= h8; ++sq)
 	{
-		pawnattack[white][sq] = pawn_attack<white>(square_bb[sq]);
-		pawnattack[black][sq] = pawn_attack<black>(square_bb[sq]);
+		pawnattack[white][sq] = pawn_attack<white>(bb_square[sq]);
+		pawnattack[black][sq] = pawn_attack<black>(bb_square[sq]);
 	}
 
 	for (auto piece = pt_king; piece <= pt_knight; ++++piece)
@@ -84,8 +84,8 @@ void bitboard::init()
 
 	for (auto square1 = a1; square1 <= h8; ++square1)
 	{
-		empty_attack[pt_bishop][square1] = attack_bishop_bb(square1, 0);
-		empty_attack[pt_rook][square1] = attack_rook_bb(square1, 0);
+		empty_attack[pt_bishop][square1] = attack_bb_bishop(square1, 0);
+		empty_attack[pt_rook][square1] = attack_bb_rook(square1, 0);
 		empty_attack[pt_queen][square1] = empty_attack[pt_bishop][square1] | empty_attack[pt_rook][square1];
 
 		for (auto piece = pt_bishop; piece <= pt_rook; ++piece)
@@ -94,10 +94,10 @@ void bitboard::init()
 				if (!(empty_attack[piece][square1] & square2))
 					continue;
 
-				connection_bb[square1][square2] = (attack_bb(piece, square1, 0) & attack_bb(piece, square2, 0))
+				bb_connection[square1][square2] = (attack_bb(piece, square1, 0) & attack_bb(piece, square2, 0))
 					| square1 | square2;
-				between_bb[square1][square2] = attack_bb(piece, square1, square_bb[square2])
-					& attack_bb(piece, square2, square_bb[square1]);
+				bb_in_between[square1][square2] = attack_bb(piece, square1, bb_square[square2])
+					& attack_bb(piece, square2, bb_square[square1]);
 			}
 	}
 }
@@ -119,7 +119,7 @@ void init_magic_bb_pext(uint64_t* attack, uint64_t* square_index[], uint64_t* ma
 			square_index[sq][pext(b, mask[sq])] = sliding_attacks(sq, b, deltas, 0, 7, 0, 7);
 			b = b - mask[sq] & mask[sq];
 			attack++;
-		} while (b);
+		} 			while (b);
 	}
 }
 #else
@@ -139,7 +139,7 @@ void init_magic_bb(uint64_t* attack, const int attack_index[], uint64_t* square_
 			const int offset = static_cast<uint32_t>((b * mult[sq]) >> shift);
 			square_index[sq][offset] = sliding_attacks(sq, b, deltas, 0, 7, 0, 7);
 			b = (b - mask[sq]) & mask[sq];
-		} while (b);
+		} 			while (b);
 	}
 }
 #endif
@@ -170,8 +170,8 @@ uint64_t sliding_attacks(const int sq, const uint64_t block, const int deltas[4]
 			(dx == 0 || f >= f_min && f <= f_max) && (dy == 0 || r >= r_min && r <= r_max);
 			f += dx, r += dy)
 		{
-			result |= square_bb[f + r * 8];
-			if (block & square_bb[f + r * 8])
+			result |= bb_square[f + r * 8];
+			if (block & bb_square[f + r * 8])
 				break;
 		}
 	}

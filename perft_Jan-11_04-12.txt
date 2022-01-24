@@ -1,0 +1,6 @@
+Fire 8.11 x64 pext
+perft 7
+rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR - - -  
+nodes 3195018407
+time 13.30 secs
+nps 240226948

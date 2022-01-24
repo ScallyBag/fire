@@ -14,11 +14,10 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "options.h"
+#include <iostream>
+
 #include "util/util.h"
 #include "uci.h"
-
-std::unique_ptr<options> params;
 
 int main(const int argc, char* argv[])
 {
@@ -27,13 +26,8 @@ int main(const int argc, char* argv[])
 	
 	// display logical cores	
 	acout() << util::core_info();
-
-	// read parameters from disk (engine.conf)
-	params = std::make_unique<options>(argc, argv);
-	auto p = params->value<std::string>("param");
-	params->read_param_file(p);
-
-	// initialize system using default hash (64 MB)
+	
+	// initialize using default hash (64 MB)
 	init(default_hash);
 	
 	// enter infinite loop and parse for input
