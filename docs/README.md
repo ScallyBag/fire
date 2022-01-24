@@ -49,8 +49,8 @@ Fire appears to be superior to Ethereal and Houdini at fast time controls (like 
 - **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set)
 - **x64 pext** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set) if you own a Intel Haswell or newer cpu, this compile should be faster.
 
-- **windows** : Fire_8_x64_popc.exe or Fire_8_x64_pext.exe
-- **linux** :   Fire_8_x64_popc or Fire_8_x64_pext
+- **windows** : Fire_8.11_x64_popc.exe or Fire_8.11_x64_pext.exe
+- **linux** :   Fire_8.11_x64_popc or Fire_8.11_x64_pext
 
 
 run 'bench' at command line to determine which binary runs best/fastest on your system. for greater accuracy, run it twice and calculate the average of both results.
