@@ -28,6 +28,8 @@ namespace evaluate
 
 	int eval(const position& pos, int alpha, int beta);
 	int eval_after_null_move(int eval);
+	bool has_two_mobile_pieces(const position& pos);
+	bool two_mobile_pieces(const position& pos);
 	extern score safety_table[1024];
 
 	constexpr score es(const int mg, const int eg)
@@ -66,6 +68,215 @@ namespace evaluate
 	inline score threats[9];
 
 	//eval bonuses/penalties
+
+	inline auto space_threshold = 592; // 2 * mat_queen + 4 * mat_rook + 2 * mat_knight // sf 12222 (* 100 / 256 = 4775) 
+
+#ifdef TUNER
+	// init mobility mult
+	inline auto mob_factor_p = 270;
+	inline auto mmrq_factor_p = 0;
+	inline auto mmfq_factor_p = 6;
+	inline auto mmc_factor_p = 2;
+	inline auto mmr_factor_p = 0;
+	inline auto mme_factor_p = 5;
+
+	inline auto mob_factor_b1 = 256;
+	inline auto mob_factor_b2 = 249;
+	inline auto mmrq_factor_b2 = 8;
+	inline auto mmfq_factor_b2 = 3;
+	inline auto mmc_factor_b2 = 0;
+	inline auto mmr_factor_b2 = 3;
+	inline auto mme_factor_b2 = 4;
+
+	inline auto mob_factor_r = 255;
+	inline auto mmrq_factor_r = 1;
+	inline auto mmfq_factor_r = 5;
+	inline auto mmc_factor_r = 6;
+	inline auto mmr_factor_r = 1;
+	inline auto mme_factor_r = 2;
+
+	inline auto mob_factor_q = 272;
+	inline auto mmrq_factor_q = 2;
+	inline auto mmfq_factor_q = 4;
+	inline auto mmc_factor_q = 1;
+	inline auto mmr_factor_q = 2;
+	inline auto mme_factor_q = 8;
+
+	// init pawn mobility values
+	inline auto pawn_mg_mult = 207.32;
+	inline auto pawn_mg_sub = 417.0;
+	inline auto pawn_eg_mult = 252.68;
+	inline auto pawn_eg_sub = 509.0;
+
+	// init bishop mobility values
+	inline auto b1_mg_mult = 92.43;
+	inline auto b1_mg_sub = 171.0;
+	inline auto b1_eg_mult = 104.75;
+	inline auto b1_eg_sub = 194.0;
+
+	inline auto b2_mg_mult = 221.48;
+	inline auto b2_mg_sub = 374.0;
+	inline auto b2_eg_mult = 203.99;
+	inline auto b2_eg_sub = 344.0;
+
+	// init rook mobility values
+	inline auto rook_mg_mult = 125.90;
+	inline auto rook_mg_sub = 190.0;
+	inline auto rook_eg_mult = 218.96;
+	inline auto rook_eg_sub = 331.0;
+	inline auto mob_r_mult = 7;
+	inline auto mob_r_div = 8;
+
+	// init queen mobility values
+	inline auto queen_mg_mult = 203.42;
+	inline auto queen_mg_sub = 616.0;
+	inline auto queen_eg_mult = 165.33;
+	inline auto queen_eg_sub = 555.0;
+
+	// init distance values
+	inline auto p_k_distance = 1114123;
+	inline auto p_k_distance_mult = 3;
+	inline auto b_k_distance = 65545;
+	inline auto b_k_distance_mult = 3;
+
+	// init pawn-bishop color values
+	inline auto pawn_on_bishop_color = -1769515;
+	inline auto pawn_on_other_bishop_color = 3014673;
+	inline auto pawn_file_width_mg = 0;
+	inline auto pawn_file_width_eg = 2;
+	inline auto threats_score = 14418116;
+
+	// init passed pawn values
+	inline int pp_dvd_mgfactor = 46;
+	inline int pp_dvd_egfactor = 33;
+	inline int pp_ndvd_mgfactor = 49;
+	inline int pp_ndvd_egfactor = 34;
+
+	inline auto pp_fp_base_mg = 1;
+	inline auto pp_fp_base_eg = 3;
+	inline auto pp_fp_mg = 10;
+	inline auto pp_fp_eg = 60;
+	inline auto pp_fp_mul = 272;
+	inline auto pp_fp_div = 256;
+
+	inline auto pp_as_base_mg = 1;
+	inline auto pp_as_base_eg = 3;
+	inline auto pp_as_mg = 10;
+	inline auto pp_as_eg = 36;
+	inline auto pp_as_mul = 304;
+	inline auto pp_as_div = 256;
+
+	inline auto pp_ab_base_mg = 1;
+	inline auto pp_ab_base_eg = 3;
+
+	inline int pp_support_proximity_factor = 30;
+	inline int pp_mk_kdfp_factor = 40;
+	inline int pp_yk_kdfp_factor = 76;
+	inline int pp_mk_factor = 32;
+	inline int pp_mk_div = 35;
+	inline int pp_yk_factor = 32;
+	inline int pp_yk_div = 35;
+
+	// calculate_scale_factor
+	inline auto sf_mult = 3;
+	inline auto sf_div = 4;
+
+	// eval_bishops
+	inline auto bishop_in_front_of_king = 7602176;
+	inline auto bishop_in_corner = 6553753;
+	inline auto trapped_bishop_extra = 69731368;
+	inline auto trapped_bishop = 33030648;
+	inline auto bishop_dominates_pawn = 2097182;
+	inline auto k_zone_attack_bonus = 8;
+
+	// eval_initiative	
+	inline auto initiative_mult = 38;
+
+	// eval_king_attack
+	inline auto k_attack_index_factor = 16;
+	inline auto k_attack_pin_factor = 12;
+	inline auto k_attack_sd_factor = 11;
+	inline auto cspan_safe = 70;
+	inline auto cspan = 30;
+	inline auto csbab_safe = 54;
+	inline auto csbab = 22;
+	inline auto csrar_safe = 70;
+	inline auto csrar = 30;
+	inline auto qcayk_all = 86;
+	inline auto qcayk = 38;
+	inline auto queen_check_bonus = 120;
+
+	// eval_knights
+	inline auto knight_attack_king = 24;
+	inline auto p_mobility_add = 16;
+	inline auto p_mobility_div = 32;
+
+	// eval_passed_pawns
+	inline auto passed_pawn_mk_mult = 3;
+	inline auto passed_pawn_mk_div = 4;
+	inline auto passed_pawn_yk_mult = 3;
+	inline auto passed_pawn_yk_div = 4;
+	inline auto passed_pawn_mk_md_mul = 2;
+	inline auto passed_pawn_mk_md_div = 4;
+	inline auto passed_pawn_yk_md_mul = 2;
+	inline auto passed_pawn_yk_md_div = 4;
+	inline auto bb_behind_passed_pawn_bonus = 6488502;
+
+	// eval_queens
+	inline auto queen_attack_king = 24;
+	inline auto queen_attack_king_zone = 8;
+	inline auto q_mobility_add = 32;
+	inline auto q_mobility_div = 64;
+
+	// eval_rooks
+	inline auto uncastled_penalty = 29556897;
+	inline auto rook_attacks_king = 8;
+	inline auto rook_traps_king_on_7th = 6684932;
+	inline auto no_pawn = 19398907;
+	inline auto pawn_attacks = 2097222;
+	inline auto pawn_no_attack = 11731094;
+	inline auto r_mobility_add = 16;
+	inline auto r_mobility_div = 32;
+
+	// eval_space
+	inline auto space_weight_mult = 3;
+	inline auto space_weight_div = 16;
+
+	// eval_strong_squares
+	inline auto safety_for_pawn_rbp = 3670059;
+	inline auto strong_p_in_front_of_pawn = 1441846;
+	inline auto strong_square_pb = 6488176;
+	inline auto strong_square_pb_extra = 16318582;
+	inline auto pb_behind_pawn = 3342348;
+	inline auto protected_piece = 5767214;
+
+	// eval_threats
+	inline auto hanging_pawn_threat = 26083619;
+	inline auto hanging_pieces = 17498230;
+	inline auto king_threat_single = 2490697;
+	inline auto king_threat_multiple = 6488796;
+	inline auto pawn_advance = 11272272;
+
+	// eval
+	inline auto blocked_pawns_mg = 43;
+	inline auto blocked_pawns_eg = 167;
+	inline auto mg_mgvalue_mult = 106;
+	inline auto mg_egvalue_mult = 6;
+	inline auto eg_mgvalue_mult = 13;
+	inline auto eg_egvalue_mult = 87;
+	inline auto eval_mult = 35;
+	inline auto conversion_mult = 115;
+	inline auto conversion_div = 128;
+	inline auto eval_div = 32;
+	inline auto eval_value_div = 8;
+	inline auto flank_double_attack = 1835008;
+	inline auto pawn_contempt_mult = 2;
+	inline auto knight_contempt_mult = 2;
+	inline auto bishop_contempt_mult = 3;
+	inline auto rook_contempt_mult = 4;
+	inline auto queen_contempt_mult = 8;
+	inline auto contempt_mult = 4;
+#endif // TUNER
 
 	inline int passed_pawn_proximity[8] =
 	{

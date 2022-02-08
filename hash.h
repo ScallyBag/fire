@@ -17,6 +17,7 @@
 #pragma once
 #include "define.h"
 #include "fire.h"
+#include "thread.h"
 
 enum hashflags : uint8_t
 {
@@ -29,16 +30,16 @@ enum hashflags : uint8_t
 	exact_value = north_border | south_border
 };
 
-constexpr uint8_t age_mask = 0x38;
-constexpr uint8_t flags_mask = 0xc7;
-constexpr uint8_t threat_mask = 0x03;
-constexpr uint8_t use_mask = 0xfb;
+const uint8_t age_mask = 0x38;
+const uint8_t flags_mask = 0xc7;
+const uint8_t threat_mask = 0x03;
+const uint8_t use_mask = 0xfb;
 
 struct main_hash_entry
 {
 	[[nodiscard]] uint32_t move() const
 	{
-		return move_;
+		return static_cast<uint32_t>(move_);
 	}
 
 	[[nodiscard]] int value() const

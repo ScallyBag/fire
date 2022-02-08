@@ -369,7 +369,7 @@ bool position::legal_move(const uint32_t move) const
 }
 
 template <bool yes>
-void position::do_castle_move(const side me, const square from, const square to, square& from_r, square& to_r)
+void position::do_castle_move(const side me, square from, square to, square& from_r, square& to_r)
 {
 	from_r = castle_rook_square(to);
 	to_r = relative_square(me, from_r > from ? f1 : d1);
@@ -487,7 +487,7 @@ void position::play_move(const uint32_t move, const bool gives_check)
 
 	if (pos_info_->castle_possibilities && castle_mask_[from] | castle_mask_[to])
 	{
-		const uint8_t castle = castle_mask_[from] | castle_mask_[to];
+		const int8_t castle = castle_mask_[from] | castle_mask_[to];
 		key ^= zobrist::castle[pos_info_->castle_possibilities & castle];
 		pos_info_->castle_possibilities &= ~castle;
 	}

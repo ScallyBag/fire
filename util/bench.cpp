@@ -14,14 +14,16 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <iostream>
 #include <fstream>
 #include "bench.h"
 
+#include "search.h"
 #include "../thread.h"
 #include "../uci.h"
 #include "util.h"
 
-// search 64 positions (start position, 21 openings from ECO, 21 middlegame, 21 endgames from ECE)
+// search 64 positions (startposition, 21 openings from ECO, 21 middlegame, 21 endgames from ECE)
 // to depth 16 and write a time-stamped results file to disk
 // this is an extremely useful function during development and code optimization efforts...to measure speedups and/or slowdowns
 // it can be started via command line 'bench', or via Bench button in your GUI's UCI dialog

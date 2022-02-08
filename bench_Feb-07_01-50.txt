@@ -1,6 +1,0 @@
-Fire 8.2 x64 avx2
-depth 16
-nodes 136248503
-time 48.54 secs
-nps 2807048
-ttd 0.76 secs

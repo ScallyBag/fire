@@ -47,16 +47,16 @@ inline syzygy_piece_type& operator--(syzygy_piece_type& d)
 	return d = static_cast<syzygy_piece_type>(static_cast<int>(d) - 1);
 }
 
-constexpr uint8_t pt_from_syz[syz_nb] = {
+const uint8_t pt_from_syz[syz_nb] = {
 	no_piecetype, pt_pawn, pt_knight, pt_bishop, pt_rook, pt_queen, pt_king
 };
 
-constexpr syzygy_piece_type syz_from_pt[num_piecetypes] = {
+const syzygy_piece_type syz_from_pt[num_piecetypes] = {
 	syz_none, syz_king, syz_pawn, syz_knight, syz_bishop, syz_rook, syz_queen
 };
 
 
-static void prt_str(const position& pos, char* str, const int mirror)
+static void prt_str(position& pos, char* str, const int mirror)
 {
 	auto pt = syz_none;
 	auto i = 0;
@@ -73,7 +73,7 @@ static void prt_str(const position& pos, char* str, const int mirror)
 	*str++ = 0;
 }
 
-static uint64 calc_key(const position& pos, const int mirror)
+static uint64 calc_key(position& pos, const int mirror)
 {
 	auto pt = syz_none;
 	auto i = 0;
@@ -115,12 +115,12 @@ bool is_little_endian()
 	{
 		int i;
 		char c[sizeof(int)];
-	} x{};
+	} x;
 	x.i = 1;
 	return x.c[0] == 1;
 }
 
-static ubyte decompress_pairs(pairs_data* d, const uint64 idx)
+static ubyte decompress_pairs(struct pairs_data* d, const uint64 idx)
 {
 	static const auto islittleendian = is_little_endian();
 	return islittleendian
@@ -128,7 +128,7 @@ static ubyte decompress_pairs(pairs_data* d, const uint64 idx)
 		: decompress_pairs<false>(d, idx);
 }
 
-static int probe_wdl_table(const position& pos, int* success)
+static int probe_wdl_table(position& pos, int* success)
 {
 	auto i = 0;
 	ubyte res = 0;
@@ -215,7 +215,7 @@ static int probe_wdl_table(const position& pos, int* success)
 	{
 		auto* entry = reinterpret_cast<struct tb_entry_pawn*>(ptr);
 		const auto k = entry->file[0].pieces[0][0] ^ c_mirror;
-		auto bb = pos.pieces(static_cast<uint8_t>(k >> 3), pt_from_syz[k & 0x07]);
+		auto bb = pos.pieces(static_cast<side>(k >> 3), pt_from_syz[k & 0x07]);
 		i = 0;
 		do
 		{
@@ -223,7 +223,7 @@ static int probe_wdl_table(const position& pos, int* success)
 		} while (bb);
 		const auto f = pawn_file(entry, p);
 		auto* pc = entry->file[f].pieces[b_side];
-		while (i < entry->num)
+		for (; i < entry->num;)
 		{
 			bb = pos.pieces(static_cast<side>((pc[i] ^ c_mirror) >> 3),
 				pt_from_syz[pc[i] & 0x07]);
@@ -239,9 +239,9 @@ static int probe_wdl_table(const position& pos, int* success)
 	return static_cast<int>(res) - 2;
 }
 
-static int probe_dtz_table(const position& pos, const int wdl, int* success)
+static int probe_dtz_table(position& pos, const int wdl, int* success)
 {
-	tb_entry* ptr = nullptr;
+	struct tb_entry* ptr = nullptr;
 	auto i = 0, res = 0;
 	int p[tb_pieces];
 
@@ -260,7 +260,7 @@ static int probe_dtz_table(const position& pos, const int wdl, int* success)
 		}
 		else
 		{
-			const auto* ptr2 = tb_hash[key >> (64 - tb_hash_bits)];
+			auto* ptr2 = tb_hash[key >> (64 - tb_hash_bits)];
 			for (i = 0; i < hash_max; i++)
 				if (ptr2[i].key == key) break;
 			if (i == hash_max)
@@ -276,7 +276,7 @@ static int probe_dtz_table(const position& pos, const int wdl, int* success)
 				free_dtz_entry(dtz_table[dtz_entries - 1].entry);
 			for (i = dtz_entries - 1; i > 0; i--)
 				dtz_table[i] = dtz_table[i - 1];
-			load_dtz_table(str, calc_key(pos, mirror), calc_key(pos, ~mirror));
+			load_dtz_table(str, calc_key(pos, mirror), calc_key(pos, !mirror));
 		}
 	}
 
@@ -327,7 +327,7 @@ static int probe_dtz_table(const position& pos, const int wdl, int* success)
 				p[i++] = pop_lsb(&bb);
 			} while (bb);
 		}
-		idx = encode_piece(reinterpret_cast<tb_entry_piece*>(entry), entry->norm, p, entry->factor);
+		idx = encode_piece(reinterpret_cast<struct tb_entry_piece*>(entry), entry->norm, p, entry->factor);
 		res = decompress_pairs(entry->precomp, idx);
 
 		if (entry->flags & 2)
@@ -353,7 +353,7 @@ static int probe_dtz_table(const position& pos, const int wdl, int* success)
 			return 0;
 		}
 		auto* pc = entry->file[f].pieces;
-		while (i < entry->num)
+		for (; i < entry->num;)
 		{
 			bb = pos.pieces(static_cast<side>((pc[i] ^ c_mirror) >> 3),
 				pt_from_syz[pc[i] & 0x07]);
@@ -362,7 +362,7 @@ static int probe_dtz_table(const position& pos, const int wdl, int* success)
 				p[i++] = pop_lsb(&bb) ^ mirror;
 			} while (bb);
 		}
-		idx = encode_pawn(reinterpret_cast<tb_entry_pawn*>(entry), entry->file[f].norm, p, entry->file[f].factor);
+		idx = encode_pawn(reinterpret_cast<struct tb_entry_pawn*>(entry), entry->file[f].norm, p, entry->file[f].factor);
 		res = decompress_pairs(entry->file[f].precomp, idx);
 
 		if (entry->flags[f] & 2)
@@ -375,7 +375,7 @@ static int probe_dtz_table(const position& pos, const int wdl, int* success)
 	return res;
 }
 
-static s_move* add_underprom_caps(const position& pos, s_move* stack, s_move* end)
+static s_move* add_underprom_caps(position& pos, s_move* stack, s_move* end)
 {
 	auto* extra = end;
 

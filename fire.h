@@ -27,6 +27,8 @@
 #include <string>
 #include <chrono>
 
+//#define TUNER
+
 // board square representation
 // perspective from black side
 enum square : int8_t

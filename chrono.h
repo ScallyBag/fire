@@ -28,9 +28,10 @@ inline time_point now()
 
 struct search_param
 {
-	search_param() : moves_to_go(0), depth(0), move_time(0), mate(0), infinite(0), ponder(0), nodes(time[white]
-		= time[black] = inc[white] = inc[black] = moves_to_go = depth = move_time = mate = infinite = ponder = 0)
+	search_param()
 	{
+		nodes = time[white] = time[black] = inc[white] = inc[black] =
+			moves_to_go = depth = move_time = mate = infinite = ponder = 0;
 	}
 
 	[[nodiscard]] bool use_time_calculating() const
@@ -47,7 +48,7 @@ struct search_param
 class timecontrol
 {
 public:
-	void init(const search_param& limit, side me, int ply);
+	void init(search_param& limit, side me, int ply);
 	[[nodiscard]] int64_t optimum() const {return optimal_time_;}
 	[[nodiscard]] int64_t maximum() const {return maximum_time_;}
 	[[nodiscard]] int64_t elapsed() const;

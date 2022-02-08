@@ -46,7 +46,7 @@ public:
 	void idle_loop();
 	void wake(bool activate_search);
 	void wait_for_search_to_end();
-	void wait(const std::atomic_bool& condition);
+	void wait(std::atomic_bool& condition);
 
 	threadinfo* ti{};
 	cmhinfo* cmhi{};
@@ -97,8 +97,7 @@ struct threadpool : std::vector<thread*>
 	time_point start{};
 	int total_analyze_time{};
 	thread* threads[max_threads]{};
-
-	[[nodiscard]] mainthread* main() const
+	mainthread* main()
 	{
 		return static_cast<mainthread*>(threads[0]);
 	}

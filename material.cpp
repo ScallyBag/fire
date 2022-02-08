@@ -30,6 +30,7 @@ namespace material
 	int mat_imbalance(const int wp, const int wn, const int wb, const int wbl, const int wbd, const int wr, const int wq,
 					  const int bp, const int bn, const int bb, const int bbl, const int bbd, const int br, const int bq)
 	{
+#ifndef TUNER
 		// pawn factors
 		constexpr auto p_base_score = 950;
 		constexpr auto p_q_factor = 90;
@@ -85,7 +86,7 @@ namespace material
 		constexpr auto max_phase = 32;
 		constexpr auto r_phase_factor = 3;
 		constexpr auto q_phase_factor = 6;
-
+#endif
 		auto score = 0;
 		
 		// bishop pair

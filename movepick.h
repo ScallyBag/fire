@@ -135,7 +135,7 @@ struct counter_move_full_stats
 {
 	uint32_t get(const side color, const uint32_t move)
 	{
-		return table_[color][move & 0xfff];
+		return static_cast<uint32_t>(table_[color][move & 0xfff]);
 	}
 
 	void clear()
@@ -156,7 +156,7 @@ struct counter_follow_up_move_stats
 {
 	uint32_t get(const ptype piece1, const square to1, const ptype piece2, const square to2)
 	{
-		return table_[piece1][to1][piece_type(piece2)][to2];
+		return static_cast<uint32_t>(table_[piece1][to1][piece_type(piece2)][to2]);
 	}
 
 	void clear()

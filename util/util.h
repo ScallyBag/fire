@@ -51,10 +51,8 @@ namespace util
 	const std::string piece_to_char(" KPNBRQ  kpnbrq");
 
 	std::string engine_info();
-	std::string build_date();
 	std::string engine_author();
 	std::string core_info();
-	std::string compiler_info();
 	std::string move_to_string(uint32_t move, const position& pos);
 	uint32_t move_from_string(const position& pos, std::string& str);
 
