@@ -30,11 +30,10 @@ namespace pawn
 	template <side me>
 	int eval_pawns(const position& pos, pawn_hash_entry* e)
 	{
-#ifndef TUNER
 		constexpr auto center_bind = 4259831;
 		constexpr auto multiple_passed_pawns = 3408076;
 		constexpr auto second_row_fixed = 1114131;
-#endif
+
 		const auto you = me == white ? black : white;
 		const auto second_row = me == white ? rank_2_bb : rank_7_bb;
 		const auto center_bind_mask = (file_d_bb | file_e_bb) &
@@ -130,11 +129,6 @@ namespace pawn
 
 	void init()
 	{
-#ifndef TUNER
-		constexpr auto pawn_unsupported = 5505051;
-		constexpr auto chain_mult = 3;
-		constexpr auto chain_div = 2;
-#endif
 		for (auto n = 0; n < 17; n++)
 			for (auto dist = 0; dist < 8; dist++)
 				king_pawn_distance[n][dist] = make_score(0, static_cast<int>(floor(sqrt(static_cast<double>(n)) * 5.0 * dist)));
@@ -152,6 +146,9 @@ namespace pawn
 				for (auto point = 0; point <= 2; ++point)
 					for (auto rank = rank_2; rank < rank_8; ++rank)
 					{
+						constexpr auto chain_div = 2;
+						constexpr auto chain_mult = 3;
+						constexpr auto pawn_unsupported = 5505051;
 						auto val = (phalanx ? phalanx_seed[rank] : seed[rank]) >> closed_file;
 						val += point == 2 ? 13 : 0;
 						chain_score[closed_file][phalanx][point][rank] = ps(chain_mult * val / chain_div, val)
@@ -219,13 +216,13 @@ namespace pawn
 	int eval_shelter_storm(const position& pos, const square square_k)
 	{
 		const auto you{ me == white ? black : white };
-#ifndef TUNER
+
 		constexpr auto file_factor_mult = 64;
 		constexpr auto ss_danger_factor = 3;
 		constexpr auto ss_safety_factor = 3;
 		constexpr auto max_safety_bonus = ev(258);
 		constexpr auto ss_base = 100;
-#endif
+
 		enum
 		{
 			not_my_pawn,
@@ -269,14 +266,14 @@ namespace pawn
 	score pawn_hash_entry::calculate_king_safety(const position& pos)
 	{
 		const auto you = me == white ? black : white;
-#ifndef TUNER
+
 		constexpr auto safe_bonus_div = 220;
 		constexpr auto safe_bonus_mult = 8;
 		constexpr auto safe_bonus_mult_r34 = 16;
 		constexpr auto safe_bonus_mult_r5 = 8;
 		constexpr auto king_1st_rank = static_cast<score>(-6553876);
 		constexpr auto king_near_enemy_pawns = static_cast<score>(43);
-#endif
+
 		const auto square_k = pos.king(me);
 		king_square[me] = square_k;
 		castle_possibilities[me] = static_cast<uint8_t>(pos.castling_possible(me));

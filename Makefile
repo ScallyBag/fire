@@ -13,38 +13,70 @@
 # this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 
 UNAME = $(shell uname)
-EXE = fire.exe
+
+ifeq ($(COMP),mingw)
+	EXE = fire.exe
+else
+	EXE = fire
+endif
+
 PGOBENCH = ./$(EXE) bench
 
 OBJS =
 	OBJS += util/bench.o bitboard.o chrono.o egtb/egtb.o endgame.o \
 	evaluate.o hash.o bitbase/kpk.o main.o material.o movegen.o \
 	movepick.o pawn.o util/perft.o position.o pst.o random/random.o search.o \
-	sfactor.o egtb/tbprobe.o thread.o tune/tune.o uci.o util/util.o zobrist.o \
+	sfactor.o egtb/tbprobe.o thread.o uci.o util/util.o zobrist.o \
 	
 optimize = yes
 debug = no
-bits = 32
+sanitize = none
+bits = 64
 prefetch = no
 popcnt = no
 sse = no
-pext = no
+mmx = no
+sse2 = no
+ssse3 = no
+sse41 = no
+avx2 = no
+bmi2 = no
 
-ifeq ($(ARCH),x86-64-popc)
+ifeq ($(ARCH),x86-64-sse41)
 	arch = x86_64
 	bits = 64
-	prefetch = yes
 	popcnt = yes
 	sse = yes
+	sse2 = yes
+	ssse3 = yes
+	sse41 = yes
+endif
+
+ifeq ($(ARCH),x86-64-avx2)
+	arch = x86_64
+	bits = 64
+	popcnt = yes
+	sse = yes
+	sse2 = yes
+	ssse3 = yes
+	sse41 = yes
+	avx2 = yes
 endif
 
 ifeq ($(ARCH),x86-64-bmi2)
 	arch = x86_64
 	bits = 64
-	prefetch = yes
 	popcnt = yes
 	sse = yes
-	pext = yes
+	sse2 = yes
+	ssse3 = yes
+	sse41 = yes
+	avx2 = yes
+	bmi2 = yes
+endif
+
+ifeq ($(sse),yes)
+	prefetch = yes
 endif
 
 CXXFLAGS += -Wcast-qual -fno-exceptions $(EXTRACXXFLAGS)
@@ -139,7 +171,35 @@ ifeq ($(popcnt),yes)
 	endif
 endif
 
-ifeq ($(pext),yes)
+ifeq ($(sse2),yes)
+	CXXFLAGS += -DUSE_SSE2
+	ifeq ($(comp),$(filter $(comp),gcc clang mingw))
+		CXXFLAGS += -msse2
+	endif
+endif
+
+ifeq ($(ssse3),yes)
+	CXXFLAGS += -DUSE_SSSE3
+	ifeq ($(comp),$(filter $(comp),gcc clang mingw))
+		CXXFLAGS += -mssse3
+	endif
+endif
+
+ifeq ($(sse41),yes)
+	CXXFLAGS += -DUSE_SSE41
+	ifeq ($(comp),$(filter $(comp),gcc clang mingw))
+		CXXFLAGS += -msse4.1
+	endif
+endif
+
+ifeq ($(avx2),yes)
+	CXXFLAGS += -DUSE_AVX2
+	ifeq ($(comp),$(filter $(comp),gcc clang mingw))
+		CXXFLAGS += -mavx2
+	endif
+endif
+
+ifeq ($(bmi2),yes)
 	CXXFLAGS += -DUSE_PEXT
 	ifeq ($(comp),$(filter $(comp),gcc clang mingw))
 		CXXFLAGS += -mbmi -mbmi2
@@ -181,18 +241,21 @@ help:
 	@echo "clean                   > Clean up"
 	@echo ""
 	@echo "Supported architectures:"
-	@echo "x86-64-popc             > x86 64-bit with popcnt support"
-	@echo "x86-64-bmi2             > x86 64-bit with pext support"
+	@echo "x86-64-sse41            > x86 64-bit with sse41 support"
+	@echo "x86-64-avx2             > x86 64-bit with avx2 support"	
+	@echo "x86-64-bmi2             > x86 64-bit with bmi2 support"
 	@echo ""
 	@echo "Supported compilers:"
 	@echo "gcc                     > Gnu compiler (default)"
 	@echo "mingw                   > Gnu compiler with MinGW under Windows"
 	@echo ""	
-	@echo "make build ARCH=x86-64-popc
-	@echo "make build ARCH=x86-64-bmi2	
+	@echo "make build ARCH=x86-64-sse41"
+	@echo "make build ARCH=x86-64-avx2"	
+	@echo "make build ARCH=x86-64-bmi2"
 	@echo ""
-	@echo "make profile-build ARCH=x86-64-popc"	
-	@echo "make profile-build ARCH=x86-64-bmi2"
+	@echo "make profile-build ARCH=x86-64-sse41"	
+	@echo "make profile-build ARCH=x86-64-avx2"
+	@echo "make profile-build ARCH=x86-64-bmi2"	
 	@echo ""
 
 .PHONY: build profile-build
@@ -245,7 +308,12 @@ config-sanity:
 	@echo "prefetch: '$(prefetch)'"
 	@echo "popcnt: '$(popcnt)'"
 	@echo "sse: '$(sse)'"
-	@echo "pext: '$(pext)'"
+	@echo "sse2: '$(sse2)'"	
+	@echo "ssse3: '$(ssse3)'"
+	@echo "sse41: '$(sse41)'"
+	@echo "avx2: '$(avx2)'"
+
+	@echo "bmi2: '$(bmi2)'"
 	@echo ""
 	@echo "Compiler:"
 	@echo "CXX: $(CXX)"
@@ -263,7 +331,12 @@ config-sanity:
 	@test "$(prefetch)" = "yes" || test "$(prefetch)" = "no"
 	@test "$(popcnt)" = "yes" || test "$(popcnt)" = "no"
 	@test "$(sse)" = "yes" || test "$(sse)" = "no"
-	@test "$(pext)" = "yes" || test "$(pext)" = "no"
+	@test "$(mmx)" = "yes" || test "$(mmx)" = "no"
+	@test "$(sse2)" = "yes" || test "$(sse2)" = "no"
+	@test "$(ssse3)" = "yes" || test "$(ssse3)" = "no"
+	@test "$(sse41)" = "yes" || test "$(sse41)" = "no"
+	@test "$(avx2)" = "yes" || test "$(avx2)" = "no"
+	@test "$(bmi2)" = "yes" || test "$(bmi2)" = "no"
 	@test "$(comp)" = "gcc" || test "$(comp)" = "mingw"
 
 $(EXE): $(OBJS) $(COBJS)
@@ -288,6 +361,8 @@ gcc-profile-use:
 	all
 
 gcc-profile-clean:
+	@rm -rf *.txt
+	@rm -rf *.map
 	@rm -rf *.gcda
 	@rm -rf *.o
 	@rm -rf bitbase/*.gcda
@@ -298,8 +373,6 @@ gcc-profile-clean:
 	@rm -rf macro/*.o
 	@rm -rf random/*.gcda
 	@rm -rf random/*.o	
-	@rm -rf tune/*.gcda
-	@rm -rf tune/*.o
 	@rm -rf util/*.gcda
 	@rm -rf util/*.o
 	

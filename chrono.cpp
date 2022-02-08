@@ -20,7 +20,7 @@
 
 // init the vars and structures needed for time manager
 // including class c_time_manager private member vars optimal_time_ & maximum_time_
-void timecontrol::init(search_param& limit, const side me, const int ply)
+void timecontrol::init(const search_param& limit, const side me, const int ply)
 {
 	start_time_ = now();
 	optimal_time_ = maximum_time_ = limit.time[me];

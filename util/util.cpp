@@ -5,7 +5,7 @@
   which have been documented in detail at https://www.chessprogramming.org/
   and demonstrated via the very strong open-source chess engine Stockfish...
   https://github.com/official-stockfish/Stockfish.
-  
+
   Fire is free software: you can redistribute it and/or modify it under the
   terms of the GNU General Public License as published by the Free Software
   Foundation, either version 3 of the License, or any later version.
@@ -20,7 +20,7 @@
 #include <unistd.h>
 #endif
 
-#include <sstream>
+#include <sstream> // std::stringstream
 
 #include "../define.h"
 #include "../fire.h"
@@ -36,37 +36,176 @@ namespace util
 	// see fire.h
 	std::string engine_info()
 	{
-		std::stringstream ss;
-		ss << program << " " << version << " ";
-		ss << platform << " " << bmis;
-		ss << std::endl;
-		return ss.str();
+		std::stringstream ei;
+		ei << program << " " << version << " ";
+		ei << platform << " " << bmis;
+		ei << std::endl;
+		return ei.str();
 	}
-	
+
+	// return string with 'build date'
+	std::string build_date()
+	{
+		const std::string months("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec");
+		std::string month, day, year;
+		std::stringstream bd, date(__DATE__);
+
+		date >> month >> day >> year;
+        bd << "\nBuild timestamp  : " << year << '-' << std::setw(2) << std::setfill('0') << month << '-' << std::setw(2) << std::setfill('0') << day << ' ' << __TIME__ << std::endl;
+		return bd.str();
+	}
+
 	// return string with 'author'
 	std::string engine_author()
 	{
-		std::stringstream ss;
-		ss << author << std::endl;
-		return ss.str();
+		std::stringstream ea;
+		ea << author << std::endl;
+		return ea.str();
 	}
 
 	// return # of cores
 	std::string core_info()
 	{
-		std::stringstream ss;
+		std::stringstream ci;
 
 #ifdef _WIN32
 		// if windows
 		SYSTEM_INFO sys_info;
 		GetSystemInfo(&sys_info);
-		ss << "info string " << sys_info.dwNumberOfProcessors << " available cores" << std::endl;
+		ci << "info string " << sys_info.dwNumberOfProcessors << " available cores" << std::endl;
 #else
 		// if linux
 		ss << "info string " << sysconf(_SC_NPROCESSORS_ONLN) << " available cores" << std::endl;
 #endif
 
-		return ss.str();
+		return ci.str();
+	}
+
+	std::string compiler_info() {
+
+	#define stringify2(x) #x
+	#define stringify(x) stringify2(x)
+	#define make_version_string(major, minor, patch) stringify(major) "." stringify(minor) "." stringify(patch)
+
+		std::string compiler = "Compiled using   : ";
+
+	#ifdef __clang__
+		compiler += "clang++ ";
+		compiler += make_version_string(__clang_major__, __clang_minor__, __clang_patchlevel__);
+
+	#elif __INTEL_COMPILER
+		compiler += "Intel compiler ";
+		compiler += "(version ";
+		compiler += stringify(__INTEL_COMPILER) " update " stringify(__INTEL_COMPILER_UPDATE);
+		compiler += ")";
+
+	#elif _MSC_VER
+		compiler += "MSVC ";
+		compiler += "(version ";
+		compiler += stringify(_MSC_FULL_VER) "." stringify(_MSC_BUILD);
+		compiler += ")";
+
+	#elif defined(__e2k__) && defined(__LCC__)
+	#define dot_ver2(n) \
+		compiler += (char)'.'; \
+		compiler += (char)('0' + (n) / 10); \
+		compiler += (char)('0' + (n) % 10);
+
+		compiler += "MCST LCC ";
+		compiler += "(version ";
+		compiler += std::to_string(__LCC__ / 100);
+		dot_ver2(__LCC__ % 100)
+		dot_ver2(__LCC_MINOR__)
+		compiler += ")";
+
+	#elif __GNUC__
+		compiler += "g++ (GNUC) ";
+		compiler += make_version_string(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
+	#else
+		compiler += "Unknown compiler ";
+		compiler += "(unknown version)";
+	#endif
+
+	#if defined(__APPLE__)
+		compiler += " on Apple";
+
+	#elif defined(__CYGWIN__)
+		compiler += " on Cygwin";
+
+	#elif defined(__MINGW64__)
+		compiler += " on MinGW64";
+
+	#elif defined(__MINGW32__)
+		compiler += " on MinGW32";
+
+	#elif defined(__ANDROID__)
+		compiler += " on Android";
+
+	#elif defined(__linux__)
+		compiler += " on Linux";
+
+	#elif defined(_WIN64)
+		compiler += " on Microsoft Windows 64-bit";
+
+	#elif defined(_WIN32)
+		compiler += " on Microsoft Windows 32-bit";
+	#else
+		compiler += " on unknown system";
+	#endif
+
+		compiler += "\nCompile settings :";
+
+	#if defined(_WIN64)
+		compiler += " 64-bit";
+	#else
+		compiler += " 32-bit";
+	#endif
+
+	#if defined(USE_VNNI)
+		compiler += " VNNI";
+	#endif
+
+	#if defined(USE_AVX512)
+		compiler += " AVX512";
+	#endif
+
+	#if defined(USE_PEXT)
+		compiler += " BMI2";
+	#endif
+
+	#if defined(USE_AVX2)
+		compiler += " AVX2";
+	#endif
+
+	#if defined(USE_SSE41)
+		compiler += " SSE41";
+	#endif
+
+	#if defined(USE_SSSE3)
+		compiler += " SSSE3";
+	#endif
+
+	#if defined(USE_SSE2)
+		compiler += " SSE2";
+	#endif
+
+	#if defined(USE_POPCNT)
+		compiler += " POPCNT";
+	#endif
+
+	#if defined(USE_MMX)
+		compiler += " MMX";
+	#endif
+
+	#if defined(USE_NEON)
+		compiler += " NEON";
+	#endif
+
+	#if !defined(NDEBUG)
+		compiler += " DEBUG";
+	#endif
+
+		return compiler;
 	}
 
 	// convert from internal move format to ascii
@@ -120,7 +259,7 @@ namespace util
 // display ascii representation of position (for use in bench and perft)
 std::ostream& operator<<(std::ostream& os, const position& pos)
 {
-	char p_chars[] =
+	constexpr char p_chars[] =
 	{
 	'K','P','N','B','R','Q',
 	'k','p','n','b','r','q',

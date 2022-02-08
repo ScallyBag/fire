@@ -24,7 +24,7 @@ constexpr auto SEP_CHAR = ';';
 #define UNLOCK(x) pthread_mutex_unlock(&(x))
 #else
 #define LOCK_T HANDLE
-#define LOCK_INIT(x) do { x = CreateMutex(NULL, FALSE, NULL); } while (0)
+#define LOCK_INIT(x) do { (x) = CreateMutex(NULL, FALSE, NULL); } while (0)
 #define LOCK(x) WaitForSingleObject(x, INFINITE)
 #define UNLOCK(x) ReleaseMutex(x)
 #endif
@@ -48,8 +48,8 @@ typedef unsigned int uint32;
 typedef unsigned char ubyte;
 typedef unsigned short ushort;
 
-const ubyte wdl_magic[4] = { 0x71, 0xe8, 0x23, 0x5d };
-const ubyte dtz_magic[4] = { 0xd7, 0x66, 0x0c, 0xa5 };
+constexpr ubyte wdl_magic[4] = { 0x71, 0xe8, 0x23, 0x5d };
+constexpr ubyte dtz_magic[4] = { 0xd7, 0x66, 0x0c, 0xa5 };
 
 constexpr auto tb_hash_bits = 10;
 
@@ -93,7 +93,7 @@ struct tb_entry_piece {
 	ubyte symmetric;
 	ubyte has_pawns;
 	ubyte enc_type;
-	struct pairs_data* precomp[2];
+	pairs_data* precomp[2];
 	int factor[2][tb_pieces];
 	ubyte pieces[2][tb_pieces];
 	ubyte norm[2][tb_pieces];
@@ -109,7 +109,7 @@ struct tb_entry_pawn {
 	ubyte has_pawns;
 	ubyte pawns[2];
 	struct {
-		struct pairs_data* precomp[2];
+		pairs_data* precomp[2];
 		int factor[2][tb_pieces];
 		ubyte pieces[2][tb_pieces];
 		ubyte norm[2][tb_pieces];
@@ -125,7 +125,7 @@ struct dtz_entry_piece {
 	ubyte symmetric;
 	ubyte has_pawns;
 	ubyte enc_type;
-	struct pairs_data* precomp;
+	pairs_data* precomp;
 	int factor[tb_pieces];
 	ubyte pieces[tb_pieces];
 	ubyte norm[tb_pieces];
@@ -144,7 +144,7 @@ struct dtz_entry_pawn {
 	ubyte has_pawns;
 	ubyte pawns[2];
 	struct {
-		struct pairs_data* precomp;
+		pairs_data* precomp;
 		int factor[tb_pieces];
 		ubyte pieces[tb_pieces];
 		ubyte norm[tb_pieces];
@@ -156,13 +156,13 @@ struct dtz_entry_pawn {
 
 struct tb_hash_entry {
 	uint64 key;
-	struct tb_entry* ptr;
+	tb_entry* ptr;
 };
 
 struct dtz_table_entry {
 	uint64 key1;
 	uint64 key2;
-	struct tb_entry* entry;
+	tb_entry* entry;
 };
 
 #endif

@@ -1,0 +1,6 @@
+Fire 8.2 x64 bmi2
+depth 16
+nodes 134495122
+time 46.29 secs
+nps 2905615
+ttd 0.72 secs

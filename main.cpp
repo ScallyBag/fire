@@ -14,8 +14,6 @@
   this program: copying.txt.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
-
 #include "util/util.h"
 #include "uci.h"
 
@@ -23,7 +21,13 @@ int main(const int argc, char* argv[])
 {
 	// display engine name, version, platform, and bmis
 	acout() << util::engine_info();
-	
+
+	// display build date/time
+	acout() << util::build_date();
+
+	// display compiler info
+	acout() << util::compiler_info() << std::endl << std::endl;
+
 	// display logical cores	
 	acout() << util::core_info();
 	

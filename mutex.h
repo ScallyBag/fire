@@ -19,15 +19,7 @@
 #include <mutex>
 
 #if defined(_WIN32) && !defined(_MSC_VER)
-
-#ifndef NOMINMAX
-#  define NOMINMAX
-#endif
-
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-#undef NOMINMAX
 
 struct Mutex
 {

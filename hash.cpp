@@ -95,7 +95,7 @@ main_hash_entry* hash::replace(const uint64_t key) const
 // send hash memory usage info to UCI GUI
 int hash::hash_full() const
 {
-	const auto i_max = 999 / bucket_size + 1;
+	constexpr auto i_max = 999 / bucket_size + 1;
 	auto cnt = 0;
 	for (auto i = 0; i < i_max; i++)
 	{

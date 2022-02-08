@@ -25,13 +25,10 @@
 
 cmhinfo* cmh_data;
 
-thread::thread()
+thread::thread() : exit_(false), search_active_(true), thread_index_(thread_pool.thread_count)
 {
-	exit_ = false;
-	thread_index_ = thread_pool.thread_count;
-
 	std::unique_lock lk(mutex_);
-	search_active_ = true;
+
 	native_thread_ = std::thread(&thread::idle_loop, this);
 	sleep_condition_.wait(lk, [&]
 		{
@@ -137,7 +134,7 @@ uint64_t threadpool::tb_hits() const
 	return hits;
 }
 
-void thread::wait(std::atomic_bool& condition)
+void thread::wait(const std::atomic_bool& condition)
 {
 	std::unique_lock lk(mutex_);
 	sleep_condition_.wait(lk, [&]

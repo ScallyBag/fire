@@ -16,23 +16,24 @@
 
 #pragma once
 
-#ifdef _MSC_VER
-#define USE_PEXT
-#endif
-
 constexpr auto program = "Fire";
-constexpr auto version= "8.11";
+constexpr auto version= "8.2";
 constexpr auto author = "N. Schmidt";
 constexpr auto platform = "x64";
 
 // specify correct bit manipulation instruction set constant, as this will be appended
 // to the fully distinguished engine name after platform
 #ifdef USE_PEXT
-constexpr auto bmis = "pext";
+constexpr auto bmis = "bmi2";
 constexpr bool use_pext = true;
+#else
+#ifdef USE_AVX2
+constexpr auto bmis = "avx2";
+constexpr bool use_pext = false;
 #else
 constexpr auto bmis = "popcnt";
 constexpr bool use_pext = false;
+#endif
 #endif
 
 // many new instructions require data that's aligned to 16-byte boundaries, so 64-byte alignment improves performance

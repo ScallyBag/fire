@@ -1,0 +1,6 @@
+Fire 8.2 x64 popcnt
+depth 16
+nodes 135537722
+time 48.05 secs
+nps 2820882
+ttd 0.75 secs
