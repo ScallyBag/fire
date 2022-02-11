@@ -28,115 +28,36 @@ namespace evaluate
 	// init arrays
 	void init()
 		{
-#ifndef TUNER
-		// init mobility mult values
-		constexpr auto mob_factor_p = 270;
-		constexpr auto mmrq_factor_p = 0;
-		constexpr auto mmfq_factor_p = 6;
-		constexpr auto mmc_factor_p = 2;
-		constexpr auto mmr_factor_p = 0;
-		constexpr auto mme_factor_p = 5;
-
-		constexpr auto mob_factor_b1 = 256;
-		constexpr auto mob_factor_b2 = 249;
-		constexpr auto mmrq_factor_b2 = 8;
-		constexpr auto mmfq_factor_b2 = 3;
-		constexpr auto mmc_factor_b2 = 0;
-		constexpr auto mmr_factor_b2 = 3;
-		constexpr auto mme_factor_b2 = 4;
-
-		constexpr auto mob_factor_r = 255;
-		constexpr auto mmrq_factor_r = 1;
-		constexpr auto mmfq_factor_r = 5;
-		constexpr auto mmc_factor_r = 6;
-		constexpr auto mmr_factor_r = 1;
-		constexpr auto mme_factor_r = 2;
-
-		constexpr auto mob_factor_q = 272;
-		constexpr auto mmrq_factor_q = 2;
-		constexpr auto mmfq_factor_q = 4;
-		constexpr auto mmc_factor_q = 1;
-		constexpr auto mmr_factor_q = 2;
-		constexpr auto mme_factor_q = 8;
-
-		// init pawn mobility values
-		constexpr auto pawn_mg_mult = 207.32;
-		constexpr auto pawn_mg_sub = 417.0;
-		constexpr auto pawn_eg_mult = 252.68;
-		constexpr auto pawn_eg_sub = 509.0;
-
-		// init bishop mobility values
-		constexpr auto b1_mg_mult = 92.43;
-		constexpr auto b1_mg_sub = 171.0;
-		constexpr auto b1_eg_mult = 104.75;
-		constexpr auto b1_eg_sub = 194.0;
-
-		constexpr auto b2_mg_mult = 221.48;
-		constexpr auto b2_mg_sub = 374.0;
-		constexpr auto b2_eg_mult = 203.99;
-		constexpr auto b2_eg_sub = 344.0;
-
-		// init rook mobility values
-		constexpr auto rook_mg_mult = 125.90;
-		constexpr auto rook_mg_sub = 190.0;
-		constexpr auto rook_eg_mult = 218.96;
-		constexpr auto rook_eg_sub = 331.0;
-		constexpr auto mob_r_mult = 7;
-		constexpr auto mob_r_div = 8;
-
-		// init queen mobility values
-		constexpr auto queen_mg_mult = 203.42;
-		constexpr auto queen_mg_sub = 616.0;
-		constexpr auto queen_eg_mult = 165.33;
-		constexpr auto queen_eg_sub = 555.0;
-
-		// init distance values
-		constexpr auto p_k_distance = 1114123;
-		constexpr auto p_k_distance_mult = 3;
-		constexpr auto b_k_distance = 65545;
-		constexpr auto b_k_distance_mult = 3;
-
-		// init pawn-bishop color values
 		constexpr auto pawn_on_bishop_color = -1769515;
-		constexpr auto pawn_on_other_bishop_color = 3014673;
-		constexpr auto pawn_file_width_mg = 0;
-		constexpr auto pawn_file_width_eg = 2;
-		constexpr auto threats_score = 14418116;
 
-		// init passed pawn values
-		constexpr auto pp_dvd_mgfactor = 46;
-		constexpr auto pp_dvd_egfactor = 33;
-		constexpr auto pp_ndvd_mgfactor = 49;
-		constexpr auto pp_ndvd_egfactor = 34;
-
-		constexpr auto pp_fp_base_mg = 1;
-		constexpr auto pp_fp_base_eg = 3;
-		constexpr auto pp_fp_mg = 10;
-		constexpr auto pp_fp_eg = 60;
-		constexpr auto pp_fp_mul = 272;
-		constexpr auto pp_fp_div = 256;
-
-		constexpr auto pp_as_base_mg = 1;
-		constexpr auto pp_as_base_eg = 3;
-		constexpr auto pp_as_mg = 10;
-		constexpr auto pp_as_eg = 36;
-		constexpr auto pp_as_mul = 304;
-		constexpr auto pp_as_div = 256;
-
-		constexpr auto pp_ab_base_mg = 1;
-		constexpr auto pp_ab_base_eg = 3;
-		
-		constexpr auto pp_support_proximity_factor = 30;
-		constexpr auto pp_mk_kdfp_factor = 40;
-		constexpr auto pp_yk_kdfp_factor = 76;
-		constexpr auto pp_mk_factor = 32;
-		constexpr auto pp_mk_div = 35;
-		constexpr auto pp_yk_factor = 32;
-		constexpr auto pp_yk_div = 35;		
-#endif
 		// init mobility mult arrays
 		for (auto n = 0; n < 64; n++)
 		{
+			constexpr auto mme_factor_q = 8;
+			constexpr auto mmr_factor_q = 2;
+			constexpr auto mmc_factor_q = 1;
+			constexpr auto mmfq_factor_q = 4;
+			constexpr auto mmrq_factor_q = 2;
+			constexpr auto mob_factor_q = 272;
+			constexpr auto mme_factor_r = 2;
+			constexpr auto mmr_factor_r = 1;
+			constexpr auto mmc_factor_r = 6;
+			constexpr auto mmfq_factor_r = 5;
+			constexpr auto mmrq_factor_r = 1;
+			constexpr auto mob_factor_r = 255;
+			constexpr auto mme_factor_b2 = 4;
+			constexpr auto mmr_factor_b2 = 3;
+			constexpr auto mmc_factor_b2 = 0;
+			constexpr auto mmfq_factor_b2 = 3;
+			constexpr auto mmrq_factor_b2 = 8;
+			constexpr auto mob_factor_b2 = 249;
+			constexpr auto mob_factor_b1 = 256;
+			constexpr auto mme_factor_p = 5;
+			constexpr auto mmr_factor_p = 0;
+			constexpr auto mmc_factor_p = 2;
+			constexpr auto mmfq_factor_p = 6;
+			constexpr auto mmrq_factor_p = 0;
+			constexpr auto mob_factor_p = 270;
 			mob_mult_p[n] = mob_factor_p * mob_mult_const[n] + ((mmrq_factor_p * mob_mult_rank_quad[n] + mmfq_factor_p * mob_mult_file_quad[n]) >> 1)
 				- mmc_factor_p * mob_mult_center[n] + mmr_factor_p * mob_mult_rank[n] + mme_factor_p * mob_mult_edge[n];
 
@@ -155,6 +76,29 @@ namespace evaluate
 		// init mobility arrays
 		for (auto n = 0; n < 256; n++)
 		{
+			constexpr auto queen_eg_sub = 555.0;
+			constexpr auto queen_eg_mult = 165.33;
+			constexpr auto queen_mg_sub = 616.0;
+			constexpr auto queen_mg_mult = 203.42;
+			constexpr auto mob_r_div = 8;
+			constexpr auto mob_r_mult = 7;
+			constexpr auto rook_eg_sub = 331.0;
+			constexpr auto rook_eg_mult = 218.96;
+			constexpr auto rook_mg_sub = 190.0;
+			constexpr auto rook_mg_mult = 125.90;
+			constexpr auto b2_eg_sub = 344.0;
+			constexpr auto b2_eg_mult = 203.99;
+			constexpr auto b2_mg_sub = 374.0;
+			constexpr auto b2_mg_mult = 221.48;
+			constexpr auto b1_eg_sub = 194.0;
+			constexpr auto b1_eg_mult = 104.75;
+			constexpr auto b1_mg_sub = 171.0;
+			constexpr auto b1_mg_mult = 92.43;
+			constexpr auto pawn_eg_sub = 509.0;
+			constexpr auto pawn_eg_mult = 252.68;
+			constexpr auto pawn_mg_sub = 417.0;
+			constexpr auto pawn_mg_mult = 207.32;
+
 			auto v38 = sqrt(0.125 * n + 1.5) - sqrt(1.5);
 			mobility_p[n] = make_score(std::lround(v38 * pawn_mg_mult - pawn_mg_sub), std::lround(v38 * pawn_eg_mult - pawn_eg_sub));
 			mobility_b1[n] = make_score(std::lround(v38 * b1_mg_mult - b1_mg_sub), std::lround(v38 * b1_eg_mult - b1_eg_sub));
@@ -167,6 +111,10 @@ namespace evaluate
 		// init distance arrays
 		for (auto n = 0; n < 8; n++)
 		{
+			constexpr auto b_k_distance_mult = 3;
+			constexpr auto b_k_distance = 65545;
+			constexpr auto p_k_distance_mult = 3;
+			constexpr auto p_k_distance = 1114123;
 			distance_p_k[n] = static_cast<score>(p_k_distance * (p_k_distance_mult - n));
 			distance_b_k[n] = static_cast<score>(b_k_distance * (b_k_distance_mult - n));
 		}
@@ -174,6 +122,10 @@ namespace evaluate
 		// init pawn-bishop color arrays
 		for (auto n = 0; n < 9; n++)
 		{
+			constexpr auto threats_score = 14418116;
+			constexpr auto pawn_file_width_eg = 2;
+			constexpr auto pawn_file_width_mg = 0;
+			constexpr auto pawn_on_other_bishop_color = 3014673;
 			pawn_on_color_bishop[n] = static_cast<score>(pawn_on_bishop_color * (n - 2));
 			pawn_other_color_bishop[n] = static_cast<score>(pawn_on_other_bishop_color * (n - 2));
 			pawn_file_width[n] = make_score(pawn_file_width_mg, pawn_file_width_eg * (n > 5 ? 9 * n - 36 : n * n - 16));
@@ -183,15 +135,41 @@ namespace evaluate
 		// init passed pawn arrays
 		for (auto n = 0; n <= 5; n++)
 		{
+			constexpr auto pp_as_div = 256;
+			constexpr auto pp_as_mul = 304;
+			constexpr auto pp_as_eg = 36;
+			constexpr auto pp_as_mg = 10;
+			constexpr auto pp_as_base_eg = 3;
+			constexpr auto pp_as_base_mg = 1;
+			constexpr auto pp_fp_div = 256;
+			constexpr auto pp_fp_mul = 272;
+			constexpr auto pp_fp_eg = 60;
+			constexpr auto pp_fp_mg = 10;
+			constexpr auto pp_fp_base_eg = 3;
+			constexpr auto pp_ndvd_egfactor = 34;
+			constexpr auto pp_ndvd_mgfactor = 49;
+			constexpr auto pp_dvd_egfactor = 33;
+			constexpr auto pp_dvd_mgfactor = 46;
+			constexpr auto pp_ab_base_mg = 1;
+			constexpr auto pp_ab_base_eg = 3;
+			constexpr auto pp_fp_base_mg = 1;
 			passed_pawn_dvd[n] = make_score(pp_dvd_mgfactor * (n - 1) * n, pp_dvd_egfactor * (n * n + 1));
 			passed_pawn_not_dvd[n] = make_score(pp_ndvd_mgfactor * (n - 1) * n, pp_ndvd_egfactor * (n * n + 1));
 
 			passed_pawn_free_passage[n] = make_score(pp_fp_base_mg, pp_fp_base_eg) * (n - 1) * n + mul_div(make_score(pp_fp_mg, pp_fp_eg) * (n - 1) * n, pp_fp_mul, pp_fp_div);
-			passed_pawn_advance_supported[n] = make_score(pp_as_base_mg, pp_as_base_eg) * (n - 1) * n + mul_div(make_score(pp_as_mg, pp_as_eg) * (n - 1) * n, pp_as_mul, pp_as_div);
+			passed_pawn_advance_supported[n] = make_score(pp_as_base_mg, pp_as_base_eg) * (n - 1)
+				* n + mul_div(make_score(pp_as_mg, pp_as_eg) * (n - 1) * n, pp_as_mul, pp_as_div);
 			passed_pawn_advance_blocked[n] = make_score(pp_ab_base_mg, pp_ab_base_eg) * (n - 1) * n;
 
 			for (auto distance = 0; distance < 8; distance++)
 			{
+				constexpr auto pp_mk_kdfp_factor = 40;
+				constexpr auto pp_yk_kdfp_factor = 76;
+				constexpr auto pp_mk_factor = 32;
+				constexpr auto pp_mk_div = 35;
+				constexpr auto pp_yk_factor = 32;
+				constexpr auto pp_yk_div = 35;
+				constexpr auto pp_support_proximity_factor = 30;
 				const auto support = pp_support_proximity_factor * passed_pawn_proximity[distance];
 				const auto free_path = (sqrt(distance + 1.0) - 1.0) * (static_cast<double>(n) - static_cast<double>(1)) * n;
 				passed_pawn_my_k[n][distance] = make_score(0, (support - std::lround(free_path * pp_mk_kdfp_factor)) * pp_mk_factor / pp_mk_div);
@@ -243,10 +221,6 @@ namespace evaluate
 	// calculate scale factor based on material hash, opposite colored bishops, passed pawns, etc 
 	sfactor calculate_scale_factor(const position& pos, const material::mat_hash_entry* material_entry, const int value)
 	{
-#ifndef TUNER
-		const auto sf_mult = 3;
-		constexpr auto sf_div = 4;
-#endif
 		const auto strong_side = value > draw_eval ? white : black;
 		auto scale_factor = material_entry->scale_factor_from_function(pos, strong_side);
 
@@ -254,6 +228,8 @@ namespace evaluate
 		{
 			if (pos.different_color_bishops())
 			{
+				constexpr auto sf_div = 4;
+				constexpr auto sf_mult = 3;
 				if (pos.non_pawn_material(white) == mat_bishop
 					&& pos.non_pawn_material(black) == mat_bishop)
 					scale_factor = pos.number(strong_side, pt_pawn) > 1 ? static_cast<sfactor>(50) : static_cast<sfactor>(12);
@@ -298,14 +274,9 @@ namespace evaluate
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
 
-#ifndef TUNER
-		constexpr auto k_zone_attack_bonus = 8;
 		constexpr auto bishop_in_front_of_king = 7602176;
 		constexpr auto bishop_in_corner = 6553753;
-		constexpr auto trapped_bishop_extra = 69731368;
-		constexpr auto trapped_bishop = 33030648;
-		constexpr auto bishop_dominates_pawn = 2097182;
-#endif
+
 		auto squares = pos.pieces(me, pt_bishop);
 		assert(squares);
 
@@ -336,6 +307,8 @@ namespace evaluate
 
 		do
 		{
+			constexpr auto bishop_dominates_pawn = 2097182;
+			constexpr auto k_zone_attack_bonus = 8;
 			const auto sq = pop_lsb(&squares);
 			score += distance_b_k[distance(sq, pos.king(me))];
 
@@ -354,6 +327,8 @@ namespace evaluate
 			// bishop trapped underneath pawns
 			if (pos.pieces(pt_pawn) & trapped_bishop_b3_c2[me][sq])
 			{
+				constexpr auto trapped_bishop = 33030648;
+				constexpr auto trapped_bishop_extra = 69731368;
 				if (pos.pieces(pt_pawn) & trapped_bishop_b3_c2_extra[sq])
 					score -= trapped_bishop_extra;
 				else
@@ -390,9 +365,7 @@ namespace evaluate
 
 	inline int eval_initiative(const position& pos, const pawn::pawn_hash_entry* pawn_entry, const int eg)
 	{
-#ifndef TUNER
 		constexpr auto initiative_mult = 38;
-#endif
 		const auto k_distance = file_distance(pos.king(white), pos.king(black)) - rank_distance(pos.king(white), pos.king(black));
 		const auto initiative = (2 * pawn_entry->asymmetry + k_distance + 3 * pos.number(eg < 0 ? b_pawn : w_pawn) - 15) * initiative_mult;
 		const auto bonus = ((eg > 0) - (eg < 0)) * std::max(initiative, -abs(eg >> 1));
@@ -404,20 +377,10 @@ namespace evaluate
 	inline int eval_king_attack(const position& pos, const attack_info& ai, const int attack_score)
 	{
 		const auto you = me == white ? black : white;
-#ifndef TUNER
-		const auto k_attack_index_factor = 16;
-		const auto k_attack_pin_factor = 12;
-		const auto k_attack_sd_factor = 11;
-		const auto cspan_safe = 70;
-		const auto cspan = 30;
-		const auto csbab_safe = 54;
-		constexpr auto csbab = 22;
-		constexpr auto csrar_safe = 70;
-		constexpr auto csrar = 30;
-		constexpr auto qcayk_all = 86;
-		constexpr auto qcayk = 38;
-		constexpr auto queen_check_bonus = 120;
-#endif
+		constexpr auto k_attack_index_factor = 16;
+		constexpr auto k_attack_pin_factor = 12;
+		constexpr auto k_attack_sd_factor = 11;
+
 		auto attack_index = attack_score;
 		attack_index += k_attack_index_factor * popcnt(ai.attack[you][pt_king] & ai.attack[me][all_pieces] & ~ai.attack[you][pieces_without_king]);
 
@@ -437,6 +400,8 @@ namespace evaluate
 
 		if (check_squares_p & ai.attack[me][pt_knight])
 		{
+			constexpr auto cspan = 30;
+			constexpr auto cspan_safe = 70;
 			if (check_squares_p & ai.attack[me][pt_knight] & safe_pbr)
 				attack_index += cspan_safe;
 			else
@@ -444,6 +409,8 @@ namespace evaluate
 		}
 		if (check_squares_b & ai.attack[me][pt_bishop])
 		{
+			constexpr auto csbab = 22;
+			constexpr auto csbab_safe = 54;
 			if (check_squares_b & ai.attack[me][pt_bishop] & safe_pbr)
 				attack_index += csbab_safe;
 			else
@@ -451,6 +418,8 @@ namespace evaluate
 		}
 		if (check_squares_r & ai.attack[me][pt_rook])
 		{
+			constexpr auto csrar = 30;
+			constexpr auto csrar_safe = 70;
 			if (check_squares_r & ai.attack[me][pt_rook] & safe_pbr)
 				attack_index += csrar_safe;
 			else
@@ -459,8 +428,11 @@ namespace evaluate
 
 		if (auto queen_check = (check_squares_b | check_squares_r) & ai.attack[me][pt_queen]; queen_check)
 		{
+			constexpr auto queen_check_bonus = 120;
 			if (queen_check & ~ai.attack[you][pt_king])
 			{
+				constexpr auto qcayk = 38;
+				constexpr auto qcayk_all = 86;
 				if (queen_check & ~ai.attack[you][all_pieces])
 					attack_index += qcayk_all;
 				else
@@ -484,15 +456,14 @@ namespace evaluate
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
-#ifndef TUNER
-		constexpr auto knight_attack_king = 24;
-		constexpr auto p_mobility_add = 16;
-		constexpr auto p_mobility_div = 32;	
-#endif
+
 		auto squares = pos.pieces(me, pt_knight);
 		assert(squares);
 		do
 		{
+			constexpr auto p_mobility_div = 32;
+			constexpr auto p_mobility_add = 16;
+			constexpr auto knight_attack_king = 24;
 			const auto sq = pop_lsb(&squares);
 			score += distance_p_k[distance(sq, pos.king(me))];
 			auto attack = pos.attack_from<pt_knight>(sq);
@@ -521,17 +492,7 @@ namespace evaluate
 	{
 		assert(bb_passed_pawns != 0);
 		constexpr auto you = me == white ? black : white;
-#ifndef TUNER		
-		constexpr auto passed_pawn_mk_mult = 3;
-		constexpr auto passed_pawn_mk_div = 4;
-		constexpr auto passed_pawn_yk_mult = 3;
-		constexpr auto passed_pawn_yk_div = 4;
-		constexpr auto passed_pawn_mk_md_mul = 2;
-		constexpr auto passed_pawn_mk_md_div = 4;
-		constexpr auto passed_pawn_yk_md_mul = 2;
-		constexpr auto passed_pawn_yk_md_div = 4;
-		constexpr auto bb_behind_passed_pawn_bonus = 6488502;
-#endif	
+
 		auto score = 0;
 		while (bb_passed_pawns)
 		{
@@ -545,6 +506,14 @@ namespace evaluate
 
 			if (pawn_rank > 1)
 			{
+				constexpr auto passed_pawn_yk_md_div = 4;
+				constexpr auto passed_pawn_yk_md_mul = 2;
+				constexpr auto passed_pawn_mk_md_div = 4;
+				constexpr auto passed_pawn_mk_md_mul = 2;
+				constexpr auto passed_pawn_yk_div = 4;
+				constexpr auto passed_pawn_yk_mult = 3;
+				constexpr auto passed_pawn_mk_div = 4;
+				constexpr auto passed_pawn_mk_mult = 3;
 				const auto square_for_pawn = passed_pawn + pawn_ahead(me);
 				auto my_distance = distance(square_for_pawn, pos.king(me));
 				auto your_distance = distance(square_for_pawn, pos.king(you));
@@ -561,6 +530,7 @@ namespace evaluate
 
 				if (pawn_rank > 2)
 				{
+					constexpr auto bb_behind_passed_pawn_bonus = 6488502;
 					const auto bb_behind_passed_pawn = bb_forward(you, passed_pawn);
 					if (bb_behind_passed_pawn & pos.pieces(me, pt_rook))
 						score += bb_behind_passed_pawn_bonus;
@@ -597,12 +567,9 @@ namespace evaluate
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
-#ifndef TUNER
+
 		constexpr auto queen_attack_king = 24;
-		constexpr auto queen_attack_king_zone = 8;
-		constexpr auto q_mobility_add = 32;
-		constexpr auto q_mobility_div = 64;
-#endif
+
 		auto squares = pos.pieces(me, pt_queen);
 		assert(squares);
 
@@ -614,6 +581,9 @@ namespace evaluate
 
 		do
 		{
+			constexpr auto q_mobility_div = 64;
+			constexpr auto q_mobility_add = 32;
+			constexpr auto queen_attack_king_zone = 8;
 			const auto sq = pop_lsb(&squares);
 			auto attack = attack_bb_rook(sq, pos.pieces() ^ pos.pieces(me, pt_queen))
 				| attack_bb_bishop(sq, pos.pieces() ^ pos.pieces(me, pt_queen));
@@ -640,16 +610,9 @@ namespace evaluate
 	{
 		constexpr auto you = me == white ? black : white;
 		auto score = 0;
-#ifndef TUNER
+
 		constexpr auto uncastled_penalty = 29556897;
-		constexpr auto rook_attacks_king = 8;
-		constexpr auto rook_traps_king_on_7th = 6684932;
-		constexpr auto no_pawn = 19398907;
-		constexpr auto pawn_attacks = 2097222;
-		constexpr auto pawn_no_attack = 11731094;
-		constexpr auto r_mobility_add = 16;
-		constexpr auto r_mobility_div = 32;
-#endif
+#
 		auto squares = pos.pieces(me, pt_rook);
 		assert(squares);
 
@@ -657,6 +620,10 @@ namespace evaluate
 			score -= uncastled_penalty;
 		do
 		{
+			constexpr auto r_mobility_div = 32;
+			constexpr auto r_mobility_add = 16;
+			constexpr auto rook_traps_king_on_7th = 6684932;
+			constexpr auto rook_attacks_king = 8;
 			const auto sq = pop_lsb(&squares);
 
 			auto attack = attack_bb_rook(sq, pos.pieces() ^ pos.pieces(me, pt_rook, pt_queen));
@@ -680,6 +647,9 @@ namespace evaluate
 
 			if (!(bb_file(sq) & pos.pieces(me, pt_pawn)))
 			{
+				constexpr auto pawn_no_attack = 11731094;
+				constexpr auto pawn_attacks = 2097222;
+				constexpr auto no_pawn = 19398907;
 				if (const auto pawn = pos.pieces(you, pt_pawn) & bb_file(sq); !pawn)
 					score += no_pawn;
 				else if (pawn & ai.attack[you][pt_pawn])
@@ -693,40 +663,16 @@ namespace evaluate
 	}
 
 	template <side me>
-	inline int eval_space(const position& pos, const attack_info& ai)
-	{
-		constexpr auto you = me == white ? black : white;
-#ifndef TUNER
-		constexpr auto space_weight_mult = 3;
-		constexpr auto space_weight_div = 16;
-#endif
-		constexpr uint64_t center_zone = me == white ? 0x000000003c3c3c00 : 0x003c3c3c00000000;
-		const auto safe = center_zone & ~(pos.pieces(me, pt_pawn) | ai.attack[you][pt_pawn] | (ai.attack[you][all_pieces] & ~ai.attack[me][all_pieces]));
-
-		auto shielded = pos.pieces(me, pt_pawn);
-		shielded |= me == white ? shielded >> 8 : shielded << 8;
-		shielded |= me == white ? shielded >> 16 : shielded << 16;
-		shielded &= safe;
-
-		const uint32_t control = popcnt(safe | (me == white ? shielded << 32 : shielded >> 32));
-		const uint32_t weight = popcnt(pos.pieces(me));
-		const auto escore = remake_score(weight * weight * space_weight_mult / space_weight_div, eval_0);
-		return escore * control;
-	}
-
-	template <side me>
 	inline int eval_strong_squares(const position& pos, const attack_info& ai, const pawn::pawn_hash_entry* pawn_entry)
 	{
 		constexpr auto you = me == white ? black : white;
 		constexpr uint64_t rank456 = me == white ? 0x3C3C3C000000 : 0x3C3C3C0000;
-#ifndef TUNER
+
 		constexpr auto safety_for_pawn_rbp = 3670059;
 		constexpr auto strong_p_in_front_of_pawn = 1441846;
-		constexpr auto strong_square_pb = 6488176;
-		constexpr auto strong_square_pb_extra = 16318582;
 		constexpr auto pb_behind_pawn = 3342348;
 		constexpr auto protected_piece = 5767214;
-#endif
+
 		auto score = 0;
 		score += safety_for_pawn_rbp * popcnt(pawn_entry->safe_for_pawn(you) & pos.pieces(me, pt_knight, pt_bishop, pt_rook));
 		score += strong_p_in_front_of_pawn * popcnt(
@@ -735,11 +681,13 @@ namespace evaluate
 		auto strong_pb = pawn_entry->safe_for_pawn(you) & ai.attack[me][pt_pawn] & pos.pieces(me, pt_knight, pt_bishop) & rank456;
 		if (strong_pb)
 		{
+			constexpr auto strong_square_pb = 6488176;
 			score += strong_square_pb * popcnt(strong_pb);
 			if (!pos.pieces(you, pt_knight))
 			{
 				do
 				{
+					constexpr auto strong_square_pb_extra = 16318582;
 					const auto sq = pop_lsb(&strong_pb);
 					if (const auto squares_same_color = dark_squares & sq ? dark_squares : ~dark_squares; !(pos.pieces(you, pt_bishop) & squares_same_color))
 						score += strong_square_pb_extra;
@@ -760,18 +708,15 @@ namespace evaluate
 		constexpr auto you = me == white ? black : white;
 		constexpr auto rank2 = me == white ? rank_2_bb : rank_7_bb;
 		constexpr auto rank7 = me == white ? rank_7_bb : rank_2_bb;
-#ifndef TUNER
-		constexpr auto hanging_pawn_threat = 26083619;
-		constexpr auto hanging_pieces = 17498230;
-		constexpr auto king_threat_single = 2490697;
-		constexpr auto king_threat_multiple = 6488796;
+
 		constexpr auto pawn_advance = 11272272;
-#endif
+
 		auto score = 0;
 		ai.strong_threat[me] = false;
 
 		if (auto pawn_threats = pos.pieces_excluded(you, pt_pawn) & ai.attack[me][pt_pawn]; pawn_threats)
 		{
+			constexpr auto hanging_pawn_threat = 26083619;
 			const auto safe_pawns = pos.pieces(me, pt_pawn) & (~ai.attack[you][all_pieces] | ai.attack[me][all_pieces]);
 			uint64_t safe_threats = pawn_attack<me>(safe_pawns) & pawn_threats;
 
@@ -791,6 +736,9 @@ namespace evaluate
 
 		if (const auto weak_pieces = pos.pieces(you) & ~ai.attack[you][pt_pawn] & ai.attack[me][all_pieces]; supported_pieces | weak_pieces)
 		{
+			constexpr auto king_threat_multiple = 6488796;
+			constexpr auto king_threat_single = 2490697;
+			constexpr auto hanging_pieces = 17498230;
 			auto b = (supported_pieces | weak_pieces) & (ai.attack[me][pt_knight] | ai.attack[me][pt_bishop]);
 			if (b & pos.pieces(you, pt_rook, pt_queen))
 				ai.strong_threat[me] = true;
@@ -833,7 +781,7 @@ namespace evaluate
 	{
 		if (pos.is_in_check())
 			return score_0;
-#ifndef TUNER
+
 	constexpr auto mg_mgvalue_mult = 106;
 	constexpr auto mg_egvalue_mult = 6;
 	constexpr auto eg_mgvalue_mult = 13;
@@ -846,17 +794,10 @@ namespace evaluate
 	constexpr auto blocked_pawns_mg = 43;
 	constexpr auto blocked_pawns_eg = 167;
 	constexpr auto flank_double_attack = 1835008;
-	constexpr auto pawn_contempt_mult = 2;
-	constexpr auto knight_contempt_mult = 2;
-	constexpr auto bishop_contempt_mult = 3;
-	constexpr auto rook_contempt_mult = 4;
-	constexpr auto queen_contempt_mult = 8;
-	constexpr auto contempt_mult = 4;
 
-#endif
 		const auto blocked_pawns = mul_div(make_score(blocked_pawns_mg, blocked_pawns_eg), 128, 256);
 
-		auto* const material_entry = material::probe(pos);
+		const auto* const material_entry = material::probe(pos);
 		auto* pi = pos.info();
 		pi->eval_is_exact = false;
 
@@ -944,12 +885,6 @@ namespace evaluate
 		eval_score -= blocked_pawns * popcnt(pos.pieces(white, pt_pawn) & shift_down<white>(pos.pieces()));
 		eval_score += blocked_pawns * popcnt(pos.pieces(black, pt_pawn) & shift_down<black>(pos.pieces()));
 		
-		if (pos.non_pawn_material(white) + pos.non_pawn_material(black) >= space_threshold)
-		{
-			eval_score += eval_space<white>(pos, ai);
-			eval_score -= eval_space<black>(pos, ai);
-		}
-
 		auto bb_flank = ai.attack[white][pieces_without_king] & bb_king_flank_attack[black][file_of(pos.king(black))]
 			& ~ai.attack[black][pt_king] & ~ai.attack[black][pt_pawn];
 		bb_flank = bb_flank >> 4 | (bb_flank & ai.double_attack[white]);
@@ -993,6 +928,12 @@ namespace evaluate
 
 		if (thread_pool.piece_contempt)
 		{
+			constexpr auto contempt_mult = 4;
+			constexpr auto queen_contempt_mult = 8;
+			constexpr auto rook_contempt_mult = 4;
+			constexpr auto bishop_contempt_mult = 3;
+			constexpr auto knight_contempt_mult = 2;
+			constexpr auto pawn_contempt_mult = 2;
 			const auto contempt_number = pawn_contempt_mult * pos.number(thread_pool.contempt_color, pt_pawn)
 				+ knight_contempt_mult * pos.number(thread_pool.contempt_color, pt_knight) + bishop_contempt_mult * pos.number(thread_pool.contempt_color, pt_bishop)
 				+ rook_contempt_mult * pos.number(thread_pool.contempt_color, pt_rook) + queen_contempt_mult * pos.number(thread_pool.contempt_color, pt_queen);
@@ -1034,85 +975,5 @@ namespace evaluate
 			}
 		}
 		return result;
-	}
-
-	template <side me>
-	bool two_mobile_pieces(const position& pos)
-	{
-		constexpr auto you = me == white ? black : white;
-		auto sq = no_square;
-
-		const uint64_t your_attack = calculate_attack<you>(pos);
-		const auto pinned = pos.info()->x_ray[me];
-
-		const auto safe = ~pos.pieces(me) & ~your_attack;
-		auto mobile = false;
-
-		if (const auto attack = pos.attack_from<pt_king>(pos.king(me)); attack & safe)
-		{
-			if (!(attack & pos.pieces(me) & your_attack))
-				mobile = true;
-		}
-
-		const auto* p_square = pos.piece_list(me, pt_knight);
-		while ((sq = *p_square++) != no_square)
-		{
-			if (pinned & sq)
-				continue;
-			if (pos.attack_from<pt_knight>(sq) & safe)
-			{
-				if (mobile)
-					return true;
-				mobile = true;
-			}
-		}
-
-		p_square = pos.piece_list(me, pt_bishop);
-		while ((sq = *p_square++) != no_square)
-		{
-			if (pinned & sq)
-				continue;
-			if (pos.attack_from<pt_bishop>(sq) & safe)
-			{
-				if (mobile)
-					return true;
-				mobile = true;
-			}
-		}
-
-		p_square = pos.piece_list(me, pt_rook);
-		while ((sq = *p_square++) != no_square)
-		{
-			if (pinned & sq)
-				continue;
-			if (pos.attack_from<pt_rook>(sq) & safe)
-			{
-				if (mobile)
-					return true;
-				mobile = true;
-			}
-		}
-
-		p_square = pos.piece_list(me, pt_queen);
-		while ((sq = *p_square++) != no_square)
-		{
-			if (pinned & sq)
-				continue;
-			if (pos.attack_from<pt_queen>(sq) & safe)
-			{
-				if (mobile)
-					return true;
-				mobile = true;
-			}
-		}
-
-		return false;
-	}
-
-	bool has_two_mobile_pieces(const position& pos)
-	{
-		if (pos.on_move() == white)
-			return two_mobile_pieces<white>(pos);
-		return two_mobile_pieces<black>(pos);
 	}
 }

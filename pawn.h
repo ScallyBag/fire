@@ -29,11 +29,11 @@ namespace pawn
 	inline int storm_half_open_file[8];
 	inline int attack_on_file[8];
 
-	const auto distance = 6;
-	const auto distance_2_div = 2;
-	const auto distance_3_div = 3;
-	const auto distance_4_div = 4;
-	const auto distance_5_div = 5;
+	constexpr auto distance = 6;
+	constexpr auto distance_2_div = 2;
+	constexpr auto distance_3_div = 3;
+	constexpr auto distance_4_div = 4;
+	constexpr auto distance_5_div = 5;
 
 	constexpr score pps(const int mg, const int eg)
 	{
@@ -45,32 +45,6 @@ namespace pawn
 		return x * 2;
 	}
 
-#ifdef TUNER
-	// 	eval_pawns
-	inline auto center_bind = 4259831;
-	inline auto multiple_passed_pawns = 3408076;
-	inline auto second_row_fixed = 1114131;
-
-	// init
-	inline auto max_safety_bonus = ev(258);
-	inline auto pawn_unsupported = 5505051;
-	inline auto chain_mult = 3;
-	inline auto chain_div = 2;
-	inline auto file_factor_mult = 64;
-
-	// eval_shelter_storm
-	inline auto ss_base = 100;
-	inline auto ss_safety_factor = 3;
-	inline auto ss_danger_factor = 3;
-
-	// calculate_king_safety
-	inline auto safe_bonus_div = 220;
-	inline auto safe_bonus_mult = 8;
-	inline auto safe_bonus_mult_r34 = 16;
-	inline auto safe_bonus_mult_r5 = 8;
-	inline auto king_1st_rank = static_cast<int>(-6553876);
-	inline auto king_near_enemy_pawns = static_cast<int>(43);
-#endif
 	//ps factors
 	inline auto mg_mg_mult = 15399;
 	inline auto mg_eg_mult = 852;
@@ -194,7 +168,7 @@ namespace pawn
 		return make_score((mg * mg_mg_mult + eg * mg_eg_mult) / ps_div, (mg * eg_mg_mult + eg * eg_eg_mult) / ps_div);
 	}
 
-	const uint64_t attack_files[num_files] =
+	constexpr uint64_t attack_files[num_files] =
 	{
 		file_a_bb | file_b_bb | file_c_bb,
 		file_a_bb | file_b_bb | file_c_bb,
@@ -338,7 +312,7 @@ namespace pawn
 		char padding[20];
 	};
 
-	static_assert(offsetof(struct pawn_hash_entry, half_open_lines) == 72, "offset wrong");
+	static_assert(offsetof(pawn_hash_entry, half_open_lines) == 72, "offset wrong");
 	static_assert(sizeof(pawn_hash_entry) == 128, "Pawn Hash Entry size incorrect");
 
 	template <class entry, int size>
@@ -356,7 +330,7 @@ namespace pawn
 
 	void init();
 	pawn_hash_entry* probe(const position& pos);
-	const int pawn_hash_size = 16384;
+	constexpr int pawn_hash_size = 16384;
 	typedef pawn_hash_table<pawn_hash_entry, pawn_hash_size> pawn_hash;
 }
 

@@ -56,7 +56,7 @@ public:
 
 constexpr int value_tempo = 24;
 constexpr uint64_t black_modifier = 0xa4489c56;
-const uint64_t averbakh_rule = 0xfff7e3c180000000;
+constexpr uint64_t averbakh_rule = 0xfff7e3c180000000;
 
 namespace endgame
 {
