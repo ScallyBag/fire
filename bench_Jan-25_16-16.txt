@@ -1,6 +1,0 @@
-Fire 8.11 x64 pext
-depth 16
-nodes 117350045
-time 41.11 secs
-nps 2854746
-ttd 0.64 secs
