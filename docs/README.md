@@ -22,16 +22,15 @@ by Norman Schmidt
 - adjustable contempt setting
 - fast perft & divide
 - bench (includes ttd time-to-depth calculation)
-- integrated tuner (if compiled with #define TUNER)
 - timestamped bench, perft/divide, and tuner logs
 - asychronous cout (acout) class using std::unique_lock<std::mutex>
 
 
-Fire 8 has undergone months of meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
+Fire has undergone months of meticulous analysis and refactoring using many of the most modern C++ tools available today, including Clang, ReSharper C++, and Visual Studio Code Analysis, ensuring the production of extremely fast highly optimized and stable executables.
 
 
 ## strength
-Fire 8 has been thoroughly tested by the CCRL testing group:
+Fire has been thoroughly tested by the CCRL testing group:
 - ~3550 Elo on [CCRL Blitz](https://www.computerchess.org.uk/ccrl/404/)
 - ~3400 Elo on [CCRL 40/15](https://www.computerchess.org.uk/ccrl/4040/)
 - ~3600 Elo on [CCRL 40/2 FRC](https://www.computerchess.org.uk/ccrl/404FRC/)
@@ -45,12 +44,13 @@ Fire appears to be superior to Ethereal and Houdini at fast time controls (like 
 | Ethereal 2.75  | 5697     | +1221    | -2334    | =2142     | 0         | 40.2%     | -70 elo  | 0%
 
 
-## available binaries
-- **x64 popc** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set)
-- **x64 pext** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set) if you own a Intel Haswell or newer cpu, this compile should be faster.
-
-- **windows** : Fire_8_x64_popc.exe or Fire_8_x64_pext.exe
-- **linux** :   Fire_8_x64_popc or Fire_8_x64_pext
+## available Windows binaries
+- **x64 bmi2** = fast pgo binary (for modern 64-bit systems w/ BMI2 instruction set) if you own a Intel Haswell or newer cpu, this compile should be faster.
+- **x64 avx2** = fast pgo binary (for modern 64-bit systems w/ AVX2 instruction set) if you own a modern AMD cpu, this compile should be the fastest.
+- **x64 sse41** = fast pgo binary (for modern 64-bit systems w/ popcnt instruction set) 
+- 
+- **windows** : Fire_8.11_x64_popc.exe or Fire_8_x64_pext.exe
+- **linux** :   Fire_8.11_x64_popc or Fire_8_x64_pext
 
 
 run 'bench' at command line to determine which binary runs best/fastest on your system. for greater accuracy, run it twice and calculate the average of both results.
