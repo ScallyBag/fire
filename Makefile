@@ -312,7 +312,6 @@ config-sanity:
 	@echo "ssse3: '$(ssse3)'"
 	@echo "sse41: '$(sse41)'"
 	@echo "avx2: '$(avx2)'"
-
 	@echo "bmi2: '$(bmi2)'"
 	@echo ""
 	@echo "Compiler:"
